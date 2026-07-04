@@ -613,10 +613,16 @@ ONE GLOBAL SELECTION: the "active building" follows the user across every page. 
 
 ACTIONS YOU MAY EMIT (these are your hands — the client executes them in order)
 1 {"type":"set_building","name":"<building name>"}        — set the global active structure
-2 {"type":"navigate","page":"<one page id from the list above>"}
+2 {"type":"navigate","page":"<one page id from the list above>","highlight":"<optional: exact 3-12 word phrase to highlight on that page>"}
 3 {"type":"research","name":"<building name>"}            — set building + run deep research (analysis page)
 4 {"type":"find_on_globe","name":"<building name>"}       — set building + locate it on the globe
 5 {"type":"simulate","name":"<building name>","disaster":"seismic"|"wind"|""}  — set building + open the FEA simulation
+
+POINTING AT THE SOURCE (very important)
+When the user asks a question whose answer exists in the research data — CURRENT CONTEXT page data or the RESEARCH DOSSIER — do BOTH:
+(a) answer it briefly in "reply", and
+(b) emit {"type":"navigate","page":"<the page holding that answer>","highlight":"<the EXACT short phrase copied verbatim from that data>"} so the app scrolls to and highlights the source text on screen.
+The highlight is matched against the page text, so keep it SHORT and DISTINCTIVE: a single name, date, number or 3-6 word phrase (e.g. "White Makrana Marble", "1632", "20,000 workers") — never join separate fields with dashes or commas. Materials facts live on "materials", timeline/dates on "history", specs/overview on "analysis", soil numbers on "soil", weather numbers on "weather". If the answer is already visible on the current page, still emit navigate to the same page with the highlight.
 
 STRICT OUTPUT SCHEMA — YOU MUST FOLLOW THIS EXACTLY
 Respond with ONE valid JSON object and NOTHING else. No markdown fences, no commentary outside JSON:
@@ -640,7 +646,8 @@ app.post('/api/assistant', async (req, res) => {
         const contextBlock =
             `CURRENT CONTEXT\n- Current page: ${ctx.page || 'unknown'}\n` +
             `- Active building: ${ctx.activeBuilding || 'none selected'}\n` +
-            `- Visible page data (trimmed):\n${String(ctx.pageText || '').substring(0, 2400)}`;
+            `- Visible page data (trimmed):\n${String(ctx.pageText || '').substring(0, 2400)}` +
+            (ctx.dossier ? `\n\nRESEARCH DOSSIER for the active building (quote phrases from here verbatim for highlights):\n${String(ctx.dossier).substring(0, 1600)}` : '');
 
         const chat = [
             { role: 'system', content: ASSISTANT_SYSTEM },
@@ -692,6 +699,10 @@ app.post('/api/assistant', async (req, res) => {
         parsed.actions = (Array.isArray(parsed.actions) ? parsed.actions : [])
             .filter(a => a && VALID_TYPES.includes(a.type))
             .filter(a => a.type !== 'navigate' || VALID_PAGES.includes(a.page))
+            .map(a => {
+                if (a.highlight != null) a.highlight = String(a.highlight).substring(0, 160);
+                return a;
+            })
             .slice(0, 4);
         parsed.model = modelUsed;
         res.json(parsed);

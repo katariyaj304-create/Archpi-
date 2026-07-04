@@ -141,7 +141,13 @@
         '#archpi-toast.on{opacity:1;transform:translate(-50%,0)}',
         '.aria-spin{width:14px;height:14px;border-radius:50%;border:2px solid #bfa17f;border-top-color:transparent;',
         ' animation:ariaSpin .8s linear infinite;display:inline-block}',
-        '@keyframes ariaSpin{to{transform:rotate(360deg)}}'
+        '@keyframes ariaSpin{to{transform:rotate(360deg)}}',
+        /* --- research highlight (ARIA points at the source text) --- */
+        '.aria-highlight{background:linear-gradient(120deg,#f6dfae,#eec987) !important;color:#3a2c17 !important;',
+        ' border-radius:4px;box-shadow:0 0 0 4px rgba(225,193,157,.55);animation:ariaGlow 1.6s ease-in-out 3}',
+        '.aria-highlight-block{outline:3px solid #bfa17f !important;outline-offset:4px;border-radius:6px;',
+        ' box-shadow:0 0 26px rgba(191,161,127,.65);animation:ariaGlow 1.6s ease-in-out 3}',
+        '@keyframes ariaGlow{0%,100%{box-shadow:0 0 0 4px rgba(225,193,157,.5)}50%{box-shadow:0 0 22px 8px rgba(225,193,157,.85)}}'
     ].join('\n');
     var styleEl = document.createElement('style');
     styleEl.textContent = css;
@@ -329,13 +335,134 @@
         h.forEach(function (m) { bubble(m.role, m.content, m.actions); });
     }
 
+    /* ================= research highlighter =================
+       ARIA points at the source: the exact phrase she quoted is found in
+       the page and lit up. Survives navigation via sessionStorage and
+       retries while research pages are still loading their data. */
+    var HL_KEY = 'archpi.aria.highlight';
+
+    function normalize(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+
+    function tryHighlight(quote) {
+        var needle = normalize(quote);
+        if (!needle || needle.length < 3) return true;
+
+        // Pass 1: a single text node containing the phrase → wrap just the phrase
+        var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+            acceptNode: function (n) {
+                if (!n.nodeValue || n.nodeValue.trim().length < 3) return NodeFilter.FILTER_REJECT;
+                var p = n.parentElement;
+                if (!p || /^(SCRIPT|STYLE|NOSCRIPT)$/.test(p.tagName) || p.closest('#aria-panel')) return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        // whitespace-flexible, case-insensitive exact-phrase matcher
+        var rx;
+        try {
+            rx = new RegExp(String(quote).trim()
+                .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                .replace(/\s+/g, '\\s+'), 'i');
+        } catch (e) { rx = null; }
+        var node;
+        while (rx && (node = walker.nextNode())) {
+            var m = node.nodeValue.match(rx);
+            if (!m) continue;
+            var range = document.createRange();
+            range.setStart(node, m.index);
+            range.setEnd(node, m.index + m[0].length);
+            var mark = document.createElement('mark');
+            mark.className = 'aria-highlight';
+            try { range.surroundContents(mark); } catch (e) {
+                node.parentElement.classList.add('aria-highlight-block');
+                node.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return true;
+            }
+            mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return true;
+        }
+
+        // Pass 2: phrase spans multiple nodes → glow the smallest element containing it
+        var best = null;
+        var all = document.body.querySelectorAll('main *, section *, article *, div, p, li, td, h1, h2, h3, span');
+        for (var j = 0; j < all.length; j++) {
+            var el = all[j];
+            if (el.closest('#aria-panel') || el.children.length > 20) continue;
+            var t = normalize(el.innerText);
+            if (t.length >= needle.length && t.indexOf(needle) !== -1) {
+                if (!best || el.innerText.length < best.innerText.length) best = el;
+            }
+        }
+        if (best) {
+            best.classList.add('aria-highlight-block');
+            best.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return true;
+        }
+        return false;
+    }
+
+    function highlightWithFallbacks(quote) {
+        if (tryHighlight(quote)) return true;
+        // The model sometimes joins fields ("Name — detail") that never appear
+        // verbatim on the page — degrade to the longest fragment, then to the
+        // first few words, until something matches.
+        var candidates = [];
+        String(quote).split(/[—–\-:;,·|]+/).forEach(function (f) {
+            f = f.trim();
+            if (f.length >= 4) candidates.push(f);
+        });
+        candidates.sort(function (a, b) { return b.length - a.length; });
+        var words = String(quote).trim().split(/\s+/);
+        if (words.length > 5) candidates.push(words.slice(0, 5).join(' '));
+        if (words.length > 3) candidates.push(words.slice(0, 3).join(' '));
+        for (var i = 0; i < candidates.length; i++) {
+            if (candidates[i] !== quote && tryHighlight(candidates[i])) return true;
+        }
+        return false;
+    }
+
+    function scheduleHighlight(quote) {
+        // research pages fill in asynchronously — keep trying for two minutes
+        var tries = 0;
+        var timer = setInterval(function () {
+            tries++;
+            if (highlightWithFallbacks(quote) || tries > 60) {
+                clearInterval(timer);
+                try { sessionStorage.removeItem(HL_KEY); } catch (e) {}
+            }
+        }, 2000);
+        highlightWithFallbacks(quote); // immediate attempt too
+    }
+
+    // A highlight left behind by a pre-navigation action?
+    try {
+        var pendingHl = sessionStorage.getItem(HL_KEY);
+        if (pendingHl) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function () { scheduleHighlight(pendingHl); });
+            } else {
+                scheduleHighlight(pendingHl);
+            }
+        }
+    } catch (e) {}
+
     /* ================= action executor ================= */
     function execute(actions) {
         if (!actions || !actions.length) return;
         var nav = null;
         actions.forEach(function (a) {
             if (a.type === 'set_building' && a.name && window.ArchPiBuilding) ArchPiBuilding.set(a.name);
-            if (a.type === 'navigate') nav = a.page + '.html';
+            if (a.type === 'navigate') {
+                var target = a.page + '.html';
+                if (a.highlight) {
+                    if (target.replace('.html', '') === PAGE) {
+                        // answer is on this very page — point at it right now
+                        scheduleHighlight(a.highlight);
+                        return;
+                    }
+                    try { sessionStorage.setItem(HL_KEY, a.highlight); } catch (e) {}
+                }
+                nav = target;
+            }
             if (a.type === 'research' && a.name) {
                 if (window.ArchPiBuilding) ArchPiBuilding.set(a.name);
                 nav = 'analysis.html?q=' + encodeURIComponent(a.name);
@@ -378,10 +505,39 @@
         msgs.appendChild(typing);
         msgs.scrollTop = msgs.scrollHeight;
 
+        // Compact extract of the active building's cached research dossier —
+        // lets ARIA answer cross-page questions and quote exact phrases for
+        // the highlighter even when the answer isn't on the current page
+        var dossier = '';
+        try {
+            var bn = (window.ArchPiBuilding && ArchPiBuilding.get()) || '';
+            var d = bn && JSON.parse(localStorage.getItem('archpi_data_' + bn) || 'null');
+            if (d) {
+                var parts = [];
+                if (d.materials && d.materials.length) {
+                    parts.push('MATERIALS (on materials page): ' + d.materials.map(function (m) {
+                        return m.name + (m.quantity ? ' — ' + m.quantity : '');
+                    }).join('; '));
+                }
+                if (d.timeline && d.timeline.length) {
+                    parts.push('TIMELINE (on history page): ' + d.timeline.map(function (t) {
+                        return (t.year ? t.year + ': ' : '') + t.title;
+                    }).join('; '));
+                }
+                if (d.quickStats) {
+                    parts.push('QUICK STATS (on analysis page): ' + Object.entries(d.quickStats)
+                        .map(function (kv) { return kv[0] + ' = ' + kv[1]; }).join('; '));
+                }
+                if (d.summary) parts.push('SUMMARY (on analysis page): ' + String(d.summary).substring(0, 300));
+                dossier = parts.join('\n').substring(0, 1600);
+            }
+        } catch (e) { /* no dossier yet */ }
+
         var context = {
             page: PAGE,
             activeBuilding: (window.ArchPiBuilding && ArchPiBuilding.get()) || '',
-            pageText: (document.body.innerText || '').replace(/\s+/g, ' ').substring(0, 2400)
+            pageText: (document.body.innerText || '').replace(/\s+/g, ' ').substring(0, 2400),
+            dossier: dossier
         };
 
         origFetch('/api/assistant', {

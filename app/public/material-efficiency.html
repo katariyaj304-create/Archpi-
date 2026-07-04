@@ -59,6 +59,7 @@ select{-webkit-appearance:none;appearance:none;background-image:url("data:image/
 .fade-up{animation:fadeUp .5s ease-out both}
 .prop-row{transition:background .2s}.prop-row:hover{background:rgba(191,161,127,.06)}
 </style>
+<script src="active-building.js"></script>
 </head>
 <body class="bg-surface font-body-md text-on-surface selection:bg-primary/20">
 
@@ -128,6 +129,10 @@ select{-webkit-appearance:none;appearance:none;background-image:url("data:image/
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
 <span class="material-symbols-outlined">architecture</span>
 <span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="forensic.html">
+<span class="material-symbols-outlined">biotech</span>
+<span class="font-label-caps text-label-caps">Forensic Lab</span>
 </a>
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
 <span class="material-symbols-outlined">api</span>
@@ -337,7 +342,12 @@ TI6AL4V:{name:'Ti-6Al-4V Titanium',E:113.8e3,fy:880,fu:950,density:4430,poisson:
 CFRP:{name:'Carbon Fiber Composite',E:70e3,fy:600,fu:600,density:1600,poisson:.1,elong:1.5,alpha:0.5e-6,costIdx:15,fatigueLim:350,color:'#2C2C2C',category:'Composite'},
 S355:{name:'S355 European Steel',E:210e3,fy:355,fu:510,density:7850,poisson:.3,elong:22,alpha:12e-6,costIdx:1.2,fatigueLim:220,color:'#5A4A3A',category:'Steel'},
 C40:{name:'Concrete C40',E:33e3,fy:40,fu:45,density:2400,poisson:.2,elong:0.35,alpha:10e-6,costIdx:0.3,fatigueLim:15,color:'#8E8E8E',category:'Concrete'},
-GFRP:{name:'Glass Fiber Reinforced Polymer',E:45e3,fy:480,fu:520,density:1900,poisson:.25,elong:2.5,alpha:6e-6,costIdx:8,fatigueLim:200,color:'#4A7A5B',category:'Composite'}
+GFRP:{name:'Glass Fiber Reinforced Polymer',E:45e3,fy:480,fu:520,density:1900,poisson:.25,elong:2.5,alpha:6e-6,costIdx:8,fatigueLim:200,color:'#4A7A5B',category:'Composite'},
+STONE:{name:'Dressed Stone Masonry',E:50e3,fy:15,fu:100,density:2600,poisson:.2,elong:0.1,alpha:8e-6,costIdx:0.8,fatigueLim:8,color:'#9A8F80',category:'Masonry'},
+BRICK:{name:'Fired Clay Brick Masonry',E:14e3,fy:8,fu:30,density:1900,poisson:.2,elong:0.1,alpha:6e-6,costIdx:0.4,fatigueLim:5,color:'#A0522D',category:'Masonry'},
+TIMBER:{name:'Structural Timber (Hardwood)',E:11e3,fy:40,fu:60,density:700,poisson:.3,elong:0.6,alpha:5e-6,costIdx:0.5,fatigueLim:20,color:'#8B5A2B',category:'Timber'},
+GLASS:{name:'Annealed Structural Glass',E:70e3,fy:45,fu:45,density:2500,poisson:.22,elong:0.02,alpha:9e-6,costIdx:1.5,fatigueLim:7,color:'#7BA7BC',category:'Glass'},
+WROUGHT:{name:'Wrought Iron (Historic)',E:190e3,fy:210,fu:340,density:7700,poisson:.3,elong:25,alpha:12e-6,costIdx:2.2,fatigueLim:140,color:'#5B564F',category:'Steel'}
 };
 
 let curMat='A36',chart=null,testRunning=false,testAnim=null;
@@ -353,6 +363,57 @@ Object.entries(MATERIALS).forEach(([k,m])=>{
 });
 matSel.value=curMat;
 matSel.addEventListener('change',()=>{curMat=matSel.value;renderProps();updateChartLabel();});
+
+// ═══════════════════════════════════════════════════════════════
+// SELECTED BUILDING'S RESEARCHED MATERIALS
+// The globally selected structure's material list (from the deep-research
+// dossier cached by the Analysis page) becomes testable here: each researched
+// material is matched to the closest engineering profile above.
+// ═══════════════════════════════════════════════════════════════
+(function(){
+    if(!window.ArchPiBuilding) return;
+    const bname=ArchPiBuilding.resolve();
+    if(!bname) return;
+    let dossier=null;
+    try{ dossier=JSON.parse(localStorage.getItem('archpi_data_'+bname)); }catch(e){}
+    const mats=(dossier&&dossier.materials)||[];
+    const note=document.createElement('p');
+    note.className='font-data-mono text-[10px] text-on-surface-variant mt-1';
+    matSel.parentElement.appendChild(note);
+    if(!mats.length){
+        note.textContent='Active structure: '+bname+' — run its Analysis first to test its researched materials here.';
+        return;
+    }
+    const MAP=[
+        [/wrought/i,'WROUGHT'],
+        [/steel|rebar|iron|metal/i,'A36'],
+        [/alumin/i,'AL7075'],
+        [/titanium/i,'TI6AL4V'],
+        [/carbon\s*fib|cfrp/i,'CFRP'],
+        [/glass\s*fib|gfrp/i,'GFRP'],
+        [/glass|glazing/i,'GLASS'],
+        [/concrete|cement|mortar/i,'C40'],
+        [/brick|terracotta/i,'BRICK'],
+        [/wood|timber|teak|oak|bamboo/i,'TIMBER'],
+        [/marble|granite|stone|sandstone|limestone|masonry/i,'STONE'],
+    ];
+    const og=document.createElement('optgroup');
+    og.label=bname+' — researched materials';
+    mats.forEach((m,i)=>{
+        const label=(m.name||'Material '+(i+1));
+        const base=(MAP.find(([re])=>re.test(label))||[null,'STONE'])[1];
+        const key='BLDG'+i;
+        MATERIALS[key]=Object.assign({},MATERIALS[base],{
+            name:label+' — '+bname,
+            category:'From '+bname+' (as '+MATERIALS[base].name+')'
+        });
+        const o=document.createElement('option');
+        o.value=key;o.textContent=label+' ('+bname+')';
+        og.appendChild(o);
+    });
+    matSel.appendChild(og);
+    note.textContent='Active structure: '+bname+' — its '+mats.length+' researched materials are in the selector, mapped to the closest engineering profile.';
+})();
 
 function renderProps(){
     const m=MATERIALS[curMat];

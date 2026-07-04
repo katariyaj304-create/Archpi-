@@ -126,6 +126,7 @@
 <link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
 <script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="structures.js"></script>
+<script src="active-building.js"></script>
 </head>
 <body class="font-body-md text-on-surface">
 
@@ -145,7 +146,8 @@
             <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="analysis.html">Analysis</a>
             <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="soil.html">Soil</a>
             <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="weather.html">Weather</a>
-            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="forensic.html">Forensic</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
         </div>
     </div>
     <div class="flex items-center gap-4">
@@ -210,6 +212,10 @@
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
 <span class="material-symbols-outlined">architecture</span>
 <span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="forensic.html">
+<span class="material-symbols-outlined">biotech</span>
+<span class="font-label-caps text-label-caps">Forensic Lab</span>
 </a>
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
 <span class="material-symbols-outlined">api</span>
@@ -755,5 +761,39 @@
             $('query-status').textContent =
                 `STRUCTURE LIST UNAVAILABLE: ${err.message} — is the forensic engine running on :8010?`;
         });
+
+        // --- Global active building (chosen on Home / Globe / Analysis)
+        //     overrides the curated-site default: the AI structural profile
+        //     provides its coordinates, and the full SoilGrids + Terzaghi
+        //     pipeline runs at its real construction site.
+        (function () {
+            const bname = window.ArchPiBuilding && ArchPiBuilding.get();
+            if (!bname) return;
+            let done = false;
+            async function applyGlobalBuilding() {
+                if (done) return; done = true;
+                try {
+                    const r = await fetch('/api/building-profile?q=' + encodeURIComponent(bname));
+                    if (!r.ok) return;
+                    const p = await r.json();
+                    const lat = p.lat, lon = p.lng;
+                    if (typeof lat !== 'number' || typeof lon !== 'number' || (!lat && !lon)) return;
+                    if (lat < -5 || lat > 62 || lon < -25 || lon > 105) {
+                        $('query-status').textContent =
+                            bname.toUpperCase() + ' lies outside this map region — showing the curated site instead.';
+                        return;
+                    }
+                    if (structureMarker) map.removeLayer(structureMarker);
+                    structureMarker = L.marker([lat, lon], { icon: queryIcon })
+                        .addTo(map).bindTooltip(bname, { direction: 'top', offset: [0, -10] });
+                    map.flyTo([lat, lon], 9, { duration: 1.4 });
+                    runDiagnostics(lat, lon, bname.toUpperCase());
+                } catch (e) { /* keep the curated default */ }
+            }
+            // Apply after the curated default has painted; timer covers the
+            // case where the structure registry (:8010) is down entirely.
+            ArchPiStructure.onChange(() => setTimeout(applyGlobalBuilding, 800));
+            setTimeout(applyGlobalBuilding, 4000);
+        })();
     </script>
 </body></html>

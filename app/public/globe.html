@@ -144,6 +144,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+<script src="active-building.js"></script>
 </head>
 <body class="bg-background text-on-surface font-body-md min-h-screen selection:bg-primary-fixed">
 
@@ -159,6 +160,7 @@
 <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-5 h-full transition-colors duration-300" href="index.html">Home</a>
 <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5 h-full transition-colors duration-300" href="globe.html">Globe View</a>
 <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-5 h-full transition-colors duration-300" href="simulation.html">Simulation</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-5 h-full transition-colors duration-300" href="forensic.html">Forensic Lab</a>
 </nav>
 </div>
 <div class="flex items-center gap-4">
@@ -267,6 +269,7 @@
 
     // Show info panel and wire Analyze / Simulate buttons for the selected structure
     function showInfoPanel(name, description, lat, lon) {
+        if (window.ArchPiBuilding) ArchPiBuilding.set(name);
         const infoPanel = document.getElementById('info-panel');
         document.getElementById('info-title').textContent = name;
         document.getElementById('info-desc').textContent = description;

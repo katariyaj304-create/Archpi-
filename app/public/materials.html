@@ -223,6 +223,7 @@
         background: linear-gradient(to bottom, #bfa17f 0%, #d1c4b8 100%);
     }
 </style>
+<script src="active-building.js"></script>
 </head>
 <body class="linen-texture text-on-surface antialiased">
 
@@ -277,6 +278,10 @@
 <a id="side-history" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
 <span class="material-symbols-outlined">architecture</span>
 <span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="forensic.html">
+<span class="material-symbols-outlined">biotech</span>
+<span class="font-label-caps text-label-caps">Forensic Lab</span>
 </a>
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
 <span class="material-symbols-outlined">api</span>
@@ -627,8 +632,11 @@
     // =========================================================
     // INITIALIZATION
     // =========================================================
-    var urlParams = new URLSearchParams(window.location.search);
-    var buildingName = urlParams.get('q');
+    // ?q= wins and becomes the global selection; otherwise the building chosen
+    // on any other page carries over — no more "no structure selected"
+    var buildingName = window.ArchPiBuilding
+        ? ArchPiBuilding.resolve()
+        : new URLSearchParams(window.location.search).get('q');
     var comparatorItems = [];
 
     var fallbackImages = [

@@ -131,6 +131,7 @@
 <link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
 <script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="structures.js"></script>
+<script src="active-building.js"></script>
 </head>
 <body class="bg-background text-on-surface font-body-md overflow-hidden">
 
@@ -150,7 +151,8 @@
             <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="analysis.html">Analysis</a>
             <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="soil.html">Soil</a>
             <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="weather.html">Weather</a>
-            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="forensic.html">Forensic</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
         </div>
     </div>
     <div class="flex items-center gap-4">
@@ -215,6 +217,10 @@
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
 <span class="material-symbols-outlined">architecture</span>
 <span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="forensic.html">
+<span class="material-symbols-outlined">biotech</span>
+<span class="font-label-caps text-label-caps">Forensic Lab</span>
 </a>
 <a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
 <span class="material-symbols-outlined">api</span>
@@ -818,6 +824,34 @@
         ArchPiStructure.init().catch(err => {
             $('stream-status').textContent = `Structure list unavailable — ${err.message} (forensic engine on :8010?)`;
         });
+
+        // --- Global active building overrides the curated-site default:
+        //     its profile coordinates become the live weather-stress site.
+        (function () {
+            const bname = window.ArchPiBuilding && ArchPiBuilding.get();
+            if (!bname) return;
+            let done = false;
+            async function applyGlobalBuilding() {
+                if (done) return; done = true;
+                try {
+                    const r = await fetch('/api/building-profile?q=' + encodeURIComponent(bname));
+                    if (!r.ok) return;
+                    const p = await r.json();
+                    const lat = p.lat, lon = p.lng;
+                    if (typeof lat !== 'number' || typeof lon !== 'number' || (!lat && !lon)) return;
+                    SITE.lat = lat; SITE.lon = lon;
+                    const meta = document.getElementById('side-structure-meta');
+                    if (meta) meta.textContent = bname + ' · ' + lat.toFixed(2) + '°, ' + lon.toFixed(2) + '°';
+                    if (wStructMarker) wmap.removeLayer(wStructMarker);
+                    wStructMarker = L.marker([lat, lon], { icon: stressIcon })
+                        .addTo(wmap).bindTooltip(bname, { direction: 'top', offset: [0, -10] });
+                    wmap.flyTo([lat, lon], 6, { duration: 1.4 });
+                    runStress(lat, lon, bname.toUpperCase(), null);
+                } catch (e) { /* keep the curated default */ }
+            }
+            ArchPiStructure.onChange(() => setTimeout(applyGlobalBuilding, 800));
+            setTimeout(applyGlobalBuilding, 4000);
+        })();
         setInterval(() => runStress(SITE.lat, SITE.lon, ArchPiStructure.current() ? ArchPiStructure.current().name : 'site', null),
             10 * 60 * 1000);  // refresh the stress site with the same cadence
 

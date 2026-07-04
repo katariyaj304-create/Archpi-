@@ -582,6 +582,126 @@ app.get('/api/usage-limits', async (req, res) => {
 });
 
 // =========================================================
+// ARIA — CONVERSATIONAL ASSISTANT
+// Qwen2.5-72B first (the 14B-1M variant is not offered by any
+// HF router provider), DeepSeek second, Gemini as last resort.
+// The model must answer with STRICT JSON: a reply plus a list of
+// app actions the client executes (navigate, research, simulate…).
+// =========================================================
+const ASSISTANT_MODELS = ['Qwen/Qwen2.5-72B-Instruct', 'deepseek-ai/DeepSeek-V3.2'];
+
+const ASSISTANT_SYSTEM = `You are ARIA (ArchPi Reasoning & Intelligence Assistant) — the built-in AI operator of ArchPi, an architectural-engineering diagnostic platform. Behave like a calm, ultra-competent personal assistant (think JARVIS): brief, precise, warm, never robotic filler.
+
+LANGUAGE RULES
+- Users may write in English, Hindi, or Hinglish. You must UNDERSTAND all three.
+- You must ALWAYS answer in English only, no matter the input language.
+
+THE APP YOU OPERATE (pages and what they do)
+- index: home page with the main search box
+- globe: world map; locates any structure by name
+- analysis: autonomous deep research on the active building (web search + AI dossier)
+- materials: the active building's materials list with images
+- material-efficiency: stress-tests materials, including the active building's researched materials
+- history: the active building's construction timeline
+- simulation: real FEA physics stress-test of the active building (seismic / wind)
+- soil: soil diagnostics at the active building's location (bearing capacity, seismic zone)
+- weather: live weather stress at the active building's location (wind shear, carbonation)
+- forensic: forensic materials lab (XRD, radiocarbon, dendro, hazards) for curated dossier sites
+- api-usage: quotas, live credits and database storage dashboard
+
+ONE GLOBAL SELECTION: the "active building" follows the user across every page. Setting it re-points the whole app at that structure.
+
+ACTIONS YOU MAY EMIT (these are your hands — the client executes them in order)
+1 {"type":"set_building","name":"<building name>"}        — set the global active structure
+2 {"type":"navigate","page":"<one page id from the list above>"}
+3 {"type":"research","name":"<building name>"}            — set building + run deep research (analysis page)
+4 {"type":"find_on_globe","name":"<building name>"}       — set building + locate it on the globe
+5 {"type":"simulate","name":"<building name>","disaster":"seismic"|"wind"|""}  — set building + open the FEA simulation
+
+STRICT OUTPUT SCHEMA — YOU MUST FOLLOW THIS EXACTLY
+Respond with ONE valid JSON object and NOTHING else. No markdown fences, no commentary outside JSON:
+{"reply":"<what you say to the user, English, 1-4 sentences>","actions":[<zero or more action objects from the catalog>]}
+
+BEHAVIOUR RULES
+- Fulfil requests through actions; never claim you did something without emitting the action.
+- "Find X on the globe" => find_on_globe. "Research/analyse X" => research. "Simulate/earthquake/storm on X" => simulate with the right disaster. "Show me its materials/history/soil/weather" => set_building (if a name was given) then navigate.
+- Use CURRENT CONTEXT (page, active building, page data) to answer questions about what is on screen — quote the real numbers you see there.
+- If the user's request needs no app action (a question, a chat), return "actions":[].
+- Never invent page ids or action types outside the catalog. Never modify the app; you only drive its existing features.
+- If a building name is ambiguous or missing, ask one short clarifying question instead of guessing.`;
+
+app.post('/api/assistant', async (req, res) => {
+    try {
+        const { messages, context } = req.body || {};
+        if (!Array.isArray(messages) || !messages.length) {
+            return res.status(400).json({ error: 'messages array required' });
+        }
+        const ctx = context || {};
+        const contextBlock =
+            `CURRENT CONTEXT\n- Current page: ${ctx.page || 'unknown'}\n` +
+            `- Active building: ${ctx.activeBuilding || 'none selected'}\n` +
+            `- Visible page data (trimmed):\n${String(ctx.pageText || '').substring(0, 2400)}`;
+
+        const chat = [
+            { role: 'system', content: ASSISTANT_SYSTEM },
+            { role: 'system', content: contextBlock },
+            ...messages.slice(-12).map(m => ({
+                role: m.role === 'assistant' ? 'assistant' : 'user',
+                content: String(m.content || '').substring(0, 2000)
+            }))
+        ];
+
+        let raw = null, modelUsed = null;
+        for (const model of ASSISTANT_MODELS) {
+            try {
+                const r = await fetch('https://router.huggingface.co/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${HF_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model, messages: chat, max_tokens: 700, temperature: 0.4, stream: false }),
+                    signal: AbortSignal.timeout(60000)
+                });
+                if (r.ok) {
+                    const d = await r.json();
+                    raw = (d.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+                    if (raw) { modelUsed = model; logApiCall('HuggingFace', '/chat (ARIA assistant)', model, raw.length, 0, true); break; }
+                } else {
+                    logApiCall('HuggingFace', '/chat (ARIA assistant)', model, 0, 0, false, `HTTP ${r.status}`);
+                    console.log(`[ARIA] ${model} returned ${r.status}, trying next...`);
+                }
+            } catch (e) {
+                console.log(`[ARIA] ${model} failed: ${e.message}`);
+            }
+        }
+        if (!raw) {
+            const g = await callGeminiText(ASSISTANT_SYSTEM + '\n\n' + contextBlock,
+                messages.slice(-6).map(m => `${m.role}: ${m.content}`).join('\n'), 700, 0.4);
+            if (g) { raw = g.text; modelUsed = g.model; }
+        }
+        if (!raw) return res.status(502).json({ error: 'All assistant models are unavailable right now.' });
+
+        // Enforce the schema: extract the JSON object; anything else becomes a plain reply
+        let parsed = null;
+        try {
+            const m = raw.match(/\{[\s\S]*\}/);
+            if (m) parsed = JSON.parse(m[0]);
+        } catch (e) { /* fall through */ }
+        if (!parsed || typeof parsed.reply !== 'string') parsed = { reply: raw.substring(0, 1200), actions: [] };
+        const VALID_TYPES = ['set_building', 'navigate', 'research', 'find_on_globe', 'simulate'];
+        const VALID_PAGES = ['index', 'globe', 'analysis', 'materials', 'material-efficiency', 'history',
+                             'simulation', 'soil', 'weather', 'forensic', 'api-usage'];
+        parsed.actions = (Array.isArray(parsed.actions) ? parsed.actions : [])
+            .filter(a => a && VALID_TYPES.includes(a.type))
+            .filter(a => a.type !== 'navigate' || VALID_PAGES.includes(a.page))
+            .slice(0, 4);
+        parsed.model = modelUsed;
+        res.json(parsed);
+    } catch (e) {
+        console.error('[ARIA] endpoint error:', e.message);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// =========================================================
 // MODEL STATUS ENDPOINT
 // =========================================================
 app.get('/api/model-status', async (req, res) => {

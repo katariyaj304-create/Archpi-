@@ -70,35 +70,35 @@
 
     /* ================= styles ================= */
     var css = [
-        /* --- the orb: ElevenLabs-style liquid sphere (layered blurred
-               swirls counter-rotating inside a glossy ball) --- */
-        '#aria-fab{position:fixed;bottom:88px;right:24px;z-index:9000;width:66px;height:66px;border-radius:50%;',
+        /* --- the orb: ElevenLabs-style liquid pearl in white/cream/gold,
+               living in the top navigation bar --- */
+        '#aria-fab{position:relative;z-index:60;width:42px;height:42px;border-radius:50%;flex:none;',
         ' border:none;cursor:pointer;padding:0;background:transparent;',
-        ' filter:drop-shadow(0 12px 28px rgba(20,16,12,.5));transition:transform .25s}',
-        '#aria-fab:hover{transform:translateY(-3px) scale(1.07)}',
-        '.aria-orb{display:block;position:relative;width:66px;height:66px;border-radius:50%;overflow:hidden;',
-        ' background:radial-gradient(circle at 50% 55%,#3a332c 0%,#191512 62%,#0b0908 100%)}',
-        '.aria-orb i{display:block}',
-        '.aria-orb i{position:absolute;inset:-35%;border-radius:50%;pointer-events:none}',
-        /* liquid band 1 — bright cream ribbon, heavy blur */
-        '.aria-orb .w1{background:conic-gradient(from 20deg,transparent 0deg,rgba(255,248,240,.95) 40deg,rgba(255,248,240,.15) 95deg,transparent 150deg,rgba(255,255,255,.6) 235deg,transparent 300deg);',
-        ' filter:blur(7px);animation:orbSwirl 7s linear infinite}',
-        /* liquid band 2 — gold ribbon, counter-rotating */
-        '.aria-orb .w2{background:conic-gradient(from 200deg,transparent 0deg,rgba(225,193,157,.85) 55deg,transparent 130deg,rgba(191,161,127,.5) 230deg,transparent 320deg);',
-        ' filter:blur(9px);animation:orbSwirlRev 11s linear infinite}',
-        /* slow deep wave for liquid depth */
-        '.aria-orb .w3{background:radial-gradient(ellipse 60% 42% at 50% 68%,rgba(255,255,255,.34) 0%,transparent 70%);',
-        ' filter:blur(5px);animation:orbBob 4.6s ease-in-out infinite}',
-        /* glass shell: top highlight + bottom vignette + rim light */
+        ' filter:drop-shadow(0 4px 12px rgba(114,90,61,.4));transition:transform .25s}',
+        '#aria-fab.floating{position:fixed;top:11px;right:150px;z-index:9000}',
+        '#aria-fab:hover{transform:scale(1.12)}',
+        '.aria-orb{display:block;position:relative;width:42px;height:42px;border-radius:50%;overflow:hidden;',
+        ' background:radial-gradient(circle at 42% 36%,#ffffff 0%,#fff5ea 34%,#f0dcc0 62%,#d8b98e 84%,#b3946a 100%)}',
+        '.aria-orb i{display:block;position:absolute;inset:-35%;border-radius:50%;pointer-events:none}',
+        /* liquid band 1 — molten gold ribbon */
+        '.aria-orb .w1{background:conic-gradient(from 20deg,transparent 0deg,rgba(191,152,102,.85) 40deg,rgba(225,193,157,.35) 95deg,transparent 150deg,rgba(176,138,92,.7) 235deg,transparent 300deg);',
+        ' filter:blur(5px);animation:orbSwirl 7s linear infinite}',
+        /* liquid band 2 — bright white ribbon, counter-rotating */
+        '.aria-orb .w2{background:conic-gradient(from 200deg,transparent 0deg,rgba(255,255,255,.95) 55deg,transparent 130deg,rgba(255,248,240,.7) 230deg,transparent 320deg);',
+        ' filter:blur(6px);animation:orbSwirlRev 11s linear infinite}',
+        /* slow warm wave for liquid depth */
+        '.aria-orb .w3{background:radial-gradient(ellipse 60% 42% at 50% 68%,rgba(203,167,118,.5) 0%,transparent 70%);',
+        ' filter:blur(4px);animation:orbBob 4.6s ease-in-out infinite}',
+        /* glass shell: white highlight + warm gold vignette + crisp rim */
         '.aria-orb::after{content:"";position:absolute;inset:0;border-radius:50%;',
-        ' background:radial-gradient(circle at 32% 22%,rgba(255,255,255,.85) 0%,rgba(255,255,255,.12) 26%,transparent 42%),',
-        '  radial-gradient(circle at 50% 118%,rgba(0,0,0,.65) 0%,transparent 58%);',
-        ' box-shadow:inset 0 0 14px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,255,255,.5)}',
+        ' background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.95) 0%,rgba(255,255,255,.25) 28%,transparent 44%),',
+        '  radial-gradient(circle at 50% 118%,rgba(140,106,66,.55) 0%,transparent 58%);',
+        ' box-shadow:inset 0 0 10px rgba(146,113,72,.45), inset 0 1px 2px rgba(255,255,255,.9), 0 0 0 1.5px rgba(191,161,127,.55)}',
         '@keyframes orbSwirl{to{transform:rotate(360deg)}}',
         '@keyframes orbSwirlRev{to{transform:rotate(-360deg)}}',
         '@keyframes orbBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7%) scale(1.06)}}',
         /* orb state rings + speed shifts */
-        '#aria-fab .aria-ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;pointer-events:none}',
+        '#aria-fab .aria-ring{position:absolute;inset:-5px;border-radius:50%;border:2px solid transparent;pointer-events:none}',
         '#aria-fab.listening .aria-ring{border-color:#c0392b;animation:ringPulse 1.1s ease-out infinite}',
         '#aria-fab.speaking .aria-ring{border-color:#e1c19d;animation:ringPulse 1.4s ease-out infinite}',
         '#aria-fab.listening .w1{animation-duration:1.8s}#aria-fab.listening .w2{animation-duration:3s}',
@@ -107,15 +107,15 @@
         '@keyframes orbTalk{0%,100%{transform:scale(1)}50%{transform:scale(1.055)}}',
         '@keyframes ringPulse{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.28);opacity:0}}',
         /* --- panel --- */
-        '#aria-panel{position:fixed;bottom:164px;right:24px;z-index:9001;width:396px;max-width:calc(100vw - 32px);',
-        ' height:560px;max-height:calc(100vh - 190px);background:#fff8f4;border:1px solid #d1c4b8;border-radius:18px;',
+        '#aria-panel{position:fixed;top:74px;right:24px;z-index:9001;width:396px;max-width:calc(100vw - 32px);',
+        ' height:560px;max-height:calc(100vh - 96px);background:#fff8f4;border:1px solid #d1c4b8;border-radius:18px;',
         ' box-shadow:0 30px 70px -20px rgba(30,27,25,.5);display:none;flex-direction:column;overflow:hidden;',
         ' font-family:Inter,system-ui,sans-serif}',
         '#aria-panel.open{display:flex;animation:ariaIn .25s ease}',
-        '@keyframes ariaIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}',
+        '@keyframes ariaIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}',
         '#aria-head{background:#26221e;color:#f7efeb;padding:13px 16px;display:flex;align-items:center;gap:11px}',
         '#aria-head .mini-orb{width:32px;height:32px;border-radius:50%;flex:none;position:relative;overflow:hidden;',
-        ' background:radial-gradient(circle at 50% 55%,#3a332c 0%,#15110e 70%)}',
+        ' background:radial-gradient(circle at 42% 36%,#ffffff 0%,#f0dcc0 55%,#c8a97e 100%)}',
         '#aria-head .mini-orb::before{content:"";position:absolute;inset:-35%;border-radius:50%;',
         ' background:conic-gradient(from 20deg,transparent 0deg,rgba(255,248,240,.9) 50deg,transparent 130deg,rgba(225,193,157,.7) 250deg,transparent 330deg);',
         ' filter:blur(4px);animation:orbSwirl 6s linear infinite}',
@@ -297,7 +297,16 @@
         fabEl.id = 'aria-fab';
         fabEl.title = 'ARIA — talk to your ArchPi assistant';
         fabEl.innerHTML = '<span class="aria-orb"><i class="w1"></i><i class="w2"></i><i class="w3"></i></span><span class="aria-ring"></span>';
-        document.body.appendChild(fabEl);
+        // Live in the top bar: insert before the icon cluster on the right
+        // (bell / settings / avatar). Pages without that cluster get a fixed
+        // orb pinned to the top-right instead.
+        var slot = document.querySelector('nav .flex.items-center.gap-4, header .flex.items-center.gap-4');
+        if (slot && slot.closest('nav, header')) {
+            slot.insertBefore(fabEl, slot.firstChild);
+        } else {
+            fabEl.classList.add('floating');
+            document.body.appendChild(fabEl);
+        }
 
         var panel = document.createElement('div');
         panel.id = 'aria-panel';

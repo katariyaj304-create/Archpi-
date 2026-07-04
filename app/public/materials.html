@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Materials Catalog</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                "colors": {
+                    "secondary-container": "#e2dfde",
+                    "error": "#ba1a1a",
+                    "secondary": "#5f5e5e",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "surface-dim": "#e0d9d4",
+                    "primary-fixed-dim": "#e1c19d",
+                    "surface-container": "#f4ece8",
+                    "tertiary": "#5e5e5e",
+                    "tertiary-fixed": "#e4e2e2",
+                    "secondary-fixed": "#e5e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "inverse-primary": "#e1c19d",
+                    "inverse-on-surface": "#f7efeb",
+                    "on-tertiary-container": "#3b3c3c",
+                    "on-surface-variant": "#4e453c",
+                    "primary": "#725a3d",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-tint": "#725a3d",
+                    "surface": "#fff8f4",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e8e1dd",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#faf2ee",
+                    "on-background": "#1e1b19",
+                    "on-primary-fixed": "#291803",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "inverse-surface": "#33302d",
+                    "on-secondary-container": "#636262",
+                    "on-primary-container": "#4d381d",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffddb8",
+                    "primary-container": "#bfa17f",
+                    "surface-container-highest": "#e8e1dd",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#80756b",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#a7a6a6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#eee7e2",
+                    "surface-bright": "#fff8f4",
+                    "on-surface": "#1e1b19",
+                    "background": "#fff8f4",
+                    "outline-variant": "#d1c4b8",
+                    "on-primary-fixed-variant": "#594327"
+                },
+                "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+                "spacing": {
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "section-gap": "80px",
+                    "gutter": "24px"
+                },
+                "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+                },
+                "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                }
+            },
+        },
+    }
+</script>
+<style>
+    .linen-texture {
+        background-color: #FDFDFD;
+        background-image: url("https://www.transparenttextures.com/patterns/linen-paper.png");
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-panel {
+        background: rgba(253, 253, 253, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+    .aluminum-finish {
+        background: linear-gradient(135deg, #f6f6f6 0%, #e8e1dd 100%);
+        position: relative;
+    }
+    .aluminum-finish::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+        opacity: 0.1;
+        pointer-events: none;
+    }
+    /* Loading animation */
+    .loading-pulse {
+        animation: pulse-gold 2s ease-in-out infinite;
+    }
+    @keyframes pulse-gold {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+    .loading-bar {
+        background: linear-gradient(90deg, transparent, #bfa17f, transparent);
+        animation: shimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    .fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* Material card hover */
+    .material-card {
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .material-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 48px rgba(114, 90, 61, 0.12), 0 4px 12px rgba(114, 90, 61, 0.08);
+    }
+    /* Accent card */
+    .accent-card {
+        border-left: 3px solid #bfa17f;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #faf2ee;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #bfa17f;
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #725a3d;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #F4ECE8;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #725a3d;
+    }
+    /* Expandable section */
+    .report-collapse {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .report-collapse.open {
+        max-height: 20000px;
+    }
+    .report-toggle-icon {
+        transition: transform 0.3s ease;
+    }
+    .report-toggle-icon.open {
+        transform: rotate(180deg);
+    }
+    /* Hero gradient overlay */
+    .hero-gradient {
+        background: linear-gradient(180deg,
+            rgba(255, 248, 244, 0.1) 0%,
+            rgba(255, 248, 244, 0.6) 50%,
+            rgba(255, 248, 244, 0.95) 80%,
+            rgba(255, 248, 244, 1) 100%);
+    }
+    /* Skeleton loading blocks */
+    .skeleton-block {
+        background: linear-gradient(90deg, #eee7e2 25%, #f4ece8 50%, #eee7e2 75%);
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s infinite;
+        border-radius: 4px;
+    }
+    @keyframes skeleton-shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    /* Timeline mini connector */
+    .timeline-connector {
+        width: 2px;
+        background: linear-gradient(to bottom, #bfa17f 0%, #d1c4b8 100%);
+    }
+</style>
+</head>
+<body class="linen-texture text-on-surface antialiased">
+
+<!-- ============================================================= -->
+<!-- 1. SIDEBAR NAVIGATION (Fixed Left 256px)                      -->
+<!-- ============================================================= -->
+<aside class="hidden lg:flex flex-col py-8 px-4 h-screen overflow-y-auto w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant z-50">
+    <div class="mb-12 px-2 cursor-pointer" onclick="window.location.href='index.html'">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary flex items-center justify-center rounded">
+                <span class="material-symbols-outlined text-on-primary">architecture</span>
+            </div>
+            <div>
+                <h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tighter">ArchPi</h1>
+                <p class="font-label-caps text-[10px] text-on-surface-variant opacity-60">Structural Intelligence</p>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a id="side-analysis" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a id="side-history" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+    <div class="mt-auto pt-8 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+            <span class="font-label-caps text-[10px] text-primary">JD</span>
+        </div>
+        <div>
+            <p class="font-label-caps text-[11px] text-on-surface leading-none">A. Sterling</p>
+            <p class="font-data-mono text-[10px] text-on-surface-variant">Senior Engineer</p>
+        </div>
+        <button class="ml-auto material-symbols-outlined text-on-surface-variant text-lg">settings</button>
+    </div>
+</aside>
+
+<!-- ============================================================= -->
+<!-- 2. TOP HEADER BAR (Sticky)                                    -->
+<!-- ============================================================= -->
+<header class="lg:ml-64 h-16 flex items-center justify-between px-margin-mobile lg:px-margin-desktop bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 sticky top-0 z-40">
+    <div class="flex items-center gap-4">
+        <h2 class="font-headline-md text-[22px] lg:text-headline-md text-on-surface" id="header-title">Material Library</h2>
+        <span class="h-4 w-px bg-outline-variant mx-1 hidden sm:block"></span>
+        <div class="hidden sm:flex gap-4">
+            <button class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1">All Materials</button>
+            <a id="back-analysis-link" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1 flex items-center gap-1" href="analysis.html">
+                <span class="material-symbols-outlined text-[14px]">arrow_back</span> Back to Analysis
+            </a>
+        </div>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">settings</span>
+    </div>
+</header>
+
+<!-- ============================================================= -->
+<!-- MAIN CONTENT AREA                                              -->
+<!-- ============================================================= -->
+<main class="lg:ml-64 min-h-screen">
+
+    <!-- 3. MODEL BADGE -->
+    <div id="model-badge" class="px-margin-mobile lg:px-margin-desktop pt-6" style="display:none;">
+        <div class="inline-flex items-center gap-2 bg-surface-container-high/60 border border-outline-variant/40 px-4 py-2 rounded-full">
+            <span class="material-symbols-outlined text-primary text-[16px]">auto_awesome</span>
+            <span class="font-label-caps text-[11px] text-on-surface-variant" id="model-badge-text">Powered by HuggingFace</span>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- LOADING STATE                                                  -->
+    <!-- ============================================================= -->
+    <div id="loading-state" class="px-margin-mobile lg:px-margin-desktop py-12">
+        <p class="font-body-lg text-body-lg text-on-surface-variant mb-6 loading-pulse" id="loading-text">Fetching structure analysis and materials data...</p>
+        <div class="w-full max-w-md h-[2px] bg-outline-variant/20 overflow-hidden rounded mb-12">
+            <div class="loading-bar h-full w-1/3"></div>
+        </div>
+        <!-- Skeleton cards -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+            <div class="border border-outline-variant/30 bg-white overflow-hidden">
+                <div class="skeleton-block h-56 w-full"></div>
+                <div class="p-8 space-y-4">
+                    <div class="skeleton-block h-6 w-2/3"></div>
+                    <div class="skeleton-block h-4 w-full"></div>
+                    <div class="skeleton-block h-4 w-5/6"></div>
+                    <div class="skeleton-block h-10 w-1/2 mt-4"></div>
+                </div>
+            </div>
+            <div class="border border-outline-variant/30 bg-white overflow-hidden">
+                <div class="skeleton-block h-56 w-full"></div>
+                <div class="p-8 space-y-4">
+                    <div class="skeleton-block h-6 w-2/3"></div>
+                    <div class="skeleton-block h-4 w-full"></div>
+                    <div class="skeleton-block h-4 w-5/6"></div>
+                    <div class="skeleton-block h-10 w-1/2 mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- ERROR STATE                                                    -->
+    <!-- ============================================================= -->
+    <div id="error-state" class="px-margin-mobile lg:px-margin-desktop py-20 text-center" style="display:none;">
+        <span class="material-symbols-outlined text-error text-6xl mb-6 block">error_outline</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-4">Research Error</h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto mb-8" id="error-message">Unable to load material data. Please check your connection and try again.</p>
+        <button onclick="window.location.reload()" class="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors">
+            <span class="material-symbols-outlined text-[16px]">refresh</span> RETRY
+        </button>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- 4. HERO SECTION (hidden until data loads)                      -->
+    <!-- ============================================================= -->
+    <section id="hero-section" style="display:none;">
+        <div class="relative w-full h-[420px] lg:h-[520px] overflow-hidden">
+            <!-- Hero Background Image -->
+            <img id="hero-image" alt="Building Hero" class="absolute inset-0 w-full h-full object-cover" src="https://images.unsplash.com/photo-1541976535033-5c71995a9b0b?q=80&w=1400&auto=format&fit=crop"/>
+            <!-- Gradient Overlay -->
+            <div class="hero-gradient absolute inset-0 z-10"></div>
+            <!-- Hero Content -->
+            <div class="absolute bottom-0 left-0 right-0 z-20 px-margin-mobile lg:px-margin-desktop pb-10">
+                <span id="hero-label" class="font-label-caps text-label-caps text-primary mb-3 block fade-in">Materials Analysis</span>
+                <h1 id="hero-title" class="font-headline-lg text-headline-lg lg:text-[56px] mb-4 leading-tight max-w-3xl fade-in" style="animation-delay:0.1s">Material Library</h1>
+                <p id="hero-summary" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-8 fade-in" style="animation-delay:0.2s">Comprehensive material analysis and structural composition data.</p>
+                <!-- Quick Stats -->
+                <div id="quick-stats" class="grid grid-cols-3 gap-4 max-w-lg fade-in" style="animation-delay:0.3s">
+                    <div class="border border-outline-variant/50 p-4 bg-surface/70 backdrop-blur-sm">
+                        <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-1">—</p>
+                        <p class="font-data-mono text-data-mono text-primary" id="qs-value-1">—</p>
+                    </div>
+                    <div class="border border-outline-variant/50 p-4 bg-surface/70 backdrop-blur-sm">
+                        <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-2">—</p>
+                        <p class="font-data-mono text-data-mono text-primary" id="qs-value-2">—</p>
+                    </div>
+                    <div class="border border-outline-variant/50 p-4 bg-surface/70 backdrop-blur-sm">
+                        <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-3">—</p>
+                        <p class="font-data-mono text-data-mono text-primary" id="qs-value-3">—</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 5. MATERIALS GRID (Main Content)                               -->
+    <!-- ============================================================= -->
+    <section id="materials-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1400px]" style="display:none;">
+        <div class="flex items-center gap-4 mb-12">
+            <span class="material-symbols-outlined text-primary text-3xl">precision_manufacturing</span>
+            <div>
+                <h2 class="font-headline-sm text-headline-sm">Construction Materials</h2>
+                <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Complete material composition breakdown</p>
+            </div>
+        </div>
+        <div id="materials-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+            <!-- Dynamic material cards injected here -->
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 6. TECHNICAL SPECIFICATIONS TABLE                              -->
+    <!-- ============================================================= -->
+    <section id="specs-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30" style="display:none;">
+        <div class="flex items-center gap-4 mb-12">
+            <span class="material-symbols-outlined text-primary text-3xl">straighten</span>
+            <h2 class="font-headline-sm text-headline-sm">Technical Specifications</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b-2 border-outline">
+                        <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Metric</th>
+                        <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Value</th>
+                        <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Unit</th>
+                        <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Significance</th>
+                    </tr>
+                </thead>
+                <tbody id="specs-tbody" class="font-data-mono text-data-mono">
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 7. ENGINEERING CHALLENGES SECTION                              -->
+    <!-- ============================================================= -->
+    <section id="challenges-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30" style="display:none;">
+        <div class="flex items-center gap-4 mb-12">
+            <span class="material-symbols-outlined text-primary text-3xl">engineering</span>
+            <div>
+                <h2 class="font-headline-sm text-headline-sm">Engineering Challenges</h2>
+                <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Structural obstacles and solutions</p>
+            </div>
+        </div>
+        <div class="accent-card bg-surface-container-low p-8 lg:p-10 max-w-3xl">
+            <p id="challenges-text" class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed"></p>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 8. CONSTRUCTION TIMELINE OVERVIEW                              -->
+    <!-- ============================================================= -->
+    <section id="timeline-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30" style="display:none;">
+        <div class="flex items-center gap-4 mb-12">
+            <span class="material-symbols-outlined text-primary text-3xl">timeline</span>
+            <div>
+                <h2 class="font-headline-sm text-headline-sm">Construction Timeline</h2>
+                <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Key construction phases overview</p>
+            </div>
+        </div>
+        <div id="timeline-container" class="space-y-0">
+            <!-- Dynamic condensed timeline injected here -->
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 9. FULL RESEARCH REPORT (Expandable Sections)                  -->
+    <!-- ============================================================= -->
+    <section id="report-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30" style="display:none;">
+        <div class="flex items-center gap-4 mb-12">
+            <span class="material-symbols-outlined text-primary text-3xl">description</span>
+            <h2 class="font-headline-sm text-headline-sm">Complete Research Dossier</h2>
+        </div>
+        <div id="report-content" class="space-y-4">
+            <!-- Dynamic expandable report sections injected here -->
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 10. SOURCES SECTION                                            -->
+    <!-- ============================================================= -->
+    <section id="sources-section" class="px-margin-mobile lg:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30" style="display:none;">
+        <h3 class="font-label-caps text-label-caps text-outline uppercase tracking-widest mb-8">Research Sources</h3>
+        <div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- Dynamic source links injected here -->
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 12. FOOTER                                                     -->
+    <!-- ============================================================= -->
+    <footer class="px-margin-mobile lg:px-margin-desktop py-20 bg-inverse-surface text-inverse-on-surface">
+        <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div>
+                <h2 class="font-headline-md text-headline-md mb-4">Request Material Dossier</h2>
+                <p class="font-body-md text-body-md opacity-70">Obtain the full construction materials analysis for internal institutional review.</p>
+            </div>
+            <button class="bg-primary-container px-10 py-4 font-label-caps text-label-caps text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300">
+                DOWNLOAD PDF ARCHIVE
+            </button>
+        </div>
+        <div class="max-w-[1200px] mx-auto mt-20 pt-10 border-t border-white/10 flex justify-between items-center">
+            <span class="font-label-caps text-[10px] opacity-40">&copy; 2024 ARCHPI STRUCTURAL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
+            <div class="flex gap-6">
+                <span class="material-symbols-outlined opacity-40 cursor-pointer">share</span>
+                <span class="material-symbols-outlined opacity-40 cursor-pointer">download</span>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<!-- ============================================================= -->
+<!-- 11. MATERIAL COMPARATOR SIDE PANEL (Slide-in from right)       -->
+<!-- ============================================================= -->
+<aside id="comparator-panel" class="fixed right-0 top-0 h-full w-full lg:w-[420px] glass-panel border-l border-outline-variant shadow-2xl z-[60] transform transition-transform duration-500 ease-in-out translate-x-full">
+    <div class="flex flex-col h-full bg-surface/90">
+        <!-- Panel Header -->
+        <div class="p-8 border-b border-outline-variant/30">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-headline-sm text-headline-sm">Material Comparator</h3>
+                <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onclick="toggleComparator()">close</button>
+            </div>
+            <p class="font-body-md text-on-surface-variant text-sm italic">Analyze structural properties across selected materials.</p>
+        </div>
+        <!-- Panel Body -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+            <div id="comparator-items" class="space-y-4">
+                <div class="border border-dashed border-outline-variant/50 p-6 text-center">
+                    <span class="material-symbols-outlined text-outline text-3xl mb-2 block">add_circle_outline</span>
+                    <p class="font-label-caps text-[11px] text-on-surface-variant">Click "Add to Comparator" on any material card to begin comparison</p>
+                </div>
+            </div>
+            <!-- Comparison Grid (appears when 2+ items added) -->
+            <div id="comparator-comparison" class="mt-8" style="display:none;">
+                <h4 class="font-label-caps text-label-caps text-primary mb-4 uppercase tracking-widest">Comparison Overview</h4>
+                <div id="comparator-table" class="space-y-3">
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="p-8 bg-surface-container-low border-t border-outline-variant/30">
+            <button onclick="clearComparator()" class="w-full border-2 border-outline text-on-surface-variant py-3 font-label-caps text-label-caps tracking-[0.15em] hover:border-error hover:text-error transition-all mb-3">CLEAR ALL</button>
+            <button class="w-full border-2 border-primary text-primary py-3 font-label-caps text-label-caps tracking-[0.15em] hover:bg-primary hover:text-on-primary transition-all">GENERATE COMPARISON REPORT</button>
+        </div>
+    </div>
+</aside>
+
+<!-- ============================================================= -->
+<!-- COMPARATOR FAB + SCROLL-TO-TOP FAB                             -->
+<!-- ============================================================= -->
+<!-- Comparator FAB -->
+<button onclick="toggleComparator()" id="comparator-fab" class="fixed bottom-28 right-8 z-[50] bg-on-surface text-surface w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group" style="display:none;">
+    <span class="material-symbols-outlined transition-transform group-hover:rotate-90">compare_arrows</span>
+    <span id="comparator-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center" style="display:none;">0</span>
+</button>
+
+<!-- 13. Scroll-to-top FAB -->
+<button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible active:scale-95 z-[50]" id="scroll-to-top">
+    <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+
+<!-- ============================================================= -->
+<!-- 14. MATERIAL SPEC MODAL                                        -->
+<!-- ============================================================= -->
+<div id="spec-modal" class="fixed inset-0 z-[70] items-center justify-center p-4 lg:p-8" style="display:none;">
+    <div id="spec-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeSpecModal()"></div>
+    <div class="relative bg-surface border border-outline-variant shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto custom-scrollbar fade-in">
+        <!-- Header image -->
+        <div class="h-52 lg:h-64 overflow-hidden relative aluminum-finish">
+            <img id="spec-modal-image" alt="Material" class="w-full h-full object-cover opacity-95" src=""/>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+            <button class="absolute top-4 right-4 w-10 h-10 bg-surface/90 rounded-full flex items-center justify-center hover:bg-surface transition-colors z-10" onclick="closeSpecModal()">
+                <span class="material-symbols-outlined text-on-surface">close</span>
+            </button>
+            <div id="spec-modal-category" class="absolute bottom-4 left-6 bg-primary text-on-primary px-3 py-1.5 font-label-caps text-[10px] tracking-widest z-10">MATERIAL</div>
+        </div>
+        <div class="p-8 lg:p-10">
+            <span class="font-label-caps text-label-caps text-primary block mb-2">MATERIAL SPECIFICATION SHEET</span>
+            <h3 id="spec-modal-name" class="font-headline-md text-headline-md mb-1">Material</h3>
+            <p id="spec-modal-role" class="font-body-md text-body-md text-on-surface-variant italic mb-8"></p>
+
+            <!-- Engineering properties grid -->
+            <div id="spec-modal-props" class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+                <!-- property tiles injected -->
+            </div>
+
+            <!-- Key facts -->
+            <div id="spec-modal-facts" class="space-y-3 mb-8">
+                <!-- fact rows injected -->
+            </div>
+
+            <!-- Full description -->
+            <div class="accent-card bg-surface-container-low p-6 lg:p-8">
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-3">Research Notes</span>
+                <div id="spec-modal-description" class="font-body-md text-body-md text-on-surface-variant leading-relaxed space-y-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // =========================================================
+    // UTILITY: HTML ESCAPING
+    // =========================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function escapeAttr(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+    var urlParams = new URLSearchParams(window.location.search);
+    var buildingName = urlParams.get('q');
+    var comparatorItems = [];
+
+    var fallbackImages = [
+        "https://images.unsplash.com/photo-1541976535033-5c71995a9b0b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518684079-3c830dcef090?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"
+    ];
+
+    var materialFallbackImages = [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1558449028-b53a39d100fc?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1587582423116-ec07293f0395?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565538420870-da08ff96a207?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1508349937151-22b68b72d5b1?q=80&w=800&auto=format&fit=crop"
+    ];
+
+    function setHref(id, href) {
+        var el = document.getElementById(id);
+        if (el) el.href = href;
+    }
+
+    if (buildingName) {
+        document.title = 'ArchPi | Materials \u2014 ' + buildingName;
+        document.getElementById('header-title').innerText = buildingName + ' \u2014 Materials';
+        var qParam = encodeURIComponent(buildingName);
+        setHref('side-analysis', 'analysis.html?q=' + qParam);
+        setHref('side-history', 'history.html?q=' + qParam);
+        setHref('back-analysis-link', 'analysis.html?q=' + qParam);
+        fetchData(buildingName);
+    } else {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = '';
+        document.getElementById('error-message').innerText = 'No structure selected. Please return to the Globe view and select a location to analyze.';
+    }
+
+    // =========================================================
+    // FETCH DATA FROM BACKEND
+    // =========================================================
+    function fetchData(query) {
+        var cached = localStorage.getItem('archpi_data_' + query);
+        if (cached) {
+            try {
+                var data = JSON.parse(cached);
+                // Only reuse caches from the current research pipeline (with material specs + images)
+                if (data.schemaVersion >= 2) {
+                    console.log('Loaded materials data from cache');
+                    setTimeout(function() { renderPage(data); }, 100);
+                    return;
+                }
+                console.log('Ignoring stale cache (schema v' + (data.schemaVersion || 1) + ')');
+            } catch (e) {
+                console.error('Cache read error', e);
+            }
+        }
+
+        fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ buildingName: query })
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Analysis request failed with status ' + response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('Materials data received:', data);
+            try {
+                localStorage.setItem('archpi_data_' + query, JSON.stringify(data));
+            } catch (e) { console.warn('Could not cache result:', e); }
+            renderPage(data);
+        })
+        .catch(function(error) {
+            console.error('Fetch error:', error);
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = '';
+            document.getElementById('error-message').innerText = 'Unable to load material data for ' + (buildingName || 'this structure') + '. ' + error.message;
+        });
+    }
+
+    // =========================================================
+    // RENDER FULL PAGE
+    // =========================================================
+    function renderPage(data) {
+        // Hide loading
+        document.getElementById('loading-state').style.display = 'none';
+
+        // 3. Model Badge
+        if (data.modelUsed) {
+            var badgeEl = document.getElementById('model-badge');
+            badgeEl.style.display = '';
+            var parts = data.modelUsed.split('/');
+            var modelDisplay = parts.length > 1 ? parts[1] : data.modelUsed;
+            document.getElementById('model-badge-text').innerText = 'Powered by HuggingFace \u00B7 ' + modelDisplay;
+        }
+
+        // 4. Hero Section
+        renderHero(data);
+
+        // 5. Materials Grid
+        renderMaterials(data.materials || []);
+
+        // 6. Specifications Table
+        renderSpecifications(data.specifications || []);
+
+        // 7. Engineering Challenges
+        renderChallenges(data.fullReport);
+
+        // 8. Construction Timeline Overview
+        renderTimelineOverview(data.timeline || []);
+
+        // 9. Full Research Report
+        renderFullReport(data.fullReport || {});
+
+        // 10. Sources
+        renderSources(data.fullReport ? data.fullReport.sources : []);
+
+        // Show comparator FAB if materials exist
+        if (data.materials && data.materials.length > 0) {
+            document.getElementById('comparator-fab').style.display = '';
+        }
+    }
+
+    // =========================================================
+    // 4. RENDER HERO SECTION
+    // =========================================================
+    function renderHero(data) {
+        var heroSection = document.getElementById('hero-section');
+        heroSection.style.display = '';
+
+        // Set hero image
+        var heroImgSrc = data.heroImage || (data.blueprint && data.blueprint.image) || fallbackImages[0];
+        document.getElementById('hero-image').src = heroImgSrc;
+
+        // Labels
+        document.getElementById('hero-label').innerText = data.title || ('Materials Analysis: ' + buildingName);
+
+        // Title
+        var subtitle = data.subtitle || ('Materials & Construction of\n' + buildingName);
+        document.getElementById('hero-title').innerHTML = escapeHtml(subtitle).replace(/\\n/g, '<br/>').replace(/\n/g, '<br/>');
+
+        // Summary
+        document.getElementById('hero-summary').innerText = data.summary || 'Comprehensive material analysis for ' + buildingName + '.';
+
+        // Quick Stats
+        if (data.quickStats) {
+            var qs = data.quickStats;
+            if (qs.stat1) {
+                document.getElementById('qs-label-1').innerText = qs.stat1.label;
+                document.getElementById('qs-value-1').innerText = qs.stat1.value;
+            }
+            if (qs.stat2) {
+                document.getElementById('qs-label-2').innerText = qs.stat2.label;
+                document.getElementById('qs-value-2').innerText = qs.stat2.value;
+            }
+            if (qs.stat3) {
+                document.getElementById('qs-label-3').innerText = qs.stat3.label;
+                document.getElementById('qs-value-3').innerText = qs.stat3.value;
+            }
+        }
+    }
+
+    // =========================================================
+    // 5. RENDER MATERIALS GRID
+    // =========================================================
+    var loadedMaterials = []; // kept for the spec modal
+
+    function renderMaterials(materials) {
+        var section = document.getElementById('materials-section');
+        var grid = document.getElementById('materials-grid');
+
+        if (materials.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        loadedMaterials = materials;
+        section.style.display = '';
+        grid.innerHTML = '';
+
+        for (var i = 0; i < materials.length; i++) {
+            var mat = materials[i];
+            var imgUrl = mat.image || materialFallbackImages[i % materialFallbackImages.length];
+            var catText = (mat.category || 'Material').toUpperCase();
+            var iconName = mat.icon || 'category';
+            var delay = (i * 0.1);
+
+            var cardHtml = '';
+            cardHtml += '<div class="material-card group border border-outline-variant bg-white overflow-hidden fade-in" style="animation-delay:' + delay + 's">';
+
+            // Large image header with aluminum finish
+            cardHtml += '  <div class="h-56 lg:h-64 overflow-hidden relative aluminum-finish">';
+            cardHtml += '    <img alt="' + escapeAttr(mat.name) + '" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" src="' + escapeAttr(imgUrl) + '" onerror="this.src=\'' + escapeAttr(materialFallbackImages[i % materialFallbackImages.length]) + '\'"/>';
+            cardHtml += '    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>';
+            // Category badge
+            cardHtml += '    <div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1.5 font-label-caps text-[10px] tracking-widest flex items-center gap-1.5 z-10">';
+            cardHtml += '      <span class="material-symbols-outlined text-[14px]">' + escapeHtml(iconName) + '</span> ' + escapeHtml(catText);
+            cardHtml += '    </div>';
+            cardHtml += '  </div>';
+
+            // Content body
+            cardHtml += '  <div class="p-8">';
+
+            // Material name
+            cardHtml += '    <h3 class="font-headline-sm text-headline-sm mb-4">' + escapeHtml(mat.name) + '</h3>';
+
+            // FULL description text (not truncated)
+            var paragraphs = (mat.description || 'Structural application material used in the construction of this building.').split('\n').filter(p => p.trim() !== '');
+            for (var p = 0; p < paragraphs.length; p++) {
+                cardHtml += '    <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">' + escapeHtml(paragraphs[p]) + '</p>';
+            }
+            
+            // Stats row
+            cardHtml += '    <div class="space-y-3 mb-8">';
+            cardHtml += '      <div class="flex justify-between items-center border-b border-outline-variant/30 pb-3">';
+            cardHtml += '        <span class="font-label-caps text-label-caps text-on-surface-variant">Quantity / Scale</span>';
+            cardHtml += '        <span class="font-data-mono text-data-mono text-primary font-semibold">' + escapeHtml(mat.quantity || 'Extensive') + '</span>';
+            cardHtml += '      </div>';
+            cardHtml += '      <div class="flex justify-between items-center border-b border-outline-variant/30 pb-3">';
+            cardHtml += '        <span class="font-label-caps text-label-caps text-on-surface-variant">Category</span>';
+            cardHtml += '        <span class="font-data-mono text-data-mono">' + escapeHtml(mat.category || 'General') + '</span>';
+            cardHtml += '      </div>';
+            if (mat.source) {
+                cardHtml += '      <div class="flex justify-between items-start gap-4 border-b border-outline-variant/30 pb-3">';
+                cardHtml += '        <span class="font-label-caps text-label-caps text-on-surface-variant flex-shrink-0">Source</span>';
+                cardHtml += '        <span class="font-data-mono text-[12px] text-right">' + escapeHtml(mat.source) + '</span>';
+                cardHtml += '      </div>';
+            }
+            cardHtml += '    </div>';
+
+            // Action buttons
+            cardHtml += '    <div class="flex gap-3">';
+            cardHtml += '      <button class="flex-1 bg-primary text-on-primary py-3.5 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors uppercase flex items-center justify-center gap-2" onclick="openSpecModal(' + i + ')">';
+            cardHtml += '        <span class="material-symbols-outlined text-[16px]">science</span> View Detailed Specs';
+            cardHtml += '      </button>';
+            cardHtml += '      <button class="px-4 border border-outline text-on-surface-variant flex items-center justify-center hover:bg-primary-container/20 hover:border-primary hover:text-primary transition-all" onclick="addToComparator(\'' + escapeAttr(mat.name) + '\', \'' + escapeAttr(mat.quantity || 'N/A') + '\', \'' + escapeAttr(mat.category || 'General') + '\')" title="Add to Comparator">';
+            cardHtml += '        <span class="material-symbols-outlined">add_chart</span>';
+            cardHtml += '      </button>';
+            cardHtml += '    </div>';
+
+            cardHtml += '  </div>';
+            cardHtml += '</div>';
+
+            grid.innerHTML += cardHtml;
+        }
+    }
+
+    // =========================================================
+    // 6. RENDER SPECIFICATIONS TABLE
+    // =========================================================
+    function renderSpecifications(specs) {
+        var section = document.getElementById('specs-section');
+        var tbody = document.getElementById('specs-tbody');
+
+        if (specs.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = '';
+        tbody.innerHTML = '';
+
+        for (var i = 0; i < specs.length; i++) {
+            var spec = specs[i];
+            var row = '';
+            row += '<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-all duration-200 cursor-default" style="transition: transform 0.2s ease;">';
+            row += '  <td class="py-4 pr-4">';
+            row += '    <div class="flex items-center gap-2">';
+            row += '      <span class="material-symbols-outlined text-primary text-[16px]">straighten</span>';
+            row += '      ' + escapeHtml(spec.metric);
+            row += '    </div>';
+            row += '  </td>';
+            row += '  <td class="py-4 text-primary font-semibold">' + escapeHtml(spec.value) + '</td>';
+            row += '  <td class="py-4 text-on-surface-variant">' + escapeHtml(spec.unit) + '</td>';
+            row += '  <td class="py-4 text-on-surface-variant text-sm max-w-sm">' + escapeHtml(spec.significance) + '</td>';
+            row += '</tr>';
+            tbody.innerHTML += row;
+        }
+
+        // Row hover effect
+        var rows = document.querySelectorAll('#specs-tbody tr');
+        for (var r = 0; r < rows.length; r++) {
+            (function(row) {
+                row.addEventListener('mouseenter', function() { row.style.transform = 'translateX(8px)'; });
+                row.addEventListener('mouseleave', function() { row.style.transform = 'translateX(0)'; });
+            })(rows[r]);
+        }
+    }
+
+    // =========================================================
+    // 7. RENDER ENGINEERING CHALLENGES
+    // =========================================================
+    function renderChallenges(fullReport) {
+        var section = document.getElementById('challenges-section');
+        if (!fullReport || !fullReport.engineeringChallenges || fullReport.engineeringChallenges.trim().length < 10) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = '';
+        document.getElementById('challenges-text').innerText = fullReport.engineeringChallenges;
+    }
+
+    // =========================================================
+    // 8. RENDER CONSTRUCTION TIMELINE OVERVIEW
+    // =========================================================
+    function renderTimelineOverview(timeline) {
+        var section = document.getElementById('timeline-section');
+        var container = document.getElementById('timeline-container');
+
+        if (timeline.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = '';
+        container.innerHTML = '';
+
+        for (var i = 0; i < timeline.length; i++) {
+            var node = timeline[i];
+            var imgSrc = node.image || fallbackImages[i % fallbackImages.length];
+            var isLast = (i === timeline.length - 1);
+            var delay = (i * 0.08);
+
+            var html = '';
+            html += '<div class="flex gap-4 lg:gap-6 fade-in" style="animation-delay:' + delay + 's">';
+
+            // Left: Dot + Connector
+            html += '  <div class="flex flex-col items-center flex-shrink-0">';
+            html += '    <div class="w-3 h-3 rounded-full bg-primary border-2 border-primary-container flex-shrink-0 mt-1"></div>';
+            if (!isLast) {
+                html += '    <div class="timeline-connector flex-1 min-h-[40px]"></div>';
+            }
+            html += '  </div>';
+
+            // Right: Content row
+            html += '  <div class="flex gap-4 pb-6 ' + (isLast ? '' : 'border-b border-outline-variant/20 mb-4') + ' flex-1 min-w-0">';
+
+            // Thumbnail
+            html += '    <div class="w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0 overflow-hidden border border-outline-variant/40">';
+            html += '      <img alt="' + escapeAttr(node.title) + '" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src="' + escapeAttr(imgSrc) + '" onerror="this.src=\'' + escapeAttr(fallbackImages[i % fallbackImages.length]) + '\'"/>';
+            html += '    </div>';
+
+            // Text
+            html += '    <div class="min-w-0 flex-1">';
+            html += '      <span class="font-label-caps text-[10px] text-primary tracking-widest">' + escapeHtml(node.dateLabel || node.year) + '</span>';
+            html += '      <h4 class="font-headline-sm text-[16px] lg:text-[18px] text-on-surface mt-0.5 leading-snug">' + escapeHtml(node.title) + '</h4>';
+            html += '      <p class="font-body-md text-[13px] text-on-surface-variant mt-1 line-clamp-2">' + escapeHtml(node.description) + '</p>';
+            html += '    </div>';
+
+            html += '  </div>';
+            html += '</div>';
+
+            container.innerHTML += html;
+        }
+    }
+
+    // =========================================================
+    // 9. RENDER FULL RESEARCH REPORT (Expandable)
+    // =========================================================
+    function renderFullReport(report) {
+        var section = document.getElementById('report-section');
+        var container = document.getElementById('report-content');
+
+        var sections = [
+            { icon: 'info', title: 'Historical Overview', key: 'overview', content: report.overview },
+            { icon: 'timeline', title: 'Construction Timeline', key: 'constructionTimeline', content: report.constructionTimeline },
+            { icon: 'hardware', title: 'Materials & Cost Analysis', key: 'materialsAndCost', content: report.materialsAndCost },
+            { icon: 'foundation', title: 'Structural System', key: 'structuralSystem', content: report.structuralSystem },
+            { icon: 'engineering', title: 'Engineering Challenges', key: 'engineeringChallenges', content: report.engineeringChallenges },
+            { icon: 'architecture', title: 'Architectural Design', key: 'architecturalDesign', content: report.architecturalDesign },
+            { icon: 'diversity_3', title: 'Cultural Impact & Legacy', key: 'culturalImpact', content: report.culturalImpact }
+        ];
+
+        var hasContent = false;
+        container.innerHTML = '';
+
+        for (var i = 0; i < sections.length; i++) {
+            var sec = sections[i];
+            if (!sec.content || sec.content.trim().length < 10) continue;
+            hasContent = true;
+
+            var toggleId = 'report-toggle-' + i;
+            var bodyId = 'report-body-' + i;
+            var iconId = 'report-icon-' + i;
+            var delay = (i * 0.08);
+
+            var html = '';
+            html += '<div class="border border-outline-variant/40 bg-white overflow-hidden fade-in" style="animation-delay:' + delay + 's">';
+
+            // Header (clickable)
+            html += '  <button id="' + toggleId + '" class="w-full flex items-center justify-between p-5 lg:p-6 hover:bg-surface-container-low transition-colors text-left" onclick="toggleReport(' + i + ')">';
+            html += '    <div class="flex items-center gap-3">';
+            html += '      <span class="material-symbols-outlined text-primary">' + sec.icon + '</span>';
+            html += '      <span class="font-label-caps text-label-caps text-on-surface uppercase tracking-widest">' + escapeHtml(sec.title) + '</span>';
+            html += '    </div>';
+            html += '    <span id="' + iconId + '" class="material-symbols-outlined text-on-surface-variant report-toggle-icon">expand_more</span>';
+            html += '  </button>';
+
+            // Body (collapsible)
+            html += '  <div id="' + bodyId + '" class="report-collapse">';
+            html += '    <div class="px-5 lg:px-6 pb-6 pt-0">';
+            html += '      <div class="border-l-2 border-primary-container pl-6 ml-3">';
+            html += '        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed whitespace-pre-line">' + escapeHtml(sec.content) + '</p>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
+
+            html += '</div>';
+            container.innerHTML += html;
+        }
+
+        if (hasContent) {
+            section.style.display = '';
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    function toggleReport(index) {
+        var body = document.getElementById('report-body-' + index);
+        var icon = document.getElementById('report-icon-' + index);
+        if (body.classList.contains('open')) {
+            body.classList.remove('open');
+            icon.classList.remove('open');
+        } else {
+            body.classList.add('open');
+            icon.classList.add('open');
+        }
+    }
+
+    // =========================================================
+    // 10. RENDER SOURCES
+    // =========================================================
+    function renderSources(sources) {
+        var section = document.getElementById('sources-section');
+        var grid = document.getElementById('sources-grid');
+
+        if (!sources || sources.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = '';
+        grid.innerHTML = '';
+
+        for (var s = 0; s < sources.length; s++) {
+            var src = sources[s];
+            var srcHtml = '';
+            srcHtml += '<a href="' + escapeAttr(src.url) + '" target="_blank" rel="noopener" class="flex items-start gap-3 p-4 border border-outline-variant/30 bg-surface-container-low hover:border-primary hover:bg-surface-container hover:shadow-md transition-all duration-300 group">';
+            srcHtml += '  <span class="material-symbols-outlined text-outline text-[18px] mt-0.5 group-hover:text-primary transition-colors flex-shrink-0">open_in_new</span>';
+            srcHtml += '  <div class="min-w-0">';
+            srcHtml += '    <span class="font-body-md text-sm text-on-surface group-hover:text-primary transition-colors block truncate">' + escapeHtml(src.title || src.url) + '</span>';
+            srcHtml += '    <span class="font-data-mono text-[10px] text-on-surface-variant block truncate mt-1">' + escapeHtml(src.url) + '</span>';
+            srcHtml += '  </div>';
+            srcHtml += '</a>';
+            grid.innerHTML += srcHtml;
+        }
+    }
+
+    // =========================================================
+    // 14. MATERIAL SPEC MODAL
+    // =========================================================
+    var propLabels = {
+        density: { label: 'Density', icon: 'scale' },
+        compressiveStrength: { label: 'Compressive Strength', icon: 'compress' },
+        tensileStrength: { label: 'Tensile Strength', icon: 'open_in_full' },
+        durability: { label: 'Durability', icon: 'shield' },
+        thermalBehavior: { label: 'Thermal Behavior', icon: 'thermostat' }
+    };
+
+    function openSpecModal(index) {
+        var mat = loadedMaterials[index];
+        if (!mat) return;
+
+        document.getElementById('spec-modal-image').src = mat.image || materialFallbackImages[index % materialFallbackImages.length];
+        document.getElementById('spec-modal-image').onerror = function() {
+            this.onerror = null;
+            this.src = materialFallbackImages[index % materialFallbackImages.length];
+        };
+        document.getElementById('spec-modal-category').innerText = (mat.category || 'Material').toUpperCase();
+        document.getElementById('spec-modal-name').innerText = mat.name || 'Building Material';
+        document.getElementById('spec-modal-role').innerText = mat.role || '';
+
+        // Engineering properties grid
+        var propsEl = document.getElementById('spec-modal-props');
+        propsEl.innerHTML = '';
+        var props = mat.properties || {};
+        var hasProps = false;
+        for (var key in propLabels) {
+            var val = props[key];
+            if (!val || String(val).trim() === '') continue;
+            hasProps = true;
+            propsEl.innerHTML +=
+                '<div class="border border-outline-variant/40 bg-surface-container-low p-4">' +
+                '  <div class="flex items-center gap-1.5 mb-2">' +
+                '    <span class="material-symbols-outlined text-primary text-[16px]">' + propLabels[key].icon + '</span>' +
+                '    <span class="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-widest">' + propLabels[key].label + '</span>' +
+                '  </div>' +
+                '  <p class="font-data-mono text-[13px] text-on-surface leading-snug">' + escapeHtml(String(val)) + '</p>' +
+                '</div>';
+        }
+        propsEl.style.display = hasProps ? '' : 'none';
+
+        // Key facts rows
+        var factsEl = document.getElementById('spec-modal-facts');
+        factsEl.innerHTML = '';
+        var facts = [
+            { label: 'Quantity / Scale', value: mat.quantity },
+            { label: 'Category', value: mat.category },
+            { label: 'Source / Origin', value: mat.source },
+            { label: 'Modern Equivalent', value: mat.modernEquivalent }
+        ];
+        for (var f = 0; f < facts.length; f++) {
+            if (!facts[f].value || String(facts[f].value).trim() === '') continue;
+            factsEl.innerHTML +=
+                '<div class="flex justify-between items-start gap-6 border-b border-outline-variant/30 pb-3">' +
+                '  <span class="font-label-caps text-label-caps text-on-surface-variant flex-shrink-0">' + facts[f].label + '</span>' +
+                '  <span class="font-data-mono text-[13px] text-right">' + escapeHtml(String(facts[f].value)) + '</span>' +
+                '</div>';
+        }
+
+        // Full description paragraphs
+        var descEl = document.getElementById('spec-modal-description');
+        descEl.innerHTML = '';
+        var descParas = (mat.description || 'No additional research notes available for this material.').split('\n').filter(function(p) { return p.trim() !== ''; });
+        for (var dp = 0; dp < descParas.length; dp++) {
+            descEl.innerHTML += '<p>' + escapeHtml(descParas[dp]) + '</p>';
+        }
+
+        var modal = document.getElementById('spec-modal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSpecModal() {
+        document.getElementById('spec-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeSpecModal();
+    });
+
+    // =========================================================
+    // 11. COMPARATOR PANEL INTERACTIVITY
+    // =========================================================
+    function toggleComparator() {
+        var panel = document.getElementById('comparator-panel');
+        panel.classList.toggle('translate-x-full');
+    }
+
+    function addToComparator(matName, matQuantity, matCategory) {
+        // Check if already added
+        for (var c = 0; c < comparatorItems.length; c++) {
+            if (comparatorItems[c].name === matName) {
+                toggleComparator();
+                return;
+            }
+        }
+
+        comparatorItems.push({ name: matName, quantity: matQuantity, category: matCategory });
+        updateComparatorPanel();
+        toggleComparator();
+    }
+
+    function clearComparator() {
+        comparatorItems = [];
+        updateComparatorPanel();
+    }
+
+    function removeFromComparator(index) {
+        comparatorItems.splice(index, 1);
+        updateComparatorPanel();
+    }
+
+    function updateComparatorPanel() {
+        var itemsContainer = document.getElementById('comparator-items');
+        var compSection = document.getElementById('comparator-comparison');
+        var badge = document.getElementById('comparator-badge');
+
+        // Update badge
+        if (comparatorItems.length > 0) {
+            badge.style.display = '';
+            badge.innerText = comparatorItems.length;
+        } else {
+            badge.style.display = 'none';
+        }
+
+        if (comparatorItems.length === 0) {
+            itemsContainer.innerHTML = '<div class="border border-dashed border-outline-variant/50 p-6 text-center">' +
+                '<span class="material-symbols-outlined text-outline text-3xl mb-2 block">add_circle_outline</span>' +
+                '<p class="font-label-caps text-[11px] text-on-surface-variant">Click "Add to Comparator" on any material card to begin comparison</p>' +
+                '</div>';
+            compSection.style.display = 'none';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < comparatorItems.length; i++) {
+            var item = comparatorItems[i];
+            html += '<div class="flex items-center justify-between p-4 border border-outline-variant/40 bg-surface-container-low">';
+            html += '  <div>';
+            html += '    <p class="font-label-caps text-[10px] text-on-surface-variant mb-0.5">MATERIAL ' + String.fromCharCode(65 + i) + '</p>';
+            html += '    <p class="font-headline-sm text-[16px] leading-tight">' + escapeHtml(item.name) + '</p>';
+            html += '    <p class="font-data-mono text-[11px] text-primary mt-1">' + escapeHtml(item.quantity) + '</p>';
+            html += '  </div>';
+            html += '  <button class="material-symbols-outlined text-on-surface-variant hover:text-error text-[18px] transition-colors" onclick="removeFromComparator(' + i + ')">close</button>';
+            html += '</div>';
+        }
+        itemsContainer.innerHTML = html;
+
+        // Show comparison table when 2+ items
+        if (comparatorItems.length >= 2) {
+            compSection.style.display = '';
+            var tableHtml = '';
+            tableHtml += '<div class="grid grid-cols-' + comparatorItems.length + ' gap-3">';
+            for (var j = 0; j < comparatorItems.length; j++) {
+                tableHtml += '<div class="border border-outline-variant/30 p-3 text-center">';
+                tableHtml += '  <p class="font-label-caps text-[10px] text-primary mb-1">' + escapeHtml(comparatorItems[j].name) + '</p>';
+                tableHtml += '  <p class="font-data-mono text-data-mono">' + escapeHtml(comparatorItems[j].quantity) + '</p>';
+                tableHtml += '  <p class="font-label-caps text-[9px] text-on-surface-variant mt-1">' + escapeHtml(comparatorItems[j].category) + '</p>';
+                tableHtml += '</div>';
+            }
+            tableHtml += '</div>';
+            document.getElementById('comparator-table').innerHTML = tableHtml;
+        } else {
+            compSection.style.display = 'none';
+        }
+    }
+
+    // =========================================================
+    // 13. SCROLL-TO-TOP BUTTON
+    // =========================================================
+    var scrollBtn = document.getElementById('scroll-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 500) {
+            scrollBtn.classList.remove('opacity-0', 'invisible');
+            scrollBtn.classList.add('opacity-100', 'visible');
+        } else {
+            scrollBtn.classList.add('opacity-0', 'invisible');
+            scrollBtn.classList.remove('opacity-100', 'visible');
+        }
+    });
+    scrollBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+</body></html>

@@ -1,0 +1,21 @@
+# Secrets — never commit API keys
+app/.env
+.env
+
+# Dependencies / virtualenvs
+node_modules/
+litellm_env/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Scratch and one-off artifacts
+app/scratch/
+app/response.txt
+app/recovered.html
+
+# Runtime data
+app/usage_data.json
+
+# Design-source zips and extracted mockups (keep out of code history)
+*.zip

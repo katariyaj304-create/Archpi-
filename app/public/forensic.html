@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aethel Forensic | Lab &amp; Technical Dossier</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e8e1dd",
+                    "on-primary-fixed": "#291803",
+                    "surface-container-low": "#faf2ee",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#d1c4b8",
+                    "on-background": "#1e1b19",
+                    "surface-tint": "#725a3d",
+                    "surface-container-high": "#eee7e2",
+                    "inverse-surface": "#33302d",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface": "#fff8f4",
+                    "surface-variant": "#e8e1dd",
+                    "surface-dim": "#e0d9d4",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1e1b19",
+                    "on-primary-fixed-variant": "#594327",
+                    "error-container": "#ffdad6",
+                    "primary": "#725a3d",
+                    "inverse-on-surface": "#f7efeb",
+                    "tertiary": "#5e5e5e",
+                    "tertiary-container": "#a7a6a6",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "secondary": "#5f5e5e",
+                    "background": "#fff8f4",
+                    "surface-bright": "#fff8f4",
+                    "primary-fixed-dim": "#e1c19d",
+                    "tertiary-fixed": "#e4e2e2",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "on-secondary-fixed-variant": "#474746",
+                    "secondary-container": "#e2dfde",
+                    "on-primary-container": "#4d381d",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#3b3c3c",
+                    "on-surface-variant": "#4e453c",
+                    "secondary-fixed": "#e5e2e1",
+                    "primary-container": "#bfa17f",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-secondary-container": "#636262",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#e1c19d",
+                    "outline": "#80756b",
+                    "primary-fixed": "#ffddb8",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#f4ece8",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "unit": "4px",
+                    "section-gap": "80px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "label-caps": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .micro-texture {
+            background-image: radial-gradient(#d1c4b8 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            opacity: 0.1;
+        }
+        .aluminum-finish {
+            background: linear-gradient(135deg, #f6f6f6 0%, #e5e2e1 100%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background-color: rgba(253, 253, 253, 0.8);
+        }
+        /* Custom scrollbar for high-density data */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #80756b; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-surface border-b border-outline-variant fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Aethel Forensic</span>
+<div class="hidden md:flex gap-6">
+<a class="text-primary font-bold border-b-2 border-primary py-1 font-body-md text-body-md" href="materials.html">Materials</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 py-1 font-body-md text-body-md" href="history.html">Timeline</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 py-1 font-body-md text-body-md" href="globe.html">Mapping</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container px-3 py-1 border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-48" placeholder="Search Dossier..." type="text"/>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant">settings</span>
+</div>
+<div class="w-8 h-8 rounded-full border border-primary flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a chief structural engineer with short grey hair and spectacles, wearing a minimalist navy turtleneck. The background is a blurred architectural studio with technical blueprints and warm wood tones, suggesting expertise and authority in building forensics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjWrabxu9o63vL_smz_gtpVL7iScX8pr79GXRuBYr0NZZ3k8PuYqk1pA06aJwrsEq0UASR6xyvbClEfPC9XhmpEoS3-S-yylTRS6vbebUnWAxd2dHXqQP9ihZ4mAL4HnPcwlRlzfy4zFtKvyccvlhNzqO3EuYjKRsTOecMoWbhkmQfOsgCH_ZRVuTY0L76FYc3n4EOqVMSSDlLc2SXmhwu3UBWtRKVc6OQp2a_VppN6QKpAlwtdQboxw"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="bg-surface-container-low border-r border-outline-variant h-screen overflow-y-auto w-64 fixed left-0 top-0 pt-20 flex flex-col hidden lg:flex">
+<div class="px-6 mb-6">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant opacity-60 mb-2">PROJECT ALPHA</h3>
+<p class="font-headline-sm text-primary text-[20px]">Forensic Lab</p>
+<p class="text-xs text-on-surface-variant">Structural Engineering</p>
+</div>
+<div class="px-4 mb-6">
+<label class="font-label-caps text-[10px] text-on-surface-variant opacity-60 mb-1 block px-2" for="side-structure">Active Structure</label>
+<select class="js-structure-select w-full bg-surface-container border border-outline-variant px-3 py-2 font-data-mono text-xs text-on-surface focus:border-primary focus:outline-none" id="side-structure"></select>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container border-r-2 border-primary scale-100 active:scale-95 transition-all" href="forensic.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="materials.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="history.html">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="soil.html">
+<span class="material-symbols-outlined">landscape</span>
+<span class="font-label-caps text-label-caps">Environment</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full py-3 bg-primary text-on-primary font-label-caps text-label-caps flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Analysis
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 pt-24 px-margin-mobile md:px-margin-desktop pb-12 relative min-h-screen">
+<div class="absolute inset-0 micro-texture pointer-events-none"></div>
+<!-- Header Section -->
+<header class="mb-12 border-b border-outline-variant pb-6 flex flex-col md:flex-row justify-between md:items-end gap-6">
+<div>
+<div class="flex items-center gap-3 mb-3">
+<label class="font-label-caps text-label-caps text-on-surface-variant" for="site-select">Structure</label>
+<select class="js-structure-select bg-surface-container border border-outline-variant px-3 py-2 font-data-mono text-sm focus:border-primary focus:outline-none" id="site-select">
+<option>Loading structures…</option>
+</select>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2" id="site-title">Technical Dossier</h1>
+<p class="text-on-surface-variant max-w-2xl font-body-md" id="site-blurb">Select a structure to run the full forensic pipeline — X-ray diffraction, degradation hazards, stratigraphy, provenance, dendrochronology and radiocarbon — against one coherent specimen.</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-2" id="site-status"></p>
+</div>
+<div class="flex items-center gap-4 mb-1">
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant">Location</p>
+<p class="font-data-mono text-data-mono mb-3" id="site-location">—</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Period</p>
+<p class="font-data-mono text-xs" id="site-period">—</p>
+</div>
+</div>
+</header>
+<!-- Bento Grid: Material Analysis Lab -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- X-Ray Diffraction Viewer -->
+<div class="md:col-span-8 bg-surface border border-outline-variant overflow-hidden flex flex-col">
+<div class="bg-surface-container-high px-4 py-2 border-b border-outline-variant flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface">Binder Chemistry: XRD Phase Identification</span>
+<div class="flex gap-4 items-center">
+<span class="font-label-caps text-label-caps text-primary cursor-pointer" data-sample="roman" id="xrd-tab-roman">Roman Ash</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant opacity-40 cursor-pointer" data-sample="medieval" id="xrd-tab-medieval">Medieval Lime</span>
+<label class="font-label-caps text-label-caps text-on-surface-variant cursor-pointer flex items-center gap-1 border-l border-outline-variant pl-4" for="xrd-file" title="Upload a two-column 2-theta / intensity scan (.txt, .csv, .xy)">
+<span class="material-symbols-outlined text-sm">upload_file</span>Upload Scan
+</label>
+<input accept=".txt,.csv,.xy,.dat,.asc" class="hidden" id="xrd-file" type="file"/>
+</div>
+</div>
+<div class="flex-1 min-h-[400px] relative">
+<div class="absolute inset-0 bg-black">
+<canvas class="w-full h-full block" id="xrd-canvas"></canvas>
+<!-- Technical Overlays (CSS) -->
+<div class="absolute top-8 left-8 text-white pointer-events-none">
+<p class="font-data-mono text-xs opacity-60" id="xrd-stream-label">SPECTROGRAPH-DATA-STREAM_01</p>
+<p class="font-headline-sm" id="xrd-headline">Awaiting Analysis…</p>
+</div>
+<div class="absolute bottom-8 right-8 text-right text-white pointer-events-none">
+<p class="font-data-mono text-xs opacity-60">ANALYTICAL_LOCK_ACTIVE</p>
+<p class="font-body-md text-sm" id="xrd-sample-id">Sample ID: —</p>
+</div>
+<div class="absolute bottom-8 left-8 text-white pointer-events-none space-y-1" id="xrd-legend"></div>
+<div class="absolute inset-0 hidden items-center justify-center bg-black/70 text-white text-center px-8" id="xrd-status">
+<div>
+<p class="font-data-mono text-xs opacity-60 mb-2" id="xrd-status-label">ENGINE</p>
+<p class="font-body-md text-sm" id="xrd-status-text"></p>
+</div>
+</div>
+<div class="absolute hidden bg-white/90 border border-outline-variant p-2 text-on-surface pointer-events-none z-10" id="xrd-tooltip">
+<p class="font-data-mono text-[10px]" id="xrd-tooltip-text"></p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 grid grid-cols-4 border-t border-outline-variant">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">CALCIUM CONTENT</p>
+<p class="font-data-mono text-headline-sm" id="xrd-calcium">—</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">SILICA RATIO</p>
+<p class="font-data-mono text-headline-sm" id="xrd-silica">—</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">CRYSTALLINITY</p>
+<p class="font-data-mono text-headline-sm" id="xrd-crystallinity">—</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">CRYSTAL SIZE</p>
+<p class="font-data-mono text-headline-sm" id="xrd-crystal-size">—</p>
+</div>
+</div>
+</div>
+<!-- Degradation Hazard Panel -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container border border-outline-variant p-6 flex-1">
+<h3 class="font-label-caps text-label-caps text-on-surface border-b border-outline-variant pb-3 mb-6 flex justify-between items-center">
+<span>Degradation Hazards</span>
+<label class="cursor-pointer text-on-surface-variant hover:text-primary flex items-center gap-1 normal-case" for="haz-file" title="Upload hourly microclimate CSV: two columns, Relative Humidity % and Temperature °C">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+</label>
+</h3>
+<input accept=".csv,.txt,.dat" class="hidden" id="haz-file" type="file"/>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Salt Crystallization</span>
+<span class="text-on-surface-variant font-data-mono" id="hz-salt-score">—</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-on-surface" id="hz-salt-bar" style="width: 0%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2" id="hz-salt-note">Awaiting microclimate evaluation.</p>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Rust Jacking</span>
+<span class="text-on-surface-variant font-data-mono" id="hz-rust-score">—</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-on-surface" id="hz-rust-bar" style="width: 0%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2" id="hz-rust-note">Awaiting microclimate evaluation.</p>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Freeze-Thaw</span>
+<span class="text-on-surface-variant font-data-mono" id="hz-freeze-score">—</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-on-surface" id="hz-freeze-bar" style="width: 0%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2" id="hz-freeze-note">Awaiting microclimate evaluation.</p>
+</div>
+</div>
+<div class="mt-12 bg-white/50 p-4 border border-outline-variant aluminum-finish">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-2" id="haz-summary-label">FORENSIC SUMMARY</p>
+<p class="text-sm italic text-on-surface-variant leading-relaxed" id="haz-summary">"The interaction between historical cementation and modern pollutants is accelerating binder leaching in Sector 04."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Chronological Palimpsest (Timeline) -->
+<section class="mb-section-gap">
+<div class="flex items-center gap-4 mb-2">
+<h2 class="font-headline-md text-headline-md">Chronological Palimpsest</h2>
+<div class="h-[1px] flex-1 bg-outline-variant"></div>
+<label class="cursor-pointer text-on-surface-variant hover:text-primary flex items-center gap-1" for="pal-file" title="Upload a stratigraphy JSON: components, relations (built_after / replaces / cuts), absolute date constraints (inscription ranges, calibrated radiocarbon intervals) and chemical signatures. Download the template for the exact shape.">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+<span class="font-label-caps text-[10px]">UPLOAD</span>
+</label>
+<button class="cursor-pointer text-on-surface-variant hover:text-primary flex items-center gap-1" id="pal-template" title="Download a worked stratigraphy JSON template" type="button">
+<span class="material-symbols-outlined text-sm">download</span>
+<span class="font-label-caps text-[10px]">TEMPLATE</span>
+</button>
+</div>
+<input accept=".json,.txt" class="hidden" id="pal-file" type="file"/>
+<p class="font-data-mono text-xs text-on-surface-variant" id="pal-status">Sequencing stratigraphic record…</p>
+<div class="relative py-12">
+<!-- Main Timeline Axis -->
+<div class="absolute left-0 top-1/2 w-full h-[1px] bg-outline-variant -translate-y-1/2"></div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative" id="pal-grid"></div>
+</div>
+</section>
+<!-- Data Widgets: Chronology Core -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- Dendrochronology Core Samples -->
+<div class="md:col-span-7 bg-surface-container-low border border-outline-variant p-6">
+<h3 class="font-label-caps text-label-caps mb-4 flex items-center justify-between gap-2">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">nature</span>
+<span id="dendro-title">Dendrochronology: Core Sample Scan #012</span>
+</span>
+<label class="cursor-pointer text-on-surface-variant hover:text-primary flex items-center gap-1 normal-case" for="dendro-file" title="Upload a ring-width series: one width in mm per line (oldest ring first), ≥20 rings">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+</label>
+</h3>
+<input accept=".csv,.txt,.dat" class="hidden" id="dendro-file" type="file"/>
+<p class="font-data-mono text-xs text-on-surface-variant mb-3" id="dendro-status">Crossdating ring-width series…</p>
+<div class="h-24 w-full bg-[#f0edea] border border-outline-variant mb-6 overflow-hidden relative">
+<canvas class="absolute inset-0 w-full h-full" id="dendro-canvas"></canvas>
+<div class="absolute top-1 left-2 z-10 bg-primary/20 border border-primary px-2 py-1 backdrop-blur-sm hidden" id="dendro-peak-call">
+<p class="font-data-mono text-[10px] text-primary" id="dendro-peak-text">GROWTH PEAK</p>
+</div>
+<div class="absolute bottom-1 right-2 z-10 bg-on-surface/5 border border-on-surface/20 px-2 py-1 backdrop-blur-sm hidden" id="dendro-fell-call">
+<p class="font-data-mono text-[10px] text-on-surface-variant" id="dendro-fell-text">FELLING DATE</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">SPECIES</p>
+<p class="font-body-md font-bold" id="dendro-species">—</p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">RINGS COUNT</p>
+<p class="font-body-md font-bold" id="dendro-rings">—</p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">LAST RING / t-VALUE</p>
+<p class="font-body-md font-bold" id="dendro-dated">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="dendro-stats"></p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">FELLING DATE</p>
+<p class="font-body-md font-bold text-primary" id="dendro-felling">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="dendro-felling-note"></p>
+</div>
+</div>
+</div>
+<!-- Radiocarbon Assay Curve -->
+<div class="md:col-span-5 bg-surface border border-outline-variant p-6">
+<h3 class="font-label-caps text-label-caps mb-4 flex items-center justify-between gap-2">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span id="c14-title">Radiocarbon Assay: C-14 Calibration</span>
+</span>
+</h3>
+<div class="flex flex-wrap items-end gap-3 mb-4">
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="c14-age">¹⁴C AGE (BP)</label>
+<input class="bg-surface-container border border-outline-variant px-3 py-2 font-data-mono text-sm w-24 focus:border-primary focus:outline-none" id="c14-age" step="1" type="number" value="760"/>
+</div>
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="c14-err">± 1σ</label>
+<input class="bg-surface-container border border-outline-variant px-3 py-2 font-data-mono text-sm w-20 focus:border-primary focus:outline-none" id="c14-err" step="1" type="number" value="25"/>
+</div>
+<button class="border border-primary text-primary px-4 py-2 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors" id="c14-run" type="button">Calibrate</button>
+</div>
+<div class="h-48 relative border-l border-b border-outline-variant mb-4">
+<canvas class="absolute inset-0 w-full h-full" id="c14-canvas"></canvas>
+<div class="absolute top-2 right-2 bg-surface-container-high border border-outline-variant p-2 hidden" id="c14-ranges">
+<p class="font-data-mono text-[10px]" id="c14-sigma1">σ1: —</p>
+<p class="font-data-mono text-[10px]" id="c14-sigma2">σ2: —</p>
+</div>
+</div>
+<p class="font-data-mono text-xs text-on-surface-variant mb-1" id="c14-status">Calibrating…</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Bayesian calibration of the conventional radiocarbon age against the bundled IntCal-style curve. Highest-posterior-density calendar ranges at 68.2% (σ1) and 95.4% (σ2); median marked on the axis.</p>
+</div>
+</section>
+<!-- Provenance Map -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-12 bg-surface-container border border-outline-variant p-8 relative overflow-hidden">
+<div class="flex justify-between items-start mb-6 relative z-10">
+<div>
+<h2 class="font-headline-md text-headline-md mb-2">Provenance Map</h2>
+<p class="text-on-surface-variant max-w-xl">Isotopic fingerprint matching (δ¹³C, δ¹⁸O, ⁸⁷Sr/⁸⁶Sr) against the ancient quarry baseline, with the least-cost historical trade route reconstructed over a maritime-weighted friction surface.</p>
+<p class="font-data-mono text-xs text-on-surface-variant mt-2" id="prov-status">Analyzing sample…</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-primary rounded-full"></span>
+<span class="font-label-caps text-label-caps">Origin Quarry</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-on-surface rounded-full"></span>
+<span class="font-label-caps text-label-caps">Destination</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-[2px] bg-primary"></span>
+<span class="font-label-caps text-label-caps">Trade Route</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap items-end gap-4 mb-6 relative z-10">
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="prov-d13c">δ¹³C ‰ VPDB</label>
+<input class="bg-surface border border-outline-variant px-3 py-2 font-data-mono text-sm w-28 focus:border-primary focus:outline-none" id="prov-d13c" step="0.1" type="number" value="2.1"/>
+</div>
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="prov-d18o">δ¹⁸O ‰ VPDB</label>
+<input class="bg-surface border border-outline-variant px-3 py-2 font-data-mono text-sm w-28 focus:border-primary focus:outline-none" id="prov-d18o" step="0.1" type="number" value="-2.0"/>
+</div>
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="prov-sr">⁸⁷Sr/⁸⁶Sr</label>
+<input class="bg-surface border border-outline-variant px-3 py-2 font-data-mono text-sm w-32 focus:border-primary focus:outline-none" id="prov-sr" step="0.0001" type="number" value="0.70785"/>
+</div>
+<div class="flex flex-col">
+<label class="font-label-caps text-[10px] text-on-surface-variant mb-1" for="prov-dest">Construction Site</label>
+<select class="bg-surface border border-outline-variant px-3 py-2 font-data-mono text-sm focus:border-primary focus:outline-none" id="prov-dest">
+<option data-name="Basilica Site, Rome" value="41.89,12.49">Rome</option>
+<option data-name="Agora Stoa, Athens" value="37.98,23.73">Athens</option>
+<option data-name="Narthex, Constantinople" value="41.01,28.98">Constantinople</option>
+<option data-name="San Niccolò, Venice" value="45.43,12.34">Venice</option>
+<option data-name="Serapeum, Alexandria" value="31.20,29.92">Alexandria</option>
+<option data-name="Antonine Baths, Carthage" value="36.85,10.32">Carthage</option>
+<option data-name="Forum, Massalia" value="43.30,5.37">Massalia</option>
+</select>
+</div>
+<button class="border border-primary text-primary px-5 py-2 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors" id="prov-run" type="button">Analyze Provenance</button>
+</div>
+<div class="aspect-[21/9] w-full border border-outline-variant relative bg-[#eee7e2]" id="prov-map-wrap">
+<canvas class="absolute inset-0 w-full h-full" id="prov-canvas"></canvas>
+<div class="absolute w-28 h-28 border border-dashed border-primary/40 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none hidden" id="prov-orbit"></div>
+<div class="absolute p-2 bg-white/90 border border-outline-variant shadow-sm pointer-events-none hidden" id="prov-origin-call">
+<p class="font-label-caps text-[9px]" id="prov-origin-call-label">MATCHED SOURCE</p>
+<p class="font-data-mono text-xs font-bold" id="prov-origin-call-name">—</p>
+</div>
+<div class="absolute p-2 bg-white/90 border border-outline-variant shadow-sm pointer-events-none hidden" id="prov-dest-call">
+<p class="font-label-caps text-[9px]">DESTINATION</p>
+<p class="font-data-mono text-xs font-bold" id="prov-dest-call-name">—</p>
+</div>
+<div class="absolute hidden pointer-events-none bg-white/95 border border-outline-variant px-2 py-1 z-20" id="prov-tooltip">
+<p class="font-data-mono text-[10px]" id="prov-tooltip-text"></p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">ORIGIN QUARRY</p>
+<p class="font-body-md font-bold" id="prov-origin">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="prov-origin-note"></p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">MATCH CONFIDENCE</p>
+<p class="font-body-md font-bold" id="prov-confidence">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="prov-confidence-note"></p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">TRADE ROUTE</p>
+<p class="font-body-md font-bold" id="prov-distance">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="prov-distance-note"></p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">TRANSPORT MODES</p>
+<p class="font-body-md font-bold" id="prov-modes">—</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="prov-modes-note"></p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (FAB) - Suppression Logic: This is a Detail/Dossier page, FAB is suppressed as per guidelines -->
+<!-- Mobile Navigation -->
+<div class="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant z-50 flex justify-around items-center h-16">
+<a class="flex flex-col items-center text-primary" href="forensic.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-label-caps">Analysis</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="history.html">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-label-caps">Timeline</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="globe.html">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[10px] font-label-caps">Routes</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-caps">Account</span>
+</a>
+</div>
+<!-- XRD Phase Identification: live viewer wired to the forensic_backend engine -->
+<script>
+(function () {
+    const XRD_API = 'http://localhost:8010';
+
+    const DEMO_SAMPLES = {
+        roman:    { label: 'ATH-22-NNA (Roman Ash)',   params: { quartz: 0.55, calcite: 0.25, gypsum: 0.20, crystallite_nm: 35, seed: 22 } },
+        medieval: { label: 'ATH-31-GXP (Medieval Lime)', params: { quartz: 0.20, calcite: 0.75, gypsum: 0.05, crystallite_nm: 60, seed: 31 } },
+    };
+    const PHASE_COLORS = { quartz: '#e1c19d', calcite: '#7fd4c9', gypsum: '#f2f2f2' };
+    const PHASE_SHORT  = { quartz: 'QUARTZ', calcite: 'CALCITE', gypsum: 'GYPSUM' };
+
+    const canvas   = document.getElementById('xrd-canvas');
+    const ctx      = canvas.getContext('2d');
+    const els = {
+        headline:  document.getElementById('xrd-headline'),
+        stream:    document.getElementById('xrd-stream-label'),
+        sampleId:  document.getElementById('xrd-sample-id'),
+        legend:    document.getElementById('xrd-legend'),
+        status:    document.getElementById('xrd-status'),
+        statusLbl: document.getElementById('xrd-status-label'),
+        statusTxt: document.getElementById('xrd-status-text'),
+        tooltip:   document.getElementById('xrd-tooltip'),
+        tooltipTxt: document.getElementById('xrd-tooltip-text'),
+        calcium:   document.getElementById('xrd-calcium'),
+        silica:    document.getElementById('xrd-silica'),
+        cryst:     document.getElementById('xrd-crystallinity'),
+        size:      document.getElementById('xrd-crystal-size'),
+        tabs: { roman: document.getElementById('xrd-tab-roman'), medieval: document.getElementById('xrd-tab-medieval') },
+        file:      document.getElementById('xrd-file'),
+    };
+
+    let lastResult = null;   // last analysis payload, for re-drawing on resize
+    let peakMarkers = [];    // [{px, py, twoTheta, height, phase}] in CSS pixels
+
+    function setStatus(label, text) {
+        if (!text) { els.status.classList.add('hidden'); els.status.classList.remove('flex'); return; }
+        els.statusLbl.textContent = label;
+        els.statusTxt.textContent = text;
+        els.status.classList.remove('hidden');
+        els.status.classList.add('flex');
+    }
+
+    function setActiveTab(key) {
+        for (const [k, el] of Object.entries(els.tabs)) {
+            el.classList.toggle('text-primary', k === key);
+            el.classList.toggle('text-on-surface-variant', k !== key);
+            el.classList.toggle('opacity-40', k !== key);
+        }
+    }
+
+    // Map each observed peak position to the phase whose reference line claimed
+    // it, giving higher-confidence phases priority on collisions.
+    function buildPhaseByPosition(matches) {
+        const map = new Map();
+        for (const m of matches) {
+            for (const line of m.matched_lines) {
+                const key = line.observed_two_theta.toFixed(2);
+                if (!map.has(key)) map.set(key, m.phase_id);
+            }
+        }
+        return map;
+    }
+
+    function draw(result) {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        peakMarkers = [];
+        if (!result) return;
+
+        const { two_theta: xs, raw, baseline, processed } = result.conditioned;
+        const m = { l: 46, r: 14, t: 44, b: 30 };
+        const W = rect.width - m.l - m.r, H = rect.height - m.t - m.b;
+        const xMin = xs[0], xMax = xs[xs.length - 1];
+        const yMax = Math.max(...raw) * 1.05 || 1;
+        const X = v => m.l + (v - xMin) / (xMax - xMin) * W;
+        const Y = v => m.t + H - Math.min(v, yMax) / yMax * H;
+
+        // Grid + axis ticks
+        ctx.font = '10px Inter';
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.lineWidth = 1;
+        for (let t = Math.ceil(xMin / 10) * 10; t <= xMax; t += 10) {
+            ctx.beginPath(); ctx.moveTo(X(t), m.t); ctx.lineTo(X(t), m.t + H); ctx.stroke();
+            ctx.fillText(t + '°', X(t) - 8, rect.height - 12);
+        }
+        for (let i = 1; i <= 4; i++) {
+            const y = m.t + H * i / 5;
+            ctx.beginPath(); ctx.moveTo(m.l, y); ctx.lineTo(m.l + W, y); ctx.stroke();
+        }
+        ctx.fillText('2θ', m.l + W - 14, rect.height - 12);
+        ctx.save();
+        ctx.translate(14, m.t + H / 2); ctx.rotate(-Math.PI / 2);
+        ctx.fillText('COUNTS', -20, 0);
+        ctx.restore();
+
+        const trace = (ys, style, width, dash) => {
+            ctx.strokeStyle = style; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+            ctx.beginPath();
+            for (let i = 0; i < xs.length; i++) {
+                const px = X(xs[i]), py = Y(ys[i]);
+                i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+            }
+            ctx.stroke(); ctx.setLineDash([]);
+        };
+
+        trace(raw, 'rgba(255,255,255,0.22)', 1);
+        trace(baseline, 'rgba(255,255,255,0.35)', 1, [4, 4]);
+
+        // Conditioned signal with champagne fill
+        const grad = ctx.createLinearGradient(0, m.t, 0, m.t + H);
+        grad.addColorStop(0, 'rgba(191,161,127,0.35)');
+        grad.addColorStop(1, 'rgba(191,161,127,0.02)');
+        ctx.beginPath();
+        ctx.moveTo(X(xs[0]), Y(0));
+        for (let i = 0; i < xs.length; i++) ctx.lineTo(X(xs[i]), Y(processed[i]));
+        ctx.lineTo(X(xs[xs.length - 1]), Y(0));
+        ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+        trace(processed, '#e1c19d', 1.5);
+
+        // Flagged peaks, coloured by owning phase
+        const phaseByPos = buildPhaseByPosition(result.phase_matches);
+        for (const p of result.detected_peaks) {
+            const phase = phaseByPos.get(p.two_theta.toFixed(2)) || null;
+            const color = phase ? PHASE_COLORS[phase] : 'rgba(255,255,255,0.4)';
+            const px = X(p.two_theta), py = Y(p.height);
+            ctx.strokeStyle = color; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(px, py - 6); ctx.lineTo(px, py - 16); ctx.stroke();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(px, py - 6); ctx.lineTo(px - 3.5, py - 12); ctx.lineTo(px + 3.5, py - 12);
+            ctx.closePath(); ctx.fill();
+            peakMarkers.push({ px, py, twoTheta: p.two_theta, height: p.height, fwhm: p.fwhm_deg, phase });
+        }
+    }
+
+    function renderResult(result, sampleLabel) {
+        lastResult = result;
+        draw(result);
+
+        els.sampleId.textContent = 'Sample ID: ' + sampleLabel;
+        els.stream.textContent = 'SPECTROGRAPH-DATA-STREAM_01 / ' +
+            result.meta.n_peaks_detected + ' PEAKS / ' + result.meta.processing_ms + 'MS';
+
+        const top = result.phase_matches.find(m => m.confidence_pct > 0);
+        els.headline.textContent = top
+            ? top.name.split(' (')[0] + ' Match: ' + top.confidence_pct + '%'
+            : 'No Crystalline Phase Matched';
+
+        els.legend.innerHTML = result.phase_matches
+            .filter(m => m.confidence_pct >= 25)
+            .map(m => '<p class="font-label-caps text-[10px] flex items-center gap-2">' +
+                '<span class="inline-block w-2 h-2" style="background:' + PHASE_COLORS[m.phase_id] + '"></span>' +
+                PHASE_SHORT[m.phase_id] + ' ' + m.confidence_pct + '%</p>')
+            .join('');
+
+        const q = result.quantitative;
+        els.calcium.textContent = q.calcium_content_pct + '%';
+        els.silica.textContent = q.silica_ratio_pct + '%';
+        els.cryst.textContent = q.crystallinity_pct + '%';
+        els.size.textContent = q.avg_crystallite_size_nm == null ? '—'
+            : q.avg_crystallite_size_nm >= 1000
+                ? (q.avg_crystallite_size_nm / 1000).toFixed(2) + 'μm'
+                : q.avg_crystallite_size_nm.toFixed(1) + 'nm';
+    }
+
+    async function analyze(twoTheta, intensity, sampleLabel) {
+        setStatus('XRD ENGINE', 'Conditioning signal, fitting profiles, matching phases…');
+        try {
+            const res = await fetch(XRD_API + '/api/v1/xrd/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ two_theta: twoTheta, intensity: intensity, sample_id: sampleLabel.slice(0, 64) }),
+            });
+            if (!res.ok) {
+                const detail = (await res.json().catch(() => ({}))).detail;
+                throw new Error(typeof detail === 'string' ? detail : 'Analysis failed (HTTP ' + res.status + ')');
+            }
+            renderResult(await res.json(), sampleLabel);
+            setStatus('', '');
+        } catch (e) {
+            const offline = e instanceof TypeError; // network failure: engine not running
+            setStatus(offline ? 'XRD ENGINE OFFLINE' : 'ANALYSIS ERROR',
+                offline
+                    ? 'Start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010'
+                    : e.message);
+        }
+    }
+
+    async function loadDemo(key) {
+        setActiveTab(key);
+        const demo = DEMO_SAMPLES[key];
+        setStatus('XRD ENGINE', 'Acquiring diffractogram…');
+        try {
+            const qs = new URLSearchParams(demo.params).toString();
+            const res = await fetch(XRD_API + '/api/v1/xrd/demo?' + qs);
+            if (!res.ok) throw new Error('demo endpoint returned HTTP ' + res.status);
+            const data = await res.json();
+            await analyze(data.two_theta, data.intensity, demo.label);
+        } catch (e) {
+            setStatus('XRD ENGINE OFFLINE',
+                'Start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010');
+        }
+    }
+
+    // Two-column text parser: whitespace/comma/semicolon separated, ignores
+    // comment lines (#, //, !) and non-numeric header rows.
+    function parseScan(text) {
+        const twoTheta = [], intensity = [];
+        for (const line of text.split(/\r?\n/)) {
+            const t = line.trim();
+            if (!t || t.startsWith('#') || t.startsWith('//') || t.startsWith('!')) continue;
+            const parts = t.split(/[\s,;]+/);
+            if (parts.length < 2) continue;
+            const x = parseFloat(parts[0]), y = parseFloat(parts[1]);
+            if (Number.isFinite(x) && Number.isFinite(y)) { twoTheta.push(x); intensity.push(y); }
+        }
+        return { twoTheta, intensity };
+    }
+
+    els.file.addEventListener('change', async () => {
+        const file = els.file.files[0];
+        if (!file) return;
+        const { twoTheta, intensity } = parseScan(await file.text());
+        if (twoTheta.length < 50) {
+            setStatus('UPLOAD ERROR', 'Could not read at least 50 numeric (2θ, intensity) rows from "' + file.name + '".');
+            els.file.value = '';
+            return;
+        }
+        setActiveTab(null);
+        await analyze(twoTheta, intensity, file.name);
+        els.file.value = '';
+    });
+
+    els.tabs.roman.addEventListener('click', () => loadDemo('roman'));
+    els.tabs.medieval.addEventListener('click', () => loadDemo('medieval'));
+
+    canvas.addEventListener('mousemove', (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
+        let best = null, bestD = 12;
+        for (const p of peakMarkers) {
+            const d = Math.abs(p.px - mx);
+            if (d < bestD && my > p.py - 40) { best = p; bestD = d; }
+        }
+        if (!best) { els.tooltip.classList.add('hidden'); return; }
+        els.tooltipTxt.textContent = (best.phase ? PHASE_SHORT[best.phase] + ' · ' : '') +
+            '2θ ' + best.twoTheta.toFixed(2) + '° · I ' + Math.round(best.height) +
+            ' · β ' + best.fwhm.toFixed(3) + '°';
+        els.tooltip.style.left = Math.min(best.px + 10, rect.width - 190) + 'px';
+        els.tooltip.style.top = Math.max(best.py - 40, 8) + 'px';
+        els.tooltip.classList.remove('hidden');
+    });
+    canvas.addEventListener('mouseleave', () => els.tooltip.classList.add('hidden'));
+
+    window.addEventListener('resize', () => draw(lastResult));
+
+    // Driven by the structure selector: analyze this building's XRD sample.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).xrd = (body, label) => {
+        setActiveTab(null);
+        return analyze(body.two_theta, body.intensity, label || body.sample_id);
+    };
+})();
+</script>
+<!-- Degradation Hazards: live panel wired to the hazard engine -->
+<script>
+(function () {
+    const HAZ_API = 'http://localhost:8010';
+
+    const STATE_STYLE = {
+        CRITICAL:   { text: 'text-error',              bar: 'bg-error',      label: 'Critical' },
+        HIGH:       { text: 'text-error',              bar: 'bg-error',      label: 'High Risk' },
+        MODERATE:   { text: 'text-primary',            bar: 'bg-primary',    label: 'Moderate' },
+        NEGLIGIBLE: { text: 'text-on-surface-variant', bar: 'bg-on-surface', label: 'Negligible' },
+    };
+
+    const el = id => document.getElementById(id);
+
+    function setRow(key, score, state, note) {
+        const style = STATE_STYLE[state];
+        const scoreEl = el('hz-' + key + '-score');
+        scoreEl.textContent = style.label + ' (' + score.toFixed(1) + ')';
+        scoreEl.className = 'font-data-mono ' + style.text;
+        const bar = el('hz-' + key + '-bar');
+        bar.className = 'h-full ' + style.bar;
+        bar.style.width = Math.max(2, score * 10) + '%';
+        el('hz-' + key + '-note').textContent = note;
+    }
+
+    function setNotes(text) {
+        for (const key of ['salt', 'rust', 'freeze']) el('hz-' + key + '-note').textContent = text;
+    }
+
+    const fmtStress = mpa => mpa >= 1000 ? (mpa / 1000).toFixed(1) + ' GPa' : mpa.toFixed(1) + ' MPa';
+
+    function summarize(res, matrix, govSalt) {
+        const top = [...matrix].sort((a, b) => b.score - a.score)[0];
+        const tensile = res.hazard_matrix[0].tensile_threshold_mpa;
+        if (top.score < 2.5) {
+            return '"No environmental hazard approaches the ' + tensile +
+                ' MPa tensile capacity of the binder under the evaluated microclimate."';
+        }
+        if (top.hazard === 'salt_crystallization') {
+            const verb = govSalt.stress_ratio > 1 ? 'exceeds' : 'approaches';
+            return '"' + govSalt.name + ' crystallization pressure (' + govSalt.pressure_mpa.toFixed(1) +
+                ' MPa over ' + govSalt.stats.cycles_per_year + ' cycles/yr) ' + verb + ' the ' +
+                tensile + ' MPa tensile capacity of the binder; salt cycling governs degradation at this site."';
+        }
+        if (top.hazard === 'rust_jacking') {
+            const d = res.rust_jacking.detail;
+            return '"Expansive corrosion of the embedded iron ties governs: ' +
+                d.section_loss_mm.toFixed(2) + ' mm of section loss drives an elastic hoop demand of ' +
+                fmtStress(d.hoop_stress_mpa) + ' against a ' + tensile + ' MPa masonry sleeve capacity."';
+        }
+        return '"Wet freeze-thaw cycling (' + res.freeze_thaw.wet_cycles_per_year +
+            ' cycles/yr, freezing to ' + res.freeze_thaw.mean_freeze_minimum_c +
+            '°C) governs pore-water damage under the evaluated microclimate."';
+    }
+
+    function render(res, sourceLabel) {
+        const matrix = res.hazard_matrix;
+        const byHazard = Object.fromEntries(matrix.map(r => [r.hazard, r]));
+        const govSalt = res.salt_assessments.find(a => a.salt_id === res.meta.governing_salt);
+
+        setRow('salt', byHazard.salt_crystallization.score, byHazard.salt_crystallization.state,
+            govSalt.name + ' (' + govSalt.formula + '): ' + govSalt.stats.cycles_per_year +
+            ' crystallization cycles/yr at ' + govSalt.pressure_mpa.toFixed(1) + ' MPa vs ' +
+            byHazard.salt_crystallization.tensile_threshold_mpa + ' MPa capacity.');
+
+        const rust = res.rust_jacking, d = rust.detail;
+        setRow('rust', rust.score, rust.state,
+            d.section_loss_mm.toFixed(2) + ' mm tie section lost over ' + d.exposure_years +
+            ' yrs · elastic hoop demand ' + fmtStress(d.hoop_stress_mpa) + ' (' +
+            (rust.i_corr_source === 'measured' ? 'measured i_corr' : 'i_corr from time-of-wetness ' +
+            (rust.time_of_wetness * 100).toFixed(0) + '%') + ').');
+
+        const ft = res.freeze_thaw;
+        setRow('freeze', ft.score, ft.state,
+            ft.wet_cycles_per_year + ' wet freeze-thaw cycles/yr · mean freeze minimum ' +
+            ft.mean_freeze_minimum_c + '°C.');
+
+        el('haz-summary-label').textContent = 'FORENSIC SUMMARY · ' + sourceLabel.toUpperCase();
+        el('haz-summary').textContent = summarize(res, matrix, govSalt);
+    }
+
+    async function evaluate(payload, sourceLabel) {
+        setNotes('Evaluating microclimate…');
+        try {
+            const res = await fetch(HAZ_API + '/api/v1/hazards/evaluate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) {
+                const detail = (await res.json().catch(() => ({}))).detail;
+                throw new Error(typeof detail === 'string' ? detail : 'evaluation failed (HTTP ' + res.status + ')');
+            }
+            render(await res.json(), sourceLabel);
+        } catch (e) {
+            const offline = e instanceof TypeError;
+            setNotes(offline ? 'Hazard engine offline.' : e.message);
+            el('haz-summary').textContent = offline
+                ? '"Hazard engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010"'
+                : '"' + e.message + '"';
+        }
+    }
+
+    async function loadDemo() {
+        try {
+            const res = await fetch(HAZ_API + '/api/v1/hazards/demo?days=365');
+            if (!res.ok) throw new Error('demo endpoint returned HTTP ' + res.status);
+            await evaluate(await res.json(), 'Synthetic facade year');
+        } catch (e) {
+            setNotes('Hazard engine offline.');
+            el('haz-summary').textContent =
+                '"Hazard engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010"';
+        }
+    }
+
+    // CSV parser: rows of "RH %, temperature C"; skips comments and headers.
+    function parseClimate(text) {
+        const rh = [], temp = [];
+        for (const line of text.split(/\r?\n/)) {
+            const t = line.trim();
+            if (!t || t.startsWith('#') || t.startsWith('//')) continue;
+            const parts = t.split(/[\s,;]+/);
+            if (parts.length < 2) continue;
+            const h = parseFloat(parts[0]), c = parseFloat(parts[1]);
+            if (Number.isFinite(h) && Number.isFinite(c)) { rh.push(h); temp.push(c); }
+        }
+        return { rh, temp };
+    }
+
+    el('haz-file').addEventListener('change', async () => {
+        const file = el('haz-file').files[0];
+        if (!file) return;
+        const { rh, temp } = parseClimate(await file.text());
+        if (rh.length < 48) {
+            setNotes('Could not read at least 48 hourly (RH, temperature) rows from "' + file.name + '".');
+            el('haz-file').value = '';
+            return;
+        }
+        await evaluate({
+            site_id: file.name.slice(0, 64),
+            relative_humidity_pct: rh,
+            temperature_c: temp,
+            material: { porosity_pct: 22.0, tensile_strength_mpa: 3.0 },
+            rust_tie: { diameter_mm: 20.0, exposure_years: 150.0, oxide: 'Fe(OH)3', cover_mm: 50.0 },
+        }, file.name);
+        el('haz-file').value = '';
+    });
+
+    // Driven by the structure selector: evaluate this building's microclimate.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).hazards = (body, label) =>
+        evaluate(body, label || body.site_id);
+})();
+</script>
+<script>
+(function () {
+    const PAL_API = 'http://localhost:8010';
+    const OFFLINE_MSG = 'Palimpsest engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010';
+    const el = id => document.getElementById(id);
+
+    const EVIDENCE_LABEL = {
+        inscription: 'INSCRIPTION',
+        radiocarbon_2sigma: 'C-14 2σ',
+        dendrochronology: 'DENDRO',
+        archival: 'ARCHIVAL',
+        other: 'DATED',
+    };
+
+    let grid = { start: null, end: null, step: 1 };
+
+    const esc = s => String(s).replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const fmtYear = y => {
+        const r = Math.round(y);
+        return r < 0 ? Math.abs(r) + ' BC' : r + ' AD';
+    };
+
+    // EPD/LPD at the modelled span's edge means "unbounded by evidence".
+    function fmtRange(a, b) {
+        const openLo = a <= grid.start + grid.step, openHi = b >= grid.end - grid.step;
+        if (openLo && openHi) return 'UNDATED';
+        if (openLo) return 'BEFORE ' + fmtYear(b);
+        if (openHi) return 'AFTER ' + fmtYear(a);
+        return fmtYear(a) + ' — ' + fmtYear(b);
+    }
+
+    function setStatus(msg, isError) {
+        const s = el('pal-status');
+        s.textContent = msg;
+        s.className = 'font-data-mono text-xs ' + (isError ? 'text-error' : 'text-on-surface-variant');
+    }
+
+    const tag = text =>
+        '<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">' + text + '</span>';
+
+    const binderEra = c =>
+        c.mean_silica_ratio_pct - c.mean_calcium_ratio_pct > 10 ? 'Siliceous Binder'
+        : c.mean_calcium_ratio_pct - c.mean_silica_ratio_pct > 10 ? 'Calcitic Binder'
+        : 'Mixed Binder';
+
+    function card(dateLabel, title, memberRows, tags, anchored) {
+        return '<div class="group cursor-pointer">' +
+            '<div class="bg-surface border border-outline-variant p-6 mb-8 group-hover:border-primary transition-colors relative z-10">' +
+            '<div class="absolute -bottom-8 left-1/2 w-[1px] h-8 bg-outline-variant group-hover:bg-primary"></div>' +
+            '<span class="font-data-mono text-xs text-primary mb-2 block">' + dateLabel + '</span>' +
+            '<h4 class="font-headline-sm text-lg mb-2">' + title + '</h4>' +
+            '<div class="text-sm text-on-surface-variant mb-4 space-y-1">' + memberRows + '</div>' +
+            '<div class="flex gap-2 flex-wrap">' + tags.join('') + '</div>' +
+            '</div>' +
+            '<div class="w-4 h-4 rounded-full bg-surface border-2 ' +
+            (anchored ? 'border-primary' : 'border-outline') + ' mx-auto relative z-20"></div>' +
+            '</div>';
+    }
+
+    const memberRow = p =>
+        '<p class="flex justify-between gap-2"><span>' + esc(p.node_id) +
+        '</span><span class="font-data-mono text-xs whitespace-nowrap">' +
+        fmtRange(p.earliest_possible, p.latest_possible) + '</span></p>';
+
+    function render(res, sourceLabel) {
+        grid = {
+            start: res.meta.grid_start_year,
+            end: res.meta.grid_end_year,
+            step: res.meta.grid_step_years,
+        };
+        const phases = Object.fromEntries(res.phases.map(p => [p.node_id, p]));
+
+        const campaigns = res.campaigns.map(c => {
+            const members = c.members.map(m => phases[m]);
+            return {
+                c,
+                members,
+                anchored: members.some(p => p.constrained),
+                kinds: [...new Set(members.flatMap(p => p.constraint_kinds))],
+                start: c.window_start ?? Math.min(...members.map(p => p.earliest_possible)),
+                order: Math.min(...members.map(p => p.phase_index)),
+            };
+        }).sort((a, b) => a.start - b.start || a.order - b.order);
+
+        let html = campaigns.map(({ c, members, anchored, kinds }) => card(
+            fmtRange(c.window_start, c.window_end),
+            'Campaign ' + c.campaign_id.replace(/\D/g, '') + ' · ' + binderEra(c),
+            members.map(memberRow).join(''),
+            [
+                tag('SiO₂ ' + c.mean_silica_ratio_pct + '%'),
+                tag('CaO ' + c.mean_calcium_ratio_pct + '%'),
+                ...kinds.map(k => tag(EVIDENCE_LABEL[k] || 'DATED')),
+            ],
+            anchored,
+        )).join('');
+
+        if (res.unclustered.length) {
+            const members = res.unclustered.map(m => phases[m]);
+            html += card(
+                fmtRange(Math.min(...members.map(p => p.earliest_possible)),
+                         Math.max(...members.map(p => p.latest_possible))),
+                'Unassigned Components',
+                members.map(memberRow).join(''),
+                [tag('NO CHEMICAL SIGNATURE')],
+                false,
+            );
+        }
+        el('pal-grid').innerHTML = html;
+
+        el('pal-grid').querySelectorAll('.group').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-4px)';
+                item.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            });
+            item.addEventListener('mouseleave', () => { item.style.transform = 'translateY(0px)'; });
+        });
+
+        setStatus('STRATIGRAPHY VALID · ' + res.meta.node_count + ' COMPONENTS · ' +
+            res.meta.edge_count + ' RELATIONS · ' + res.meta.constraint_count + ' DATED · ' +
+            res.campaigns.length + ' CAMPAIGNS · SOURCE: ' + sourceLabel.toUpperCase(), false);
+        el('pal-status').title = 'Sequence: ' + res.graph.topological_order.join(' → ');
+    }
+
+    function apiErrorMessage(status, body) {
+        const d = body && body.detail;
+        if (typeof d === 'string') return d;
+        if (d && d.message) return d.message;                     // paradox / conflict / unknown component
+        if (Array.isArray(d) && d[0]) {
+            return 'Invalid payload: ' + d[0].msg + ' at ' + (d[0].loc || []).slice(1).join('.');
+        }
+        return 'sequencing failed (HTTP ' + status + ')';
+    }
+
+    async function sequence(payload, sourceLabel) {
+        setStatus('Sequencing stratigraphic record…', false);
+        try {
+            const res = await fetch(PAL_API + '/api/v1/palimpsest/sequence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) {
+                throw new Error(apiErrorMessage(res.status, await res.json().catch(() => ({}))));
+            }
+            render(await res.json(), sourceLabel);
+        } catch (e) {
+            setStatus(e instanceof TypeError ? OFFLINE_MSG : e.message, true);
+        }
+    }
+
+    async function loadDemo() {
+        try {
+            const res = await fetch(PAL_API + '/api/v1/palimpsest/demo');
+            if (!res.ok) throw new Error('demo endpoint returned HTTP ' + res.status);
+            await sequence(await res.json(), 'Aethel demo dossier');
+        } catch (e) {
+            setStatus(OFFLINE_MSG, true);
+        }
+    }
+
+    el('pal-template').addEventListener('click', async () => {
+        try {
+            const res = await fetch(PAL_API + '/api/v1/palimpsest/demo');
+            if (!res.ok) throw new Error();
+            const blob = new Blob([JSON.stringify(await res.json(), null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'palimpsest_template.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        } catch {
+            setStatus(OFFLINE_MSG, true);
+        }
+    });
+
+    el('pal-file').addEventListener('change', async () => {
+        const file = el('pal-file').files[0];
+        if (!file) return;
+        let payload;
+        try {
+            payload = JSON.parse(await file.text());
+        } catch {
+            setStatus('"' + file.name + '" is not valid JSON — download the template for the expected shape.', true);
+            el('pal-file').value = '';
+            return;
+        }
+        if (payload && !payload.site_id) payload.site_id = file.name.slice(0, 64);
+        await sequence(payload, file.name);
+        el('pal-file').value = '';
+    });
+
+    // Driven by the structure selector: sequence this building's stratigraphy.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).palimpsest = (body, label) =>
+        sequence(body, label || 'structure dossier');
+})();
+</script>
+<script>
+(function () {
+    const PROV_API = 'http://localhost:8010';
+    const OFFLINE_MSG = 'Provenance engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010';
+    const el = id => document.getElementById(id);
+
+    const COLORS = {
+        sea: '#e2d9cf', land: '#f7f0e9', coast: '#b3a390',
+        mountain: '#d9c9b2', river: '#a9bcc2',
+        quarry: '#80756b', route: '#725a3d', destination: '#1e1b19',
+    };
+    const WATER = m => m === 'sea' || m === 'river';
+
+    const canvas = el('prov-canvas');
+    const ctx = canvas.getContext('2d');
+    const wrap = el('prov-map-wrap');
+
+    let terrain = null;      // GeoJSON of the router's own geography
+    let quarries = [];       // baseline registry, for markers + hover
+    let lastResult = null;   // last analyze payload, for redraw on resize
+    let proj = null;         // current lon/lat -> CSS pixel projection
+
+    function setStatus(msg, isError) {
+        const s = el('prov-status');
+        s.textContent = msg;
+        s.className = 'font-data-mono text-xs mt-2 ' + (isError ? 'text-error' : 'text-on-surface-variant');
+    }
+
+    // Equirectangular fit with mid-latitude longitude compression, letterboxed.
+    function computeProjection(w, h) {
+        const [lonMin, latMin, lonMax, latMax] = terrain.bbox;
+        const kx = Math.cos(35 * Math.PI / 180);
+        const spanX = (lonMax - lonMin) * kx, spanY = latMax - latMin;
+        const s = Math.min(w / spanX, h / spanY) * 0.98;
+        const ox = (w - spanX * s) / 2, oy = (h - spanY * s) / 2;
+        return {
+            x: lon => ox + (lon - lonMin) * kx * s,
+            y: lat => oy + (latMax - lat) * s,
+        };
+    }
+
+    function tracePolygon(ring) {
+        ctx.beginPath();
+        ring.forEach(([lon, lat], i) => {
+            const x = proj.x(lon), y = proj.y(lat);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+    }
+
+    function placeCallout(id, lon, lat, dx, dy) {
+        const box = el(id);
+        box.classList.remove('hidden');
+        const left = Math.min(Math.max(proj.x(lon) + dx, 4), wrap.clientWidth - 150);
+        const top = Math.min(Math.max(proj.y(lat) + dy, 4), wrap.clientHeight - 44);
+        box.style.left = left + 'px';
+        box.style.top = top + 'px';
+    }
+
+    function draw() {
+        const w = wrap.clientWidth, h = wrap.clientHeight;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (!terrain) return;
+        proj = computeProjection(w, h);
+
+        ctx.fillStyle = COLORS.sea;
+        ctx.fillRect(0, 0, w, h);
+
+        for (const kind of ['land', 'mountain', 'river']) {
+            for (const f of terrain.features) {
+                if (f.properties.kind !== kind) continue;
+                tracePolygon(f.geometry.coordinates[0]);
+                ctx.fillStyle = COLORS[kind === 'land' ? 'land' : kind];
+                ctx.fill();
+                if (kind === 'land') {
+                    ctx.strokeStyle = COLORS.coast;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        for (const q of quarries) {
+            ctx.beginPath();
+            ctx.arc(proj.x(q.lon), proj.y(q.lat), 2.5, 0, 2 * Math.PI);
+            ctx.fillStyle = COLORS.quarry;
+            ctx.fill();
+        }
+
+        if (!lastResult) return;
+        const [origin, destination, trade] = lastResult.geojson.features;
+
+        ctx.beginPath();
+        trade.geometry.coordinates.forEach(([lon, lat], i) => {
+            const x = proj.x(lon), y = proj.y(lat);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = COLORS.route;
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+
+        // Open circles at transshipment points (water<->land leg boundaries).
+        const legs = lastResult.route.legs;
+        for (let i = 1; i < legs.length; i++) {
+            if (WATER(legs[i - 1].mode) === WATER(legs[i].mode)) continue;
+            ctx.beginPath();
+            ctx.arc(proj.x(legs[i].start[0]), proj.y(legs[i].start[1]), 4, 0, 2 * Math.PI);
+            ctx.strokeStyle = COLORS.route;
+            ctx.lineWidth = 1.5;
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        const [olon, olat] = origin.geometry.coordinates;
+        ctx.beginPath();
+        ctx.arc(proj.x(olon), proj.y(olat), 5.5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = COLORS.route;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        const [dlon, dlat] = destination.geometry.coordinates;
+        ctx.beginPath();
+        ctx.arc(proj.x(dlon), proj.y(dlat), 4.5, 0, 2 * Math.PI);
+        ctx.fillStyle = COLORS.destination;
+        ctx.fill();
+
+        placeCallout('prov-origin-call', olon, olat, 12, -34);
+        placeCallout('prov-dest-call', dlon, dlat, 12, 10);
+        const orbit = el('prov-orbit');
+        orbit.classList.remove('hidden');
+        orbit.style.left = (proj.x(olon) - 56) + 'px';
+        orbit.style.top = (proj.y(olat) - 56) + 'px';
+    }
+
+    function render(res, sourceLabel) {
+        lastResult = res;
+        const best = res.matches[0];
+        const runnerUp = res.matches[1];
+        const route = res.route;
+
+        el('prov-origin').textContent = best.name;
+        el('prov-origin-note').textContent = best.material.replace('_', ' ').toUpperCase() +
+            ' · σ-distance ' + best.distance_sigma;
+        el('prov-confidence').textContent = best.confidence_pct.toFixed(1) + '%';
+        el('prov-confidence').className = 'font-body-md font-bold' + (best.plausible ? ' text-primary' : ' text-error');
+        el('prov-confidence-note').textContent = best.plausible
+            ? (runnerUp ? 'runner-up: ' + runnerUp.name + ' (' + runnerUp.confidence_pct.toFixed(1) + '%)' : '')
+            : 'OUTSIDE ALL BASELINES (p < 0.01)';
+        el('prov-distance').textContent = Math.round(route.total_km).toLocaleString() + ' km';
+        el('prov-distance-note').textContent = route.transshipments + ' transshipment' +
+            (route.transshipments === 1 ? '' : 's') + ' · ' + route.legs.length + ' legs';
+        const modes = Object.entries(route.km_by_mode).sort((a, b) => b[1] - a[1]);
+        el('prov-modes').textContent = modes.map(([m, km]) => m.toUpperCase() + ' ' + Math.round(km)).join(' · ');
+        el('prov-modes-note').textContent = 'km per mode · friction-weighted cost ' + Math.round(route.total_cost);
+
+        el('prov-origin-call-label').textContent = 'MATCHED SOURCE · ' + best.confidence_pct.toFixed(1) + '%';
+        el('prov-origin-call-name').textContent = best.name;
+        el('prov-dest-call-name').textContent = res.meta.destination_name;
+
+        setStatus(best.plausible
+            ? 'MATCH: ' + best.name.toUpperCase() + ' (' + best.confidence_pct.toFixed(1) + '%) · ROUTE ' +
+              Math.round(route.total_km) + ' KM · SOURCE: ' + sourceLabel.toUpperCase()
+            : 'WARNING — no registry quarry is isotopically consistent with this sample; nearest is ' +
+              best.name + ' at ' + best.distance_sigma + 'σ.', !best.plausible);
+        draw();
+    }
+
+    function apiErrorMessage(status, body) {
+        const d = body && body.detail;
+        if (typeof d === 'string') return d;
+        if (d && d.message) return d.message;
+        if (Array.isArray(d) && d[0]) return 'Invalid input: ' + d[0].msg;
+        return 'analysis failed (HTTP ' + status + ')';
+    }
+
+    function currentPayload() {
+        const num = id => { const v = el(id).value.trim(); return v === '' ? null : parseFloat(v); };
+        const [lat, lon] = el('prov-dest').value.split(',').map(parseFloat);
+        return {
+            sample_id: 'UI-SAMPLE',
+            delta13c: num('prov-d13c'),
+            delta18o: num('prov-d18o'),
+            sr8786: num('prov-sr'),
+            destination: { lat, lon, name: el('prov-dest').selectedOptions[0].dataset.name },
+            top_k: 3,
+        };
+    }
+
+    async function analyze(payload, sourceLabel) {
+        const measured = [payload.delta13c, payload.delta18o, payload.sr8786].filter(v => v !== null);
+        if (measured.length < 2) {
+            setStatus('At least two isotope systems are required for a fingerprint match.', true);
+            return;
+        }
+        setStatus('Analyzing isotopic fingerprint…', false);
+        try {
+            const res = await fetch(PROV_API + '/api/v1/provenance/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error(apiErrorMessage(res.status, await res.json().catch(() => ({}))));
+            render(await res.json(), sourceLabel);
+        } catch (e) {
+            setStatus(e instanceof TypeError ? OFFLINE_MSG : e.message, true);
+        }
+    }
+
+    // Hover: identify baseline quarries under the cursor.
+    canvas.addEventListener('mousemove', ev => {
+        if (!proj) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
+        let hit = null;
+        for (const q of quarries) {
+            const dx = proj.x(q.lon) - mx, dy = proj.y(q.lat) - my;
+            if (dx * dx + dy * dy < 100) { hit = q; break; }
+        }
+        const tip = el('prov-tooltip');
+        if (!hit) { tip.classList.add('hidden'); return; }
+        el('prov-tooltip-text').textContent = hit.name + ' · ' + hit.material.replace('_', ' ');
+        tip.style.left = (mx + 12) + 'px';
+        tip.style.top = (my - 8) + 'px';
+        tip.classList.remove('hidden');
+    });
+    canvas.addEventListener('mouseleave', () => el('prov-tooltip').classList.add('hidden'));
+
+    el('prov-run').addEventListener('click', () => analyze(currentPayload(), 'manual entry'));
+    el('prov-dest').addEventListener('change', () => analyze(currentPayload(), 'manual entry'));
+    window.addEventListener('resize', draw);
+
+    // Driven by the structure selector: mirror the building's sample into the
+    // inputs, then match + route it. draw() re-runs once terrain arrives, so
+    // this is safe even if it fires before the map assets have loaded.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).provenance = (body, label) => {
+        el('prov-d13c').value = body.delta13c;
+        el('prov-d18o').value = body.delta18o;
+        el('prov-sr').value = body.sr8786;
+        const opt = [...el('prov-dest').options].find(o => o.dataset.name === body.destination.name);
+        if (opt) el('prov-dest').value = opt.value;
+        return analyze(body, label || body.sample_id);
+    };
+
+    (async function init() {
+        try {
+            const [terrainRes, quarryRes] = await Promise.all([
+                fetch(PROV_API + '/api/v1/provenance/terrain'),
+                fetch(PROV_API + '/api/v1/provenance/quarries'),
+            ]);
+            if (!terrainRes.ok || !quarryRes.ok) throw new Error('engine returned an error');
+            terrain = await terrainRes.json();
+            quarries = (await quarryRes.json()).quarries;
+            draw();
+        } catch (e) {
+            setStatus(OFFLINE_MSG, true);
+        }
+    })();
+})();
+</script>
+<script>
+(function () {
+    const DENDRO_API = 'http://localhost:8010';
+    const OFFLINE_MSG = 'Dendro engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010';
+    const el = id => document.getElementById(id);
+
+    const canvas = el('dendro-canvas');
+    const ctx = canvas.getContext('2d');
+    const wrap = canvas.parentElement;
+    let lastResult = null;
+    let lastWidths = null;
+
+    function setStatus(msg, isError) {
+        const s = el('dendro-status');
+        s.textContent = msg;
+        s.className = 'font-data-mono text-xs mb-3 ' + (isError ? 'text-error' : 'text-on-surface-variant');
+    }
+
+    function draw() {
+        const w = wrap.clientWidth, h = wrap.clientHeight;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        if (!lastResult || !lastWidths) return;
+
+        const widths = lastWidths;
+        const n = widths.length;
+        const max = Math.max(...widths);
+        const bw = w / n;
+        const best = lastResult.best;
+        const peakIdx = lastResult.widest_ring_year - best.start_year;
+
+        for (let i = 0; i < n; i++) {
+            const barH = Math.max(1, (widths[i] / max) * (h - 6));
+            const x = i * bw;
+            ctx.fillStyle = i === peakIdx ? '#725a3d'
+                : i === n - 1 ? '#1e1b19'
+                : '#bfa17f';
+            ctx.globalAlpha = i === peakIdx || i === n - 1 ? 1 : 0.55;
+            ctx.fillRect(x, (h - barH) / 2, Math.max(0.6, bw - 0.4), barH);
+        }
+        ctx.globalAlpha = 1;
+
+        // Position the growth-peak callout above the widest ring.
+        const peak = el('dendro-peak-call');
+        peak.classList.remove('hidden');
+        peak.style.left = Math.min(Math.max(peakIdx * bw - 20, 2), w - 130) + 'px';
+        el('dendro-fell-call').classList.remove('hidden');
+    }
+
+    function render(res, sourceLabel) {
+        lastResult = res;
+        const best = res.best;
+        const fell = res.felling;
+        const fellText = fell.latest === null ? '≥ ' + fell.earliest + ' AD'
+            : fell.earliest === fell.latest ? fell.earliest + ' AD'
+            : fell.earliest + '–' + fell.latest + ' AD';
+
+        el('dendro-title').textContent = 'Dendrochronology: ' + res.meta.sample_id;
+        el('dendro-species').textContent = res.meta.species;
+        el('dendro-rings').textContent = res.meta.ring_count + ' Years';
+        el('dendro-dated').textContent = res.dated ? best.end_year + ' AD' : 'UNDATED';
+        el('dendro-dated').className = 'font-body-md font-bold' + (res.dated ? '' : ' text-error');
+        el('dendro-stats').textContent = 't ' + best.t_value + ' · GLK ' + best.glk_pct +
+            '% · r ' + best.correlation;
+        el('dendro-felling').textContent = fellText;
+        el('dendro-felling-note').textContent = ({
+            exact: 'bark edge — exact',
+            range: 'sapwood range',
+            terminus_post_quem: 'terminus post quem',
+        })[fell.terminus];
+
+        el('dendro-peak-text').textContent = 'GROWTH PEAK: ' + res.widest_ring_year + ' AD';
+        el('dendro-fell-text').textContent = 'FELLING: ' + fellText;
+
+        setStatus(res.dated
+            ? 'CROSSDATED · LAST RING ' + best.end_year + ' AD · t=' + best.t_value +
+              ' (threshold 3.5) · SPAN ' + best.start_year + '–' + best.end_year +
+              ' · SOURCE: ' + sourceLabel.toUpperCase()
+            : 'NO SIGNIFICANT MATCH — best t=' + best.t_value + ' is below the 3.5 acceptance threshold.',
+            !res.dated);
+        draw();
+    }
+
+    async function analyze(payload, sourceLabel) {
+        lastWidths = payload.ring_widths;
+        setStatus('Crossdating ring-width series…', false);
+        try {
+            const res = await fetch(DENDRO_API + '/api/v1/dendro/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) {
+                const d = (await res.json().catch(() => ({}))).detail;
+                throw new Error(typeof d === 'string' ? d : 'analysis failed (HTTP ' + res.status + ')');
+            }
+            render(await res.json(), sourceLabel);
+        } catch (e) {
+            setStatus(e instanceof TypeError ? OFFLINE_MSG : e.message, true);
+        }
+    }
+
+    function parseWidths(text) {
+        const out = [];
+        for (const line of text.split(/\r?\n/)) {
+            const t = line.trim();
+            if (!t || t.startsWith('#') || t.startsWith('//')) continue;
+            for (const tok of t.split(/[\s,;]+/)) {
+                const v = parseFloat(tok);
+                if (Number.isFinite(v) && v > 0) out.push(v);
+            }
+        }
+        return out;
+    }
+
+    el('dendro-file').addEventListener('change', async () => {
+        const file = el('dendro-file').files[0];
+        if (!file) return;
+        const widths = parseWidths(await file.text());
+        if (widths.length < 20) {
+            setStatus('Could not read at least 20 positive ring widths from "' + file.name + '".', true);
+            el('dendro-file').value = '';
+            return;
+        }
+        await analyze({ sample_id: file.name.slice(0, 64), ring_widths: widths }, file.name);
+        el('dendro-file').value = '';
+    });
+
+    window.addEventListener('resize', draw);
+
+    // Driven by the structure selector: crossdate this building's core.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).dendro = (body, label) =>
+        analyze(body, label || body.sample_id);
+})();
+</script>
+<script>
+(function () {
+    const C14_API = 'http://localhost:8010';
+    const OFFLINE_MSG = 'Radiocarbon engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010';
+    const el = id => document.getElementById(id);
+
+    const canvas = el('c14-canvas');
+    const ctx = canvas.getContext('2d');
+    const wrap = canvas.parentElement;
+    let curve = null;           // { base, c14 } full calibration curve
+    let lastResult = null;
+
+    const fmtYear = y => y < 0 ? Math.abs(y) + ' BC' : y + ' AD';
+    const fmtRanges = rs => rs.map(r => fmtYear(r.start_year) + '–' + fmtYear(r.end_year)).join(', ');
+
+    function setStatus(msg, isError) {
+        const s = el('c14-status');
+        s.textContent = msg;
+        s.className = 'font-data-mono text-xs mb-1 ' + (isError ? 'text-error' : 'text-on-surface-variant');
+    }
+
+    function draw() {
+        const w = wrap.clientWidth, h = wrap.clientHeight;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        if (!lastResult || !curve) return;
+
+        const r = lastResult;
+        const age = r.meta.radiocarbon_age_bp, sd = r.meta.uncertainty_bp;
+        // Display window: around the 95% range with padding.
+        const pad = 45;
+        const yrLo = r.hpd_95[0].start_year - pad;
+        const yrHi = r.hpd_95[r.hpd_95.length - 1].end_year + pad;
+
+        // Curve + measured age determine the BP (y) window.
+        const idxLo = yrLo - curve.base, idxHi = yrHi - curve.base;
+        const seg = curve.c14.slice(Math.max(0, idxLo), idxHi + 1);
+        const bpLo = Math.min(age - 3 * sd, Math.min(...seg));
+        const bpHi = Math.max(age + 3 * sd, Math.max(...seg));
+
+        const X = yr => ((yr - yrLo) / (yrHi - yrLo)) * w;
+        const Y = bp => h - ((bp - bpLo) / (bpHi - bpLo)) * h;
+
+        // Measured 14C age band (horizontal ±1σ) across the plot.
+        ctx.fillStyle = 'rgba(114,90,61,0.10)';
+        ctx.fillRect(0, Y(age + sd), w, Y(age - sd) - Y(age + sd));
+        ctx.strokeStyle = 'rgba(114,90,61,0.5)';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(0, Y(age)); ctx.lineTo(w, Y(age)); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // σ2 then σ1 posterior ranges as vertical bands.
+        for (const rng of r.hpd_95) {
+            ctx.fillStyle = 'rgba(114,90,61,0.08)';
+            ctx.fillRect(X(rng.start_year), 0, X(rng.end_year) - X(rng.start_year), h);
+        }
+        for (const rng of r.hpd_68) {
+            ctx.fillStyle = 'rgba(114,90,61,0.18)';
+            ctx.fillRect(X(rng.start_year), 0, X(rng.end_year) - X(rng.start_year), h);
+        }
+
+        // Calibration curve.
+        ctx.strokeStyle = '#725a3d';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let yr = yrLo; yr <= yrHi; yr++) {
+            const bp = curve.c14[yr - curve.base];
+            if (bp === undefined) continue;
+            const px = X(yr), py = Y(bp);
+            yr === yrLo ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Posterior distribution along the bottom axis (filled).
+        const base = r.cal_years[0];
+        let dmax = 0;
+        for (let yr = yrLo; yr <= yrHi; yr++) dmax = Math.max(dmax, r.density[yr - base] || 0);
+        const distH = h * 0.42;
+        ctx.beginPath();
+        ctx.moveTo(X(yrLo), h);
+        for (let yr = yrLo; yr <= yrHi; yr++) {
+            const d = (r.density[yr - base] || 0) / (dmax || 1);
+            ctx.lineTo(X(yr), h - d * distH);
+        }
+        ctx.lineTo(X(yrHi), h);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(30,27,25,0.45)';
+        ctx.fill();
+
+        // Median line.
+        ctx.strokeStyle = '#1e1b19';
+        ctx.setLineDash([4, 2]);
+        ctx.beginPath(); ctx.moveTo(X(r.median_year), 0); ctx.lineTo(X(r.median_year), h); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function render(res, sourceLabel) {
+        lastResult = res;
+        el('c14-ranges').classList.remove('hidden');
+        el('c14-sigma1').textContent = 'σ1: ' + fmtRanges(res.hpd_68);
+        el('c14-sigma2').textContent = 'σ2: ' + fmtRanges(res.hpd_95);
+        el('c14-title').textContent = res.meta.lab_code
+            ? 'Radiocarbon: ' + res.meta.lab_code : 'Radiocarbon: C-14 Calibration';
+        setStatus(res.meta.radiocarbon_age_bp + ' ± ' + res.meta.uncertainty_bp +
+            ' BP → median ' + fmtYear(res.median_year) + ' · SOURCE: ' + sourceLabel.toUpperCase());
+        draw();
+    }
+
+    async function calibrate(payload, sourceLabel) {
+        setStatus('Calibrating radiocarbon age…');
+        try {
+            const res = await fetch(C14_API + '/api/v1/radiocarbon/calibrate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) {
+                const d = (await res.json().catch(() => ({}))).detail;
+                throw new Error(d && d.message ? d.message : (typeof d === 'string' ? d : 'calibration failed (HTTP ' + res.status + ')'));
+            }
+            render(await res.json(), sourceLabel);
+        } catch (e) {
+            setStatus(e instanceof TypeError ? OFFLINE_MSG : e.message, true);
+        }
+    }
+
+    function currentPayload() {
+        return {
+            sample_id: 'UI-C14',
+            radiocarbon_age_bp: parseFloat(el('c14-age').value),
+            uncertainty_bp: parseFloat(el('c14-err').value),
+        };
+    }
+
+    el('c14-run').addEventListener('click', () => {
+        const p = currentPayload();
+        if (!Number.isFinite(p.radiocarbon_age_bp) || !Number.isFinite(p.uncertainty_bp) || p.uncertainty_bp <= 0) {
+            setStatus('Enter a radiocarbon age and a positive ± error.', true);
+            return;
+        }
+        calibrate(p, 'manual entry');
+    });
+    window.addEventListener('resize', draw);
+
+    // Driven by the structure selector: mirror the age into the inputs and
+    // calibrate. If the curve is still loading, draw() re-runs once it lands.
+    (window.ArchPiPanels = window.ArchPiPanels || {}).radiocarbon = (body, label) => {
+        el('c14-age').value = body.radiocarbon_age_bp;
+        el('c14-err').value = body.uncertainty_bp;
+        return calibrate(body, label || body.sample_id);
+    };
+
+    (async function init() {
+        try {
+            const curveRes = await fetch(C14_API + '/api/v1/radiocarbon/curve');
+            if (!curveRes.ok) throw new Error('engine returned an error');
+            const cv = await curveRes.json();
+            curve = { base: cv.cal_start_ad, c14: cv.c14_bp };
+            draw();   // redraw with the last calibration if it already arrived
+        } catch (e) {
+            setStatus(OFFLINE_MSG, true);
+        }
+    })();
+})();
+</script>
+<!-- Structure selector: drives every panel from one coherent specimen -->
+<script src="structures.js"></script>
+<script>
+(function () {
+    const API = 'http://localhost:8010';
+    const el = id => document.getElementById(id);
+
+    function setStatus(msg, isError) {
+        const s = el('site-status');
+        s.textContent = msg;
+        s.className = 'font-data-mono text-[10px] mt-2 ' + (isError ? 'text-error' : 'text-on-surface-variant');
+    }
+
+    function setHeader(site) {
+        el('site-title').textContent = site.name;
+        el('site-blurb').textContent = site.blurb;
+        el('site-location').textContent = site.location;
+        el('site-period').textContent = site.period;
+    }
+
+    // Hand each panel the sub-body it expects. Panels register themselves on
+    // window.ArchPiPanels; any not yet wired are simply skipped.
+    function dispatch(bundles, name) {
+        const P = window.ArchPiPanels || {};
+        if (P.xrd)         P.xrd(bundles.xrd, bundles.xrd.sample_id);
+        if (P.hazards)     P.hazards(bundles.hazards, name);
+        if (P.palimpsest)  P.palimpsest(bundles.palimpsest, name);
+        if (P.provenance)  P.provenance(bundles.provenance, bundles.provenance.sample_id);
+        if (P.dendro)      P.dendro(bundles.dendro, bundles.dendro.sample_id);
+        if (P.radiocarbon) P.radiocarbon(bundles.radiocarbon, bundles.radiocarbon.sample_id);
+    }
+
+    async function loadSite(site) {
+        setHeader(site);
+        setStatus('Loading specimen…', false);
+        try {
+            const res = await fetch(API + '/api/v1/sites/' + site.site_id);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const full = await res.json();
+            dispatch(full.bundles, full.name);
+            setStatus('Specimen loaded · ' + full.name + ' — every panel below reflects this structure.', false);
+        } catch (e) {
+            setStatus(e instanceof TypeError
+                ? 'Forensic engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010'
+                : 'Could not load specimen (' + e.message + ')', true);
+        }
+    }
+
+    ArchPiStructure.onChange(loadSite);
+    ArchPiStructure.init().catch(e => setStatus(
+        e instanceof TypeError
+            ? 'Forensic engine offline — start it from app/ with: python -m uvicorn forensic_backend.main:app --port 8010'
+            : 'Could not load the structure list (' + e.message + ')', true));
+})();
+</script>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.querySelectorAll('.group').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-4px)';
+                item.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = item.classList.contains('translate-y-12') ? 'translateY(48px)' : 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

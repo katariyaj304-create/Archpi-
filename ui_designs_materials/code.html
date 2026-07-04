@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Materials Catalog</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#e1c19d",
+                        "surface-container": "#f4ece8",
+                        "surface": "#fff8f4",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "inverse-surface": "#33302d",
+                        "surface-container-low": "#faf2ee",
+                        "secondary": "#5f5e5e",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#e1c19d",
+                        "surface-variant": "#e8e1dd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1e1b19",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "surface-container-high": "#eee7e2",
+                        "inverse-on-surface": "#f7efeb",
+                        "outline": "#80756b",
+                        "on-secondary-container": "#636262",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#e0d9d4",
+                        "surface-bright": "#fff8f4",
+                        "primary": "#725a3d",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "tertiary": "#5e5e5e",
+                        "primary-fixed": "#ffddb8",
+                        "on-primary-fixed-variant": "#594327",
+                        "tertiary-container": "#a7a6a6",
+                        "secondary-fixed": "#e5e2e1",
+                        "secondary-container": "#e2dfde",
+                        "on-surface": "#1e1b19",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#3b3c3c",
+                        "background": "#fff8f4",
+                        "surface-tint": "#725a3d",
+                        "surface-container-highest": "#e8e1dd",
+                        "on-surface-variant": "#4e453c",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#d1c4b8",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-primary-fixed": "#291803",
+                        "on-secondary-fixed-variant": "#474746",
+                        "primary-container": "#bfa17f",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#4d381d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FDFDFD;
+            color: #1e1b19;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .linen-texture {
+            background-image: radial-gradient(#d1c4b8 0.5px, transparent 0.5px);
+            background-size: 8px 8px;
+            opacity: 0.05;
+        }
+        .aluminum-finish {
+            background: linear-gradient(135deg, #f6f6f6 0%, #e8e1dd 100%);
+            position: relative;
+        }
+        .aluminum-finish::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        .glass-panel {
+            background: rgba(253, 253, 253, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F4ECE8;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #725a3d;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="h-full w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col py-8 px-4 z-50">
+<div class="mb-12 px-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-primary">architecture</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tighter">ArchPi</h1>
+<p class="font-label-caps text-[10px] text-on-surface-variant opacity-60">Structural Intelligence</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 ease-in-out text-on-surface-variant hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">architecture</span>
+<span class="font-label-caps text-label-caps">Blueprints</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 ease-in-out text-on-surface-variant hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">calculate</span>
+<span class="font-label-caps text-label-caps">Calculations</span>
+</a>
+<!-- Active State: Materials -->
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 ease-in-out text-on-primary-container bg-primary-container/20 border-r-2 border-primary group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 ease-in-out text-on-surface-variant hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">domain</span>
+<span class="font-label-caps text-label-caps">Projects</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 ease-in-out text-on-surface-variant hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">inventory_2</span>
+<span class="font-label-caps text-label-caps">Archive</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User Profile" data-alt="A professional headshot of a male senior structural engineer in a minimalist office setting. He is wearing a crisp white shirt and dark blazer, reflecting a sophisticated and intelligent persona. The lighting is soft and neutral, consistent with a high-end architectural firm environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7-AtqkcDVTkNPCd4iFh6bKj0tCQhpWIWF8ve_oelxcW4tyHQm08itiw5pQf35eQCCIuoGgpxgnQZoj1Somn0f6oISwZ0eeFERBEyaocXbGdsZsGHhIKtx2u6yqkMDOptPyhUWapasaueNgzOluj6uFdZ2NyLhtOiAO8BHLi66oLNZ2VythxypaD5aXvgLilxox3A26qCWzFE7m7Jy7p-0MrA9-8bebgnUTA3yScN_O2VLnn7Jk_HcN7A177ULJTrDlHmVuqjLQxQq"/>
+</div>
+<div>
+<p class="font-label-caps text-[11px] text-on-surface leading-none">A. Sterling</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant">Senior Engineer</p>
+</div>
+<button class="ml-auto material-symbols-outlined text-on-surface-variant text-lg">settings</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 mr-[400px] min-h-screen">
+<!-- Top Bar -->
+<header class="h-20 flex items-center justify-between px-margin-desktop bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Material Library</h2>
+<span class="h-4 w-px bg-outline-variant mx-2"></span>
+<div class="flex gap-4">
+<button class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1">All Materials</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1">Metals</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1">Composites</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1">Advanced Glass</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-lg">search</span>
+<input class="bg-surface-container-low border border-outline-variant text-sm py-2 pl-10 pr-4 w-64 focus:outline-none focus:border-primary transition-colors" placeholder="Search specifications..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">tune</button>
+</div>
+</header>
+<!-- Content Grid -->
+<div class="p-margin-desktop">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+<!-- Material Card 1: Reinforced Concrete -->
+<div class="group border border-outline-variant bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="h-48 overflow-hidden relative aluminum-finish">
+<img alt="Reinforced Concrete" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" data-alt="A close-up, high-resolution architectural photograph showing the raw, brutalist texture of reinforced concrete. The surface features fine air pockets, subtle formwork lines, and a neutral gray color palette. The lighting is angled to highlight the tactile roughness and structural honesty of the material, typical of modernist structural engineering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8HQQl_QQwaEl8BtQ5vxv5xEO99HtcnAfxpFJKl7IjEupnO1-1fP8VxAPeik_Ug2RUjdxoy1eFF3QRE5_jybtxD5iBS7CIViajCNCrO0UvpIlJEg4EubuKG1QMUDxIeS2B8itVDHNHzOcdg9mi0SHKs5JzB2ruGdqEKGMJwUCwhJ0xHpKZMPc1otJzdhjcLqlBD0uPSSMTF3uR3G7uqQxpTmAVrPEyFhqWgpnSqYPsefulzLkGC8vHyWbATVmQHJsu8SzSmJj9tkQZ"/>
+<div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 font-label-caps text-[10px]">STRUCTURAL</div>
+</div>
+<div class="p-8">
+<h3 class="font-headline-sm text-headline-sm mb-6">Reinforced Concrete (Grade C50)</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Density</span>
+<span class="font-data-mono text-data-mono">2,450 kg/m³</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Compressive Strength</span>
+<span class="font-data-mono text-data-mono text-primary">50.0 MPa</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sustainability Rating</span>
+<span class="font-data-mono text-data-mono flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-green-600" style="font-variation-settings: 'FILL' 1;">eco</span>
+                                    B+ (Low Carbon Mix)
+                                </span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary py-3 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors uppercase">View Detailed Specs</button>
+<button class="w-12 border border-outline text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors" title="Add to Comparator">
+<span class="material-symbols-outlined">add_chart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Material Card 2: Structural Steel -->
+<div class="group border border-outline-variant bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="h-48 overflow-hidden relative aluminum-finish">
+<img alt="Structural Steel" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" data-alt="Macro detail of a brushed structural steel beam, showing a sleek, metallic surface with hairline vertical grain patterns. The color is a cool, sophisticated silver-gray with subtle blue reflections. The lighting highlights the precision-engineered edge of the metal, embodying strength and modern industrial elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8Lari3xOTwcIjLZOpkNzsD2xBXmMzPNTcYABYBQve5I8xJVZ3dNIewrgjMpvcbN4mUSwUksVuVCC0xsJoJCxWNDaizMXkiwt15j-yYKHckL81CMvD5cg8IV29Nt05ZacWpC1WNNbrtUVISL3cleKgC4AF3rhvlld7iDhwLZbDLB5WgXF9qTQKZJYhSjp7criwPXCs89X2VSKgOtveWL5oVSEKgGYSfxP4nLzU-1OEm9Mmqngt5GfY-x2qoxlCzuxWFcL9tzimD5wr"/>
+<div class="absolute top-4 right-4 bg-on-surface text-surface px-3 py-1 font-label-caps text-[10px]">ALLOY</div>
+</div>
+<div class="p-8">
+<h3 class="font-headline-sm text-headline-sm mb-6">Structural Steel (S355)</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Density</span>
+<span class="font-data-mono text-data-mono">7,850 kg/m³</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Tensile Strength</span>
+<span class="font-data-mono text-data-mono text-primary">470 - 630 MPa</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sustainability Rating</span>
+<span class="font-data-mono text-data-mono flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-green-600" style="font-variation-settings: 'FILL' 1;">eco</span>
+                                    A (100% Recyclable)
+                                </span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary py-3 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors uppercase">View Detailed Specs</button>
+<button class="w-12 border border-outline text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors" title="Add to Comparator">
+<span class="material-symbols-outlined">add_chart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Material Card 3: Smart Glass -->
+<div class="group border border-outline-variant bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="h-48 overflow-hidden relative aluminum-finish">
+<img alt="Smart Glass" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" data-alt="An abstract architectural shot of high-tech electrochromic glass panels. The surface is semi-translucent with a subtle blue tint, reflecting a clean, minimalist urban environment. Fine structural gaskets and ultra-thin frames are visible, emphasizing technical precision and the future of sustainable facade engineering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVDa6QKyfRs3jZ1kUFGduLXPT2E5Zwc2IscbLNl6MjnifS0_IcAEooHSREAfAeiqxiAuYN4jQivRBMlNMgO0_PIuo39uiMfLPnd6zMqNoTN76UTOFS-IgV7awZy73-kq512NYdJBN4dWtYC6b5hkUIN0-CyFEskrpbR-d5Cv8e98GxBavjGVtzQ5kZlyJja5vYdMfAiaWUSlo_AMMjEzQ89iD6PlzFJHScL5xFBvtKb18QP-dF4aRJqVXHwNTAPj_hhycPv3txp7eM"/>
+<div class="absolute top-4 right-4 bg-primary-container text-on-primary-container px-3 py-1 font-label-caps text-[10px]">FACADE</div>
+</div>
+<div class="p-8">
+<h3 class="font-headline-sm text-headline-sm mb-6">Electrochromic Smart Glass</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">U-Value</span>
+<span class="font-data-mono text-data-mono">1.1 W/m²K</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Light Transmission</span>
+<span class="font-data-mono text-data-mono text-primary">1% - 60%</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sustainability Rating</span>
+<span class="font-data-mono text-data-mono flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-green-600" style="font-variation-settings: 'FILL' 1;">eco</span>
+                                    A+ (HVAC Saver)
+                                </span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary py-3 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors uppercase">View Detailed Specs</button>
+<button class="w-12 border border-outline text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors" title="Add to Comparator">
+<span class="material-symbols-outlined">add_chart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Material Card 4: Engineered Timber -->
+<div class="group border border-outline-variant bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="h-48 overflow-hidden relative aluminum-finish">
+<img alt="CLT Timber" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" data-alt="Macro perspective of Cross-Laminated Timber (CLT), showing the tight, warm-toned wood grain layers bonded together. The natural texture is clean and knot-free, with a light blonde finish that radiates warmth and modern sustainability. The lighting is bright and airy, accentuating the material's eco-friendly structural properties." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_dhHeV-rPGRre7htpt1SWlPcEhorXlfVejKyYwV_GJ3ABdamf5xzkRVWFWVh8qteLs8rMM8Gk6CZkRaIWse5UJl066_d-deqo9tzJom1Yk7TRBDuL9r9eppC5rp9IXIIYeG1jliEFaeoqk7RB0mMgPWx80oRCW6yXEVVaLP4Nw4YcptiHcI5kfFDRrPoKpp650GFcB_giCZnEoztIDxFzqiM1fgR_DaHl4gO5PAlXW8FL_3SWFvWsXK1lGn6LmDGUkPvJ8QiGIqre"/>
+<div class="absolute top-4 right-4 bg-tertiary-container text-on-tertiary-container px-3 py-1 font-label-caps text-[10px]">RENEWABLE</div>
+</div>
+<div class="p-8">
+<h3 class="font-headline-sm text-headline-sm mb-6">Cross-Laminated Timber (CLT)</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Density</span>
+<span class="font-data-mono text-data-mono">500 kg/m³</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Fire Resistance</span>
+<span class="font-data-mono text-data-mono text-primary">REI 90</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sustainability Rating</span>
+<span class="font-data-mono text-data-mono flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-green-600" style="font-variation-settings: 'FILL' 1;">eco</span>
+                                    A++ (Carbon Sink)
+                                </span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary py-3 font-label-caps text-label-caps tracking-widest hover:bg-on-primary-fixed-variant transition-colors uppercase">View Detailed Specs</button>
+<button class="w-12 border border-outline text-on-surface-variant flex items-center justify-center hover:bg-surface-variant transition-colors" title="Add to Comparator">
+<span class="material-symbols-outlined">add_chart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Floating Comparator Panel -->
+<aside class="fixed right-0 top-0 h-full w-[400px] glass-panel border-l border-outline-variant shadow-2xl z-50 transform transition-transform duration-500 translate-x-0">
+<div class="flex flex-col h-full">
+<div class="p-8 border-b border-outline-variant/30">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm">Material Comparator</h3>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm italic">Analyze structural properties across two material selections.</p>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<div class="grid grid-cols-2 gap-4 mb-12">
+<!-- Target 1 -->
+<div class="space-y-4">
+<div class="aspect-video bg-surface-variant border border-outline-variant/50 overflow-hidden">
+<img alt="Material 1" class="w-full h-full object-cover grayscale brightness-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGxu8GxnqR4Iwy3pAUMNCNEATp3-PQtWh5kI_LMt3Wu83091SQScjJJAfyoJ17F206vFvZ4uYDlF3ixMjpcwjschkvelE-lBjQfB1sGy0PRyK1L3B_kYJNwJcv_tiMS7QSjr4jLqVBsIZFHyUBx3wcg6QdMJK-ioywxAS0VxvNpx5IwT58iqsDcKof8L1q0vBmmuwWYxqrndAt2ZkMBGqqc7m6uoTwpL0UEJZ5soCNFm0OqdySWsTwnwfJJl0YGCEzDFW7auO8kNW5"/>
+</div>
+<div>
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">SELECTED A</p>
+<p class="font-headline-sm text-lg leading-tight">Reinforced Concrete</p>
+</div>
+</div>
+<!-- Divider -->
+<div class="flex flex-col items-center justify-center relative">
+<div class="h-full w-px bg-outline-variant/40 absolute left-1/2 -translate-x-1/2"></div>
+<div class="z-10 bg-surface border border-outline-variant w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold">VS</div>
+</div>
+<!-- Target 2 -->
+<div class="space-y-4 text-right">
+<div class="aspect-video bg-surface-variant border border-outline-variant/50 overflow-hidden">
+<img alt="Material 2" class="w-full h-full object-cover grayscale brightness-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0x45T_s9h2BS_eobsMMVknko9s0nxZEiZa1YwpfRNxSkCQ-_QVNkbxGd5m8GXMoKDtK60r8P42e0wqnH6mNwenMIcY47OoeL8PICFjMlK-2-mtWBez9a4LRBdXcu0f92b_fWxaRRyRtIBd738q6wKXlkkznXOhQ5YSvjO75CcqNnpV-IELepVUn9Hm_R9WnBQ74o_5Zqi2ILTaVqFF6FAAd2jc3xaYq5P1H4qa--_PoZDIiLdLAi_IkZcq8mM46YW06ur94svNn2I"/>
+</div>
+<div>
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">SELECTED B</p>
+<p class="font-headline-sm text-lg leading-tight">Structural Steel</p>
+</div>
+</div>
+</div>
+<!-- Comparison Table -->
+<div class="space-y-8">
+<div>
+<h4 class="font-label-caps text-label-caps mb-4 text-primary">Structural Performance</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-sm py-2 border-b border-outline-variant/20">
+<span class="font-data-mono text-on-surface-variant">Strength-to-Weight</span>
+<div class="flex gap-4">
+<span class="font-data-mono">Low</span>
+<span class="font-data-mono text-primary font-bold">High</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-sm py-2 border-b border-outline-variant/20">
+<span class="font-data-mono text-on-surface-variant">Elastic Modulus</span>
+<div class="flex gap-4">
+<span class="font-data-mono">30 GPa</span>
+<span class="font-data-mono">210 GPa</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-sm py-2 border-b border-outline-variant/20">
+<span class="font-data-mono text-on-surface-variant">Ductility Index</span>
+<div class="flex gap-4">
+<span class="font-data-mono">Moderate</span>
+<span class="font-data-mono">High</span>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps mb-4 text-primary">Economic &amp; Env</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-sm py-2 border-b border-outline-variant/20">
+<span class="font-data-mono text-on-surface-variant">Cost per Ton</span>
+<div class="flex gap-4">
+<span class="font-data-mono text-primary">$120</span>
+<span class="font-data-mono">$950</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-sm py-2 border-b border-outline-variant/20">
+<span class="font-data-mono text-on-surface-variant">Embodied Carbon</span>
+<div class="flex gap-4">
+<span class="font-data-mono">0.12 kg/kg</span>
+<span class="font-data-mono text-error">1.85 kg/kg</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-low border-t border-outline-variant/30">
+<button class="w-full border-2 border-primary text-primary py-4 font-label-caps text-label-caps tracking-[0.2em] hover:bg-primary hover:text-on-primary transition-all">GENERATE STRUCTURAL REPORT</button>
+<p class="text-center mt-4 text-[10px] font-data-mono opacity-50 uppercase">Analysis Engine v.4.2.0 - Ref: ISO 9001</p>
+</div>
+</div>
+</aside>
+<!-- Floating Action Button (Limited context) -->
+<button class="fixed bottom-10 right-10 z-[60] bg-on-surface text-surface w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group">
+<span class="material-symbols-outlined transition-transform group-hover:rotate-90">add</span>
+</button>
+<script>
+        // Simple interactivity for demonstration
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidePanel = document.querySelector('aside.glass-panel');
+            const closeBtn = sidePanel.querySelector('button.material-symbols-outlined');
+            
+            closeBtn.addEventListener('click', () => {
+                sidePanel.classList.toggle('translate-x-full');
+            });
+            
+            // Hover micro-interactions for material cards
+            const cards = document.querySelectorAll('.group.border-outline-variant');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    // Subtle hover logic could go here
+                });
+            });
+        });
+    </script>
+</body></html>

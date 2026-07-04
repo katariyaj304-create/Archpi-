@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Material Efficiency Testing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{
+colors:{
+"secondary-container":"#e2dfde","error":"#ba1a1a","secondary":"#5f5e5e",
+"surface-dim":"#e0d9d4","primary-fixed-dim":"#e1c19d","surface-container":"#f4ece8",
+"tertiary":"#5e5e5e","inverse-primary":"#e1c19d","inverse-on-surface":"#f7efeb",
+"on-surface-variant":"#4e453c","primary":"#725a3d","surface-tint":"#725a3d",
+"surface":"#fff8f4","error-container":"#ffdad6","surface-variant":"#e8e1dd",
+"on-primary":"#ffffff","surface-container-low":"#faf2ee","on-background":"#1e1b19",
+"on-primary-fixed":"#291803","inverse-surface":"#33302d","on-secondary-container":"#636262",
+"on-primary-container":"#4d381d","on-secondary":"#ffffff","primary-fixed":"#ffddb8",
+"primary-container":"#bfa17f","surface-container-highest":"#e8e1dd","on-tertiary":"#ffffff",
+"outline":"#80756b","on-error":"#ffffff","tertiary-container":"#a7a6a6",
+"surface-container-lowest":"#ffffff","surface-container-high":"#eee7e2",
+"surface-bright":"#fff8f4","on-surface":"#1e1b19","background":"#fff8f4",
+"outline-variant":"#d1c4b8","on-primary-fixed-variant":"#594327"
+},
+borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+spacing:{"unit":"4px","margin-mobile":"16px","margin-desktop":"48px","section-gap":"80px","gutter":"24px"},
+fontFamily:{
+"label-caps":["Inter"],"headline-md":["Playfair Display"],"data-mono":["Inter"],
+"headline-lg":["Playfair Display"],"headline-sm":["Playfair Display"],"body-md":["Inter"],"body-lg":["Inter"]
+},
+fontSize:{
+"label-caps":["12px",{"lineHeight":"1","letterSpacing":"0.1em","fontWeight":"600"}],
+"headline-md":["32px",{"lineHeight":"1.2","letterSpacing":"-0.01em","fontWeight":"600"}],
+"data-mono":["14px",{"lineHeight":"1.4","letterSpacing":"-0.01em","fontWeight":"500"}],
+"headline-lg":["48px",{"lineHeight":"1.1","letterSpacing":"-0.02em","fontWeight":"700"}],
+"headline-sm":["24px",{"lineHeight":"1.3","fontWeight":"500"}],
+"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}]
+}
+}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24}
+.glass-panel{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.brushed-aluminum{background:linear-gradient(135deg,#F6F6F6 0%,#E8E4E0 50%,#F0EDEA 100%);position:relative}
+.brushed-aluminum::after{content:"";position:absolute;inset:0;opacity:.04;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0z' fill='%23000' fill-opacity='.03'/%3E%3C/svg%3E")}
+@keyframes pulse-live{0%{box-shadow:0 0 0 0 rgba(52,168,83,.4)}70%{box-shadow:0 0 0 8px rgba(52,168,83,0)}100%{box-shadow:0 0 0 0 rgba(52,168,83,0)}}
+.pulse-live{animation:pulse-live 2s infinite}
+@keyframes log-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.log-anim{animation:log-in .35s ease-out}
+input[type=range]{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#d1c4b8;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#725a3d;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23725a3d' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.gauge-ring{transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease-out both}
+.prop-row{transition:background .2s}.prop-row:hover{background:rgba(191,161,127,.06)}
+</style>
+</head>
+<body class="bg-surface font-body-md text-on-surface selection:bg-primary/20">
+
+<!-- ═══════════ TOP NAV ═══════════ -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-14 px-6 lg:px-10 max-w-[1440px] mx-auto">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-2xl">architecture</span>
+            <span class="font-headline-md text-[22px] text-on-surface tracking-tight">ArchPi</span>
+        </a>
+        <nav class="hidden md:flex gap-6 items-center h-full">
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-4 transition-colors" href="simulation.html">Simulation</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-4 transition-colors" href="analysis.html">Blueprints</a>
+            <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-4" href="material-efficiency.html">Material Efficiency</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-4 transition-colors" href="globe.html">Projects</a>
+        </nav>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">search</span>
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">settings</span>
+        <div class="w-8 h-8 rounded-full bg-on-surface text-surface flex items-center justify-center font-label-caps text-[10px] ml-1">JD</div>
+    </div>
+</div>
+</header>
+
+<!-- ═══════════ LEFT SIDEBAR ═══════════ -->
+<aside class="hidden lg:flex flex-col h-screen overflow-y-auto w-[200px] fixed left-0 top-0 pt-[72px] pb-6 px-5 bg-surface border-r border-outline-variant/40 z-40">
+    <div class="mb-6">
+        <h3 class="font-headline-sm text-[18px] text-on-surface leading-tight">Materials</h3>
+        <p class="font-label-caps text-[9px] text-on-surface-variant tracking-[.15em] mt-0.5">EFFICIENCY TESTING</p>
+    </div>
+    <nav class="flex flex-col gap-0.5 text-[13px]">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+    <div class="mt-auto p-4 brushed-aluminum border border-outline-variant/50 rounded-lg">
+        <p class="font-label-caps text-[9px] text-on-surface-variant mb-2">SYSTEM HEALTH</p>
+        <div class="flex items-center gap-2 mb-1"><div class="w-[6px] h-[6px] bg-green-500 rounded-full pulse-live"></div><span class="font-data-mono text-[11px]">Core integrity: 98.4%</span></div>
+        <div class="flex items-center gap-2"><div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div><span class="font-data-mono text-[11px]">Sensor Latency: 2ms</span></div>
+    </div>
+</aside>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
+<main class="lg:ml-[200px] pt-14 min-h-screen">
+<div class="p-6 lg:p-8 max-w-[1280px] mx-auto">
+
+    <!-- Page Title -->
+    <div class="flex justify-between items-start mb-6 fade-up">
+        <div>
+            <h1 class="font-headline-lg text-[42px] text-on-surface leading-[1.05] mb-2">Material Efficiency Testing</h1>
+            <p class="font-body-md text-on-surface-variant max-w-xl text-[15px]">Apply controlled stress conditions to structural materials. Analyze yield points, deformation behavior, and failure thresholds.</p>
+        </div>
+        <div class="flex flex-col items-end gap-1 pt-2">
+            <span class="font-label-caps text-[9px] text-on-surface-variant tracking-wider">LAB STATUS</span>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 font-label-caps text-[11px] rounded-sm">
+                <span class="w-[6px] h-[6px] bg-green-500 rounded-full pulse-live"></span>
+                TESTING LAB ONLINE
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ GRID 8 + 4 ═══════════ -->
+    <div class="grid grid-cols-12 gap-5">
+
+        <!-- ═══ LEFT COL (8) ═══ -->
+        <div class="col-span-12 lg:col-span-8 space-y-5">
+
+            <!-- STRESS-STRAIN CHART -->
+            <div class="bg-surface border border-outline-variant fade-up" style="animation-delay:.1s">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-[18px]">show_chart</span>
+                        <span class="font-headline-sm text-[15px]">Stress-Strain Curve</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-data-mono text-[10px] text-on-surface-variant" id="chart-material-label">A36 Structural Steel</span>
+                        <span class="font-label-caps text-[9px] px-2 py-0.5 border border-outline-variant" id="chart-phase-badge">IDLE</span>
+                    </div>
+                </div>
+                <div id="stress-chart" style="height:420px;width:100%"></div>
+            </div>
+
+            <!-- REALTIME GAUGES -->
+            <div class="grid grid-cols-3 gap-4 fade-up" style="animation-delay:.15s">
+                <div class="bg-surface border border-outline-variant p-5 text-center">
+                    <p class="font-label-caps text-[9px] text-on-surface-variant mb-3 tracking-wider">APPLIED STRESS</p>
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2"><circle cx="50" cy="50" r="42" fill="none" stroke="#e8e1dd" stroke-width="5"/><circle id="g-stress-ring" cx="50" cy="50" r="42" fill="none" stroke="#725a3d" stroke-width="5" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round" class="gauge-ring" transform="rotate(-90 50 50)"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" class="font-data-mono" font-size="14" fill="#1e1b19" id="g-stress-val">0</text><text x="50" y="63" text-anchor="middle" font-size="7" fill="#80756b" class="font-label-caps">MPa</text></svg>
+                </div>
+                <div class="bg-surface border border-outline-variant p-5 text-center">
+                    <p class="font-label-caps text-[9px] text-on-surface-variant mb-3 tracking-wider">CURRENT STRAIN</p>
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2"><circle cx="50" cy="50" r="42" fill="none" stroke="#e8e1dd" stroke-width="5"/><circle id="g-strain-ring" cx="50" cy="50" r="42" fill="none" stroke="#725a3d" stroke-width="5" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round" class="gauge-ring" transform="rotate(-90 50 50)"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" class="font-data-mono" font-size="14" fill="#1e1b19" id="g-strain-val">0</text><text x="50" y="63" text-anchor="middle" font-size="7" fill="#80756b" class="font-label-caps">%</text></svg>
+                </div>
+                <div class="bg-surface border border-outline-variant p-5 text-center">
+                    <p class="font-label-caps text-[9px] text-on-surface-variant mb-3 tracking-wider">SAFETY FACTOR</p>
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2"><circle cx="50" cy="50" r="42" fill="none" stroke="#e8e1dd" stroke-width="5"/><circle id="g-sf-ring" cx="50" cy="50" r="42" fill="none" stroke="#34a853" stroke-width="5" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round" class="gauge-ring" transform="rotate(-90 50 50)"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" class="font-data-mono" font-size="14" fill="#1e1b19" id="g-sf-val">∞</text><text x="50" y="63" text-anchor="middle" font-size="7" fill="#80756b" class="font-label-caps">ratio</text></svg>
+                </div>
+            </div>
+
+            <!-- TEST LOG -->
+            <div class="bg-surface border border-outline-variant fade-up" style="animation-delay:.2s">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum flex justify-between items-center">
+                    <span class="font-headline-sm text-[15px]">Test Results Log</span>
+                    <span class="font-data-mono text-[10px] text-on-surface-variant">LOG_v2.1.0</span>
+                </div>
+                <div class="px-5 py-4 font-data-mono text-[12px] h-44 overflow-y-auto space-y-1.5 bg-surface-container-low/50" id="test-log"></div>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT COL (4) ═══ -->
+        <div class="col-span-12 lg:col-span-4 space-y-5">
+
+            <!-- MATERIAL SELECTION -->
+            <div class="bg-surface border border-outline-variant fade-up" style="animation-delay:.1s">
+                <div class="px-5 py-3 border-b border-outline-variant brushed-aluminum">
+                    <h2 class="font-headline-sm text-[17px]">Material Database</h2>
+                </div>
+                <div class="p-4 space-y-3">
+                    <select id="mat-select" class="w-full border border-outline-variant bg-surface text-on-surface font-data-mono text-[12px] px-3 py-2.5 focus:outline-none focus:border-primary transition-colors pr-8"></select>
+                    <!-- Properties Table -->
+                    <div class="space-y-0 border border-outline-variant/60" id="mat-props"></div>
+                </div>
+            </div>
+
+            <!-- TEST CONFIG -->
+            <div class="bg-surface border border-outline-variant fade-up" style="animation-delay:.15s">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum">
+                    <span class="font-label-caps text-[11px] tracking-wider text-on-surface-variant">TEST CONFIGURATION</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div>
+                        <span class="font-label-caps text-[9px] text-on-surface-variant">STRESS TYPE</span>
+                        <select id="stress-type" class="w-full mt-1 border border-outline-variant bg-surface font-data-mono text-[12px] px-3 py-2 pr-8">
+                            <option value="tensile">Tensile (Pulling)</option>
+                            <option value="compressive">Compressive (Crushing)</option>
+                            <option value="shear">Shear (Sliding)</option>
+                            <option value="bending">Bending (Flexural)</option>
+                            <option value="torsional">Torsional (Twisting)</option>
+                            <option value="impact">Impact (Sudden Load)</option>
+                            <option value="fatigue">Cyclic / Fatigue</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-0.5"><span class="font-label-caps text-[9px]">MAX STRESS</span><span class="font-data-mono text-[11px] text-primary" id="d-maxstress">400 MPa</span></div>
+                        <input type="range" id="max-stress" min="10" max="1200" step="5" value="400" class="w-full">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-0.5"><span class="font-label-caps text-[9px]">TEMPERATURE</span><span class="font-data-mono text-[11px] text-primary" id="d-temp">20°C</span></div>
+                        <input type="range" id="temp-slider" min="-40" max="800" step="5" value="20" class="w-full">
+                    </div>
+                    <div>
+                        <span class="font-label-caps text-[9px] text-on-surface-variant">LOADING RATE</span>
+                        <select id="load-rate" class="w-full mt-1 border border-outline-variant bg-surface font-data-mono text-[12px] px-3 py-2 pr-8">
+                            <option value="0.5">Quasi-Static</option>
+                            <option value="1" selected>Moderate</option>
+                            <option value="2">High-Speed</option>
+                            <option value="4">Impact</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-0.5"><span class="font-label-caps text-[9px]">CROSS-SECTION</span><span class="font-data-mono text-[11px] text-primary" id="d-area">50 cm²</span></div>
+                        <input type="range" id="area-slider" min="10" max="500" step="5" value="50" class="w-full">
+                    </div>
+
+                    <!-- Execute Buttons -->
+                    <button id="btn-run" class="w-full py-3 px-4 bg-primary-container text-on-primary-container hover:brightness-105 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-2">
+                        <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+                        <span class="font-body-md text-[14px] font-medium" id="btn-run-label">Run Stress Test</span>
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btn-compare" class="py-2.5 px-3 border border-outline-variant text-on-surface hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2 text-[12px] font-label-caps">
+                            <span class="material-symbols-outlined text-[16px]">compare_arrows</span>Compare
+                        </button>
+                        <button id="btn-reset" class="py-2.5 px-3 border border-outline-variant text-on-surface-variant hover:border-error hover:text-error transition-all flex items-center justify-center gap-2 text-[12px] font-label-caps">
+                            <span class="material-symbols-outlined text-[16px]">restart_alt</span>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEST SUMMARY (hidden until test completes) -->
+            <div id="summary-panel" class="bg-surface border border-outline-variant hidden fade-up">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum flex justify-between items-center">
+                    <span class="font-label-caps text-[11px] tracking-wider text-on-surface-variant">TEST SUMMARY</span>
+                    <span class="font-label-caps text-[10px] px-2 py-0.5 border" id="summary-status">—</span>
+                </div>
+                <div class="p-4 space-y-2.5" id="summary-body"></div>
+            </div>
+
+            <!-- COMPARISON PANEL (hidden until compare clicked) -->
+            <div id="compare-panel" class="bg-surface border border-outline-variant hidden fade-up">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum flex justify-between items-center">
+                    <span class="font-label-caps text-[11px] tracking-wider text-on-surface-variant">MATERIAL COMPARISON</span>
+                    <button id="btn-close-compare" class="material-symbols-outlined text-[18px] text-on-surface-variant hover:text-primary cursor-pointer">close</button>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-2 mb-3" id="compare-checks"></div>
+                    <button id="btn-run-compare" class="w-full py-2.5 bg-primary text-on-primary font-label-caps text-[11px] tracking-wider hover:brightness-110 transition-all">
+                        OVERLAY CURVES
+                    </button>
+                    <div class="mt-3 space-y-2" id="compare-bars"></div>
+                </div>
+            </div>
+
+            <!-- LINK TO SIMULATION -->
+            <a href="simulation.html" class="flex items-center justify-between w-full py-3 px-4 border border-outline-variant bg-surface hover:bg-surface-variant transition-all group">
+                <span class="font-body-md text-[13px]">Test in Building Simulation →</span>
+                <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-primary">open_in_new</span>
+            </a>
+        </div>
+    </div>
+</div>
+</main>
+
+<!-- Floating Agent -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button class="w-12 h-12 bg-[#34A853] text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-[22px]">support_agent</span>
+    </button>
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+(function(){
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// MATERIAL DATABASE — Real engineering properties
+// ═══════════════════════════════════════════════════════════════
+const MATERIALS={
+A36:{name:'ASTM A36 Structural Steel',E:200e3,fy:250,fu:400,density:7850,poisson:.3,elong:20,alpha:12e-6,costIdx:1.0,fatigueLim:160,color:'#725a3d',category:'Steel'},
+A992:{name:'ASTM A992 (W-shapes)',E:200e3,fy:345,fu:450,density:7850,poisson:.3,elong:18,alpha:12e-6,costIdx:1.15,fatigueLim:210,color:'#8B6F47',category:'Steel'},
+A500B:{name:'ASTM A500 Grade B (HSS)',E:200e3,fy:290,fu:400,density:7850,poisson:.3,elong:23,alpha:12e-6,costIdx:1.1,fatigueLim:180,color:'#A68B5B',category:'Steel'},
+REBAR60:{name:'Grade 60 Rebar (A706)',E:200e3,fy:420,fu:550,density:7850,poisson:.3,elong:14,alpha:12e-6,costIdx:0.95,fatigueLim:200,color:'#6B4F2E',category:'Steel'},
+AL7075:{name:'7075-T6 Aluminum',E:71.7e3,fy:503,fu:572,density:2810,poisson:.33,elong:11,alpha:23.6e-6,costIdx:3.5,fatigueLim:159,color:'#9BADB7',category:'Aluminum'},
+TI6AL4V:{name:'Ti-6Al-4V Titanium',E:113.8e3,fy:880,fu:950,density:4430,poisson:.34,elong:14,alpha:8.6e-6,costIdx:12,fatigueLim:510,color:'#6C8A9C',category:'Titanium'},
+CFRP:{name:'Carbon Fiber Composite',E:70e3,fy:600,fu:600,density:1600,poisson:.1,elong:1.5,alpha:0.5e-6,costIdx:15,fatigueLim:350,color:'#2C2C2C',category:'Composite'},
+S355:{name:'S355 European Steel',E:210e3,fy:355,fu:510,density:7850,poisson:.3,elong:22,alpha:12e-6,costIdx:1.2,fatigueLim:220,color:'#5A4A3A',category:'Steel'},
+C40:{name:'Concrete C40',E:33e3,fy:40,fu:45,density:2400,poisson:.2,elong:0.35,alpha:10e-6,costIdx:0.3,fatigueLim:15,color:'#8E8E8E',category:'Concrete'},
+GFRP:{name:'Glass Fiber Reinforced Polymer',E:45e3,fy:480,fu:520,density:1900,poisson:.25,elong:2.5,alpha:6e-6,costIdx:8,fatigueLim:200,color:'#4A7A5B',category:'Composite'}
+};
+
+let curMat='A36',chart=null,testRunning=false,testAnim=null;
+const CIRC=2*Math.PI*42; // gauge circumference
+
+// ═══════════════════════════════════════════════════════════════
+// MATERIAL SELECTOR
+// ═══════════════════════════════════════════════════════════════
+const matSel=document.getElementById('mat-select');
+Object.entries(MATERIALS).forEach(([k,m])=>{
+    const o=document.createElement('option');o.value=k;o.textContent=m.name;
+    matSel.appendChild(o);
+});
+matSel.value=curMat;
+matSel.addEventListener('change',()=>{curMat=matSel.value;renderProps();updateChartLabel();});
+
+function renderProps(){
+    const m=MATERIALS[curMat];
+    const props=[
+        ['Young\'s Modulus (E)',fmtE(m.E)+' GPa'],
+        ['Yield Strength (σy)',m.fy+' MPa'],
+        ['Ultimate Strength (σu)',m.fu+' MPa'],
+        ['Density',m.density+' kg/m³'],
+        ['Poisson\'s Ratio (ν)',m.poisson.toFixed(2)],
+        ['Elongation at Break',m.elong+'%'],
+        ['Thermal Expansion (α)',m.alpha.toExponential(1)+' /°C'],
+        ['Fatigue Limit',m.fatigueLim+' MPa'],
+        ['Cost Index',m.costIdx.toFixed(1)+'×'],
+        ['Category',m.category]
+    ];
+    document.getElementById('mat-props').innerHTML=props.map(([l,v])=>
+        `<div class="prop-row flex justify-between items-center px-3 py-1.5 border-b border-outline-variant/30 last:border-0">
+            <span class="font-label-caps text-[8px] text-on-surface-variant tracking-wider">${l}</span>
+            <span class="font-data-mono text-[11px] text-on-surface font-semibold">${v}</span>
+        </div>`
+    ).join('');
+}
+function fmtE(e){return(e/1e3).toFixed(1);}
+function updateChartLabel(){document.getElementById('chart-material-label').textContent=MATERIALS[curMat].name;}
+renderProps();
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDER DISPLAYS
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('max-stress').addEventListener('input',function(){document.getElementById('d-maxstress').textContent=this.value+' MPa';});
+document.getElementById('temp-slider').addEventListener('input',function(){document.getElementById('d-temp').textContent=this.value+'°C';});
+document.getElementById('area-slider').addEventListener('input',function(){document.getElementById('d-area').textContent=this.value+' cm²';});
+
+// ═══════════════════════════════════════════════════════════════
+// STRESS-STRAIN CURVE GENERATOR
+// ═══════════════════════════════════════════════════════════════
+function genCurve(matKey,maxStress,tempC){
+    const m=MATERIALS[matKey];
+    // Temperature derating: reduce fy and E at high temps
+    const tf=tempC>200?Math.max(0.2,1-(tempC-200)/800):tempC<-20?Math.min(1.15,1+(-20-tempC)/400*0.1):1;
+    const fy=m.fy*tf, fu=m.fu*tf, E=m.E*tf;
+    const ey=fy/E; // yield strain
+    const eu=m.elong/100; // ultimate strain
+    const ef=eu*1.3; // fracture strain
+    const esh=ey*1.5; // end of yield plateau (for steel)
+    const isConcrete=m.category==='Concrete';
+    const isComposite=m.category==='Composite';
+    const pts=[];
+    const n=200;
+    const maxEps=Math.min(ef*1.1,maxStress>fu?ef*1.1:maxStress/E*3);
+    for(let i=0;i<=n;i++){
+        const eps=maxEps*i/n;
+        let sig;
+        if(isConcrete){
+            // Concrete: parabolic rise then drop
+            const ec=fy/E;
+            if(eps<=ec){sig=fy*(2*eps/ec-(eps/ec)**2);}
+            else if(eps<=ec*3){sig=fy*(1-(eps-ec)/(ec*5));}
+            else{sig=Math.max(0,fy*0.2);}
+            sig=Math.max(0,sig);
+        }else if(isComposite){
+            // Composites: linear to failure (brittle)
+            if(eps<=ey){sig=E*eps;}
+            else{sig=fu*(1-Math.min(1,(eps-ey)/(eu-ey))*0.05);if(eps>eu)sig=0;}
+        }else{
+            // Steel/metal: elastic → yield plateau → strain hardening → necking
+            if(eps<=ey){sig=E*eps;}
+            else if(eps<=esh){sig=fy;}
+            else if(eps<=eu){
+                const t2=(eps-esh)/(eu-esh);
+                sig=fy+(fu-fy)*Math.pow(t2,0.45);
+            }else if(eps<=ef){
+                const t3=(eps-eu)/(ef-eu);
+                sig=fu-(fu-fu*0.6)*t3*t3;
+            }else{sig=0;}
+        }
+        if(sig<0)sig=0;
+        if(sig>maxStress*1.05)break;
+        pts.push([parseFloat((eps*100).toFixed(4)),parseFloat(sig.toFixed(1))]);
+    }
+    return{pts,ey:ey*100,fy,eu:eu*100,fu,ef:ef*100,E,isConcrete,isComposite};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ECHART INIT
+// ═══════════════════════════════════════════════════════════════
+function initChart(){
+    chart=echarts.init(document.getElementById('stress-chart'));
+    const opt={
+        backgroundColor:'#FAFAF8',
+        grid:{left:65,right:30,top:40,bottom:50},
+        tooltip:{trigger:'axis',backgroundColor:'rgba(30,27,25,.9)',borderColor:'#725a3d',textStyle:{color:'#fff',fontFamily:'Inter',fontSize:11},
+            formatter:p=>`<b>Strain:</b> ${p[0].data[0].toFixed(3)}%<br/><b>Stress:</b> ${p[0].data[1].toFixed(1)} MPa`},
+        xAxis:{type:'value',name:'Strain ε (%)',nameLocation:'middle',nameGap:30,
+            nameTextStyle:{fontFamily:'Inter',fontSize:11,color:'#80756b'},
+            axisLabel:{fontFamily:'Inter',fontSize:10,color:'#80756b',formatter:v=>v.toFixed(1)},
+            splitLine:{lineStyle:{color:'rgba(209,196,184,.2)',type:'dashed'}},
+            axisLine:{lineStyle:{color:'#d1c4b8'}}},
+        yAxis:{type:'value',name:'Stress σ (MPa)',nameLocation:'middle',nameGap:45,
+            nameTextStyle:{fontFamily:'Inter',fontSize:11,color:'#80756b'},
+            axisLabel:{fontFamily:'Inter',fontSize:10,color:'#80756b'},
+            splitLine:{lineStyle:{color:'rgba(209,196,184,.2)',type:'dashed'}},
+            axisLine:{lineStyle:{color:'#d1c4b8'}}},
+        series:[{type:'line',data:[],smooth:.15,symbol:'none',lineStyle:{width:2.5,color:'#725a3d'},
+            areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(191,161,127,.15)'},{offset:1,color:'rgba(191,161,127,0)'}])},
+            markLine:{silent:true,data:[],label:{fontFamily:'Inter',fontSize:9},lineStyle:{width:1}}}]
+    };
+    chart.setOption(opt);
+    window.addEventListener('resize',()=>chart.resize());
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAUGES
+// ═══════════════════════════════════════════════════════════════
+function setGauge(id,pct,color){
+    const el=document.getElementById(id);
+    el.setAttribute('stroke-dashoffset',CIRC-(CIRC*Math.min(pct,1)));
+    if(color)el.setAttribute('stroke',color);
+}
+function gaugeColor(ratio){
+    if(ratio<.5)return'#34a853';if(ratio<.8)return'#f9ab00';if(ratio<1)return'#e37400';return'#ba1a1a';
+}
+function updateGauges(stress,strain,sf,fy){
+    const r=stress/fy;
+    document.getElementById('g-stress-val').textContent=Math.round(stress);
+    setGauge('g-stress-ring',Math.min(stress/(fy*1.5),1),gaugeColor(r));
+    document.getElementById('g-strain-val').textContent=strain.toFixed(2);
+    setGauge('g-strain-ring',Math.min(strain/20,1),'#725a3d');
+    const sfv=stress>0?(fy/stress):99;
+    document.getElementById('g-sf-val').textContent=sfv>10?'∞':sfv.toFixed(2);
+    const sfColor=sfv<1?'#ba1a1a':sfv<1.5?'#e37400':sfv<2.5?'#f9ab00':'#34a853';
+    setGauge('g-sf-ring',Math.min(sfv>10?1:sfv/5,1),sfColor);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TEST LOG
+// ═══════════════════════════════════════════════════════════════
+const logEl=document.getElementById('test-log');
+function addLog(msg,level){
+    const ts=new Date().toLocaleTimeString('en-GB',{hour12:false});
+    const colors={info:'text-on-surface-variant',warning:'text-primary font-medium',critical:'text-error font-semibold',success:'text-green-600 font-medium'};
+    const d=document.createElement('div');
+    d.className=`flex gap-3 ${colors[level]||colors.info} log-anim`;
+    d.innerHTML=`<span class="w-16 shrink-0 text-[10px] opacity-60">[${ts}]</span><span class="text-[11px]">${msg}</span>`;
+    logEl.prepend(d);
+    while(logEl.children.length>60)logEl.removeChild(logEl.lastChild);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN STRESS TEST
+// ═══════════════════════════════════════════════════════════════
+function runTest(){
+    if(testRunning)return;
+    testRunning=true;
+    document.getElementById('btn-run-label').textContent='Testing...';
+    document.getElementById('btn-run').classList.add('opacity-60','pointer-events-none');
+    document.getElementById('summary-panel').classList.add('hidden');
+    document.getElementById('chart-phase-badge').textContent='TESTING';
+    document.getElementById('chart-phase-badge').classList.add('text-primary');
+
+    const maxStress=+document.getElementById('max-stress').value;
+    const tempC=+document.getElementById('temp-slider').value;
+    const rate=+document.getElementById('load-rate').value;
+    const stressType=document.getElementById('stress-type').value;
+
+    const c=genCurve(curMat,maxStress,tempC);
+    const m=MATERIALS[curMat];
+
+    // Stress type factor — shear/bending reduces effective yield
+    const typeFactor={tensile:1,compressive:m.category==='Concrete'?1:.95,shear:.577,bending:.9,torsional:.577,impact:1.15,fatigue:.5}[stressType]||1;
+    const effFy=c.fy*typeFactor;
+
+    // Mark lines for chart
+    const marks=[];
+    marks.push({yAxis:effFy,label:{formatter:'Yield: '+effFy.toFixed(0)+' MPa',position:'insideEndTop',fontSize:9},lineStyle:{color:'#f9ab00',type:'dashed'}});
+    marks.push({yAxis:c.fu,label:{formatter:'UTS: '+c.fu.toFixed(0)+' MPa',position:'insideEndTop',fontSize:9},lineStyle:{color:'#ba1a1a',type:'dashed'}});
+
+    addLog(`Test initiated: ${m.name} | ${stressType.toUpperCase()} | ${maxStress} MPa max | ${tempC}°C`,'info');
+    if(tempC>200)addLog(`⚠ Elevated temperature: ${tempC}°C — material properties derated`,'warning');
+
+    // Animate curve point by point
+    let idx=0;
+    const pts=c.pts;
+    const drawData=[];
+    let yieldLogged=false,utsLogged=false,neckLogged=false;
+
+    function tick(){
+        if(idx>=pts.length){finishTest(c,effFy,maxStress,stressType,tempC);return;}
+        const batchSize=Math.max(1,Math.ceil(rate*2));
+        for(let b=0;b<batchSize&&idx<pts.length;b++,idx++){
+            drawData.push(pts[idx]);
+            const [eps,sig]=pts[idx];
+            // Phase detection & logging
+            if(!yieldLogged&&sig>=effFy*0.9)addLog(`Approaching yield point — σ = ${sig.toFixed(0)} MPa`,'info');
+            if(!yieldLogged&&sig>=effFy){addLog(`⚠ YIELD DETECTED at σ = ${sig.toFixed(0)} MPa (ε = ${eps.toFixed(3)}%)`,'warning');yieldLogged=true;}
+            if(!utsLogged&&sig>=c.fu*.98){addLog(`Ultimate tensile strength reached: σu = ${sig.toFixed(0)} MPa`,'critical');utsLogged=true;}
+            if(!neckLogged&&yieldLogged&&utsLogged&&eps>c.eu*.9){addLog('Necking initiated — specimen area reducing','critical');neckLogged=true;}
+            updateGauges(sig,eps,0,effFy);
+        }
+        chart.setOption({series:[{data:drawData,markLine:{data:marks}}]});
+        testAnim=requestAnimationFrame(tick);
+    }
+    chart.setOption({series:[{data:[],markLine:{data:marks}}]});
+    testAnim=requestAnimationFrame(tick);
+}
+
+function finishTest(c,effFy,maxStress,stressType,tempC){
+    testRunning=false;
+    document.getElementById('btn-run-label').textContent='Run Stress Test';
+    document.getElementById('btn-run').classList.remove('opacity-60','pointer-events-none');
+    document.getElementById('chart-phase-badge').textContent='COMPLETE';
+    document.getElementById('chart-phase-badge').classList.remove('text-primary');
+
+    const m=MATERIALS[curMat];
+    const lastPt=c.pts[c.pts.length-1];
+    const peakStress=Math.max(...c.pts.map(p=>p[1]));
+    const peakStrain=c.pts.find(p=>p[1]===peakStress)?.[0]||0;
+    const didYield=peakStress>=effFy;
+    const didFail=peakStress>=c.fu*.99;
+    const failMode=c.isConcrete?'Brittle / Crushing':c.isComposite?'Delamination / Brittle':'Ductile / Necking';
+    // Energy = area under curve (trapezoidal)
+    let energy=0;
+    for(let i=1;i<c.pts.length;i++){energy+=.5*(c.pts[i][1]+c.pts[i-1][1])*(c.pts[i][0]-c.pts[i-1][0])/100;}
+    const maxDeform=(peakStrain/100)*(+document.getElementById('area-slider').value/1e4)*1000;
+    const efficiency=Math.min(100,maxStress<=effFy?(maxStress/effFy*85):didFail?95+(5*Math.random()):85+Math.random()*10);
+
+    const status=!didYield?'PASSED':didFail?'FAILED':'YIELD WARNING';
+    const statusColor=!didYield?'border-green-500 text-green-700 bg-green-50':didFail?'border-error text-error bg-error-container/30':'border-primary text-primary bg-primary-fixed/20';
+
+    addLog(didFail?'SPECIMEN FAILURE — test terminated':'Test complete — no failure','success');
+    addLog(`Efficiency score: ${efficiency.toFixed(1)}%`,'info');
+
+    // Render summary
+    document.getElementById('summary-panel').classList.remove('hidden');
+    document.getElementById('summary-status').className=`font-label-caps text-[10px] px-2 py-0.5 border ${statusColor}`;
+    document.getElementById('summary-status').textContent=status;
+
+    const rows=[
+        ['YIELD DETECTED',didYield?`Yes @ ${effFy.toFixed(0)} MPa`:'No'],
+        ['PEAK STRESS',peakStress.toFixed(1)+' MPa'],
+        ['PEAK STRAIN',peakStrain.toFixed(3)+'%'],
+        ['FAILURE MODE',didFail?failMode:'N/A'],
+        ['ENERGY ABSORBED',energy.toFixed(1)+' MJ/m³'],
+        ['MAX DEFORMATION',maxDeform.toFixed(2)+' mm'],
+        ['EFFICIENCY SCORE',efficiency.toFixed(1)+'%'],
+        ['TEMPERATURE',tempC+'°C'],
+        ['STRESS TYPE',stressType.toUpperCase()]
+    ];
+    document.getElementById('summary-body').innerHTML=rows.map(([l,v])=>
+        `<div class="flex justify-between items-center px-1 py-1 border-b border-outline-variant/30 last:border-0">
+            <span class="font-label-caps text-[8px] text-on-surface-variant">${l}</span>
+            <span class="font-data-mono text-[11px] text-on-surface font-semibold">${v}</span>
+        </div>`
+    ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPARISON MODE
+// ═══════════════════════════════════════════════════════════════
+let compareMode=false;
+const COMP_COLORS=['#725a3d','#9BADB7','#6C8A9C','#2C2C2C','#8E8E8E','#4A7A5B','#A68B5B','#6B4F2E','#8B6F47','#5A4A3A'];
+document.getElementById('btn-compare').addEventListener('click',()=>{
+    compareMode=!compareMode;
+    const panel=document.getElementById('compare-panel');
+    if(compareMode){
+        panel.classList.remove('hidden');
+        // Build checkboxes
+        document.getElementById('compare-checks').innerHTML=Object.entries(MATERIALS).map(([k,m],i)=>
+            `<label class="flex items-center gap-2 text-[11px] font-data-mono cursor-pointer">
+                <input type="checkbox" value="${k}" class="cmp-chk accent-primary w-3 h-3" ${k===curMat?'checked':''}>
+                <span class="truncate">${m.name.split(' ').slice(0,2).join(' ')}</span>
+            </label>`
+        ).join('');
+    }else{panel.classList.add('hidden');}
+});
+document.getElementById('btn-close-compare').addEventListener('click',()=>{
+    compareMode=false;document.getElementById('compare-panel').classList.add('hidden');
+});
+
+document.getElementById('btn-run-compare').addEventListener('click',()=>{
+    const checked=[...document.querySelectorAll('.cmp-chk:checked')].map(c=>c.value);
+    if(checked.length<2){addLog('Select at least 2 materials to compare','warning');return;}
+    const maxStress=+document.getElementById('max-stress').value;
+    const tempC=+document.getElementById('temp-slider').value;
+    const series=checked.map((k,i)=>{
+        const c=genCurve(k,maxStress,tempC);
+        return{type:'line',name:MATERIALS[k].name,data:c.pts,smooth:.15,symbol:'none',
+            lineStyle:{width:2,color:MATERIALS[k].color||COMP_COLORS[i%COMP_COLORS.length]},
+            areaStyle:null,markLine:i===0?{silent:true,data:[
+                {yAxis:c.fy,label:{formatter:'Yield: '+c.fy.toFixed(0),fontSize:8},lineStyle:{color:'#f9ab00',type:'dashed',width:1}}
+            ]}:undefined};
+    });
+    chart.setOption({series,legend:{show:true,top:8,textStyle:{fontFamily:'Inter',fontSize:10,color:'#4e453c'}}},{replaceMerge:'series'});
+    addLog(`Comparison: ${checked.map(k=>MATERIALS[k].name.split(' ')[1]||MATERIALS[k].name).join(' vs ')}`,'info');
+
+    // Comparison bars
+    const metrics=[
+        {name:'Strength/Weight',fn:m=>m.fy/m.density*1000,unit:'kNm/kg'},
+        {name:'Cost Efficiency',fn:m=>m.fy/m.costIdx,unit:'MPa/$'},
+        {name:'Ductility',fn:m=>m.elong,unit:'%'},
+        {name:'Fatigue Resist.',fn:m=>m.fatigueLim,unit:'MPa'},
+        {name:'Thermal Tolerance',fn:m=>1/m.alpha,unit:'1/α'}
+    ];
+    const barsHtml=metrics.map(met=>{
+        const vals=checked.map(k=>({k,v:met.fn(MATERIALS[k])}));
+        const maxV=Math.max(...vals.map(x=>x.v));
+        return `<div class="mb-2">
+            <span class="font-label-caps text-[8px] text-on-surface-variant">${met.name}</span>
+            ${vals.map((x,i)=>`<div class="flex items-center gap-2 mt-0.5">
+                <span class="font-data-mono text-[9px] w-12 truncate">${MATERIALS[x.k].name.split(' ')[1]||'—'}</span>
+                <div class="flex-1 h-[6px] bg-surface-container-high rounded-full overflow-hidden">
+                    <div class="h-full rounded-full" style="width:${(x.v/maxV*100).toFixed(0)}%;background:${MATERIALS[x.k].color}"></div>
+                </div>
+                <span class="font-data-mono text-[9px] w-10 text-right">${x.v.toFixed(0)}</span>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+    document.getElementById('compare-bars').innerHTML=barsHtml;
+});
+
+// ═══════════════════════════════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('btn-reset').addEventListener('click',()=>{
+    if(testAnim)cancelAnimationFrame(testAnim);
+    testRunning=false;
+    document.getElementById('btn-run-label').textContent='Run Stress Test';
+    document.getElementById('btn-run').classList.remove('opacity-60','pointer-events-none');
+    document.getElementById('chart-phase-badge').textContent='IDLE';
+    document.getElementById('chart-phase-badge').classList.remove('text-primary');
+    document.getElementById('summary-panel').classList.add('hidden');
+    updateGauges(0,0,0,1);
+    chart.setOption({series:[{data:[],markLine:{data:[]}}],legend:{show:false}},{replaceMerge:'series'});
+    addLog('Test reset — specimen cleared','info');
+});
+
+// ═══════════════════════════════════════════════════════════════
+// BUTTON WIRING
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('btn-run').addEventListener('click',runTest);
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+initChart();
+updateGauges(0,0,0,1);
+addLog('Material Efficiency Testing Lab initialized','info');
+addLog('10 materials loaded in database','info');
+addLog('ECharts stress-strain renderer ready','info');
+addLog('Select a material and configure test parameters to begin','info');
+})();
+</script>
+</body>
+</html>

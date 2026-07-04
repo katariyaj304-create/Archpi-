@@ -1,0 +1,833 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ArchPi | Global Weather &amp; Environmental Dynamics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#1e1b19",
+                        "on-primary-fixed-variant": "#594327",
+                        "error-container": "#ffdad6",
+                        "primary": "#725a3d",
+                        "inverse-on-surface": "#f7efeb",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "surface": "#fff8f4",
+                        "surface-variant": "#e8e1dd",
+                        "surface-dim": "#e0d9d4",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d1c4b8",
+                        "on-background": "#1e1b19",
+                        "surface-tint": "#725a3d",
+                        "surface-container-high": "#eee7e2",
+                        "inverse-surface": "#33302d",
+                        "surface-container-highest": "#e8e1dd",
+                        "on-primary-fixed": "#291803",
+                        "surface-container-low": "#faf2ee",
+                        "secondary-container": "#e2dfde",
+                        "on-primary-container": "#4d381d",
+                        "primary-fixed-dim": "#e1c19d",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-secondary-fixed-variant": "#474746",
+                        "tertiary-container": "#a7a6a6",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary": "#5f5e5e",
+                        "background": "#fff8f4",
+                        "surface-bright": "#fff8f4",
+                        "tertiary": "#5e5e5e",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-secondary-container": "#636262",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary-container": "#bfa17f",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#3b3c3c",
+                        "on-surface-variant": "#4e453c",
+                        "primary-fixed": "#ffddb8",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f4ece8",
+                        "on-primary": "#ffffff",
+                        "outline": "#80756b",
+                        "inverse-primary": "#e1c19d",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "data-mono": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .aluminum-texture {
+            background-color: #f6f6f6;
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.05) 50%, transparent 50%),
+                              linear-gradient(rgba(255,255,255,0.05) 50%, transparent 50%);
+            background-size: 2px 2px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 248, 244, 0.8);
+            border: 1px solid #e0d9d4;
+        }
+        .technical-grid {
+            background-image: radial-gradient(#d1c4b8 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .scale-98 { transform: scale(0.98); }
+        .label-caps { text-transform: uppercase; }
+        /* Live Leaflet weather map */
+        .leaflet-container { background: #faf2ee; font-family: 'Inter'; }
+        .wind-arrow { text-align: center; pointer-events: auto; }
+        /* While drag-selecting an area, markers must not swallow the mouse */
+        .area-selecting .leaflet-marker-icon, .area-selecting .wind-arrow { pointer-events: none !important; }
+        .wovl-btn.active { background: #725a3d !important; color: #fff8f4 !important; }
+        .stress-ping { width: 14px; height: 14px; background: #ba1a1a; border: 2px solid #fff8f4; border-radius: 50%; box-shadow: 0 0 0 3px rgba(186,26,26,0.3); }
+        .leaflet-control-zoom a { color: #725a3d !important; }
+        .leaflet-control-attribution { background: rgba(255,248,244,0.8) !important; font-size: 9px !important; }
+    </style>
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="structures.js"></script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+
+<!-- ================================================================ -->
+<!-- TOP NAVIGATION BAR                                               -->
+<!-- ================================================================ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2 cursor-pointer transition-transform duration-200 active:scale-95">
+            <span class="material-symbols-outlined text-primary text-2xl">architecture</span>
+            <span class="font-headline-md text-headline-sm text-on-surface tracking-tighter">ArchPi</span>
+        </a>
+        <div class="hidden md:flex gap-6 items-center h-full">
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="index.html">Home</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="globe.html">Globe</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="analysis.html">Analysis</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="soil.html">Soil</a>
+            <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="weather.html">Weather</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+            <span class="font-label-caps text-[10px] text-primary">JD</span>
+        </div>
+    </div>
+</div>
+</nav>
+
+<!-- ================================================================ -->
+<!-- SIDEBAR                                                          -->
+<!-- ================================================================ -->
+<aside class="hidden lg:flex flex-col py-8 px-4 w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low border-r border-outline-variant/30 z-40">
+    <div class="flex flex-col gap-2 mb-10">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">architecture</span>
+            <span class="font-headline-sm text-headline-sm text-on-surface">ArchPi</span>
+        </div>
+        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest ml-8">Structural Intelligence</span>
+    </div>
+    <div class="mb-6">
+        <label class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1 block" for="side-structure">Active Structure</label>
+        <select class="js-structure-select w-full bg-surface-container border border-outline-variant/60 px-3 py-2 font-data-mono text-xs text-on-surface focus:border-primary focus:outline-none" id="side-structure"></select>
+        <p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="side-structure-meta">Loading…</p>
+    </div>
+    <nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+</aside>
+
+<!-- Main Wrapper -->
+<div class="lg:ml-64 pt-16 flex flex-col h-screen overflow-hidden">
+<!-- Page Header Bar -->
+<header class="sticky top-0 z-30 flex items-center justify-between px-margin-desktop w-full h-16 border-b border-outline-variant bg-surface/80 backdrop-blur-xl">
+<div class="flex items-center space-x-8">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Environment</span>
+<nav class="flex space-x-6">
+<a class="text-on-surface-variant font-label-caps text-label-caps hover:text-primary transition-colors duration-200" href="#">Lab</a>
+<a class="text-on-surface-variant font-label-caps text-label-caps hover:text-primary transition-colors duration-200" href="#">Reports</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-caps text-label-caps" href="#">Compliance</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<button class="bg-primary text-white px-4 py-1.5 font-label-caps text-[11px] rounded shadow-sm hover:brightness-110 transition-all">New Case</button>
+<div class="flex items-center space-x-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">settings</span>
+<div class="w-8 h-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional structural engineer profile portrait in a minimalist grey studio, soft architectural lighting highlighting features, wearing a modern charcoal turtleneck, high-end editorial photography style with muted tones and sharp focus on eyes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARFPkYCQTckDG3bHWzemOuXWog5ma1gjEzVQLIttAb-9lZ50J8WK_qo-P2cYtQyDl1F0acO09SveBzAzb6dEKUhXtpJmp1cgHtJjP9UnAGll0k63vUk2FYqpmeGxLIivHtPx5HKH_NZFD2AqdsIrZc7OsAVQthjwKWzYFJ2dakjA9-GmRbx1ZHA59yGZDGA8Tw2qcGLX6kBPrA3ORRSHVJ-qSc7Z8yDLfLEHFeps7NRX5zgWUYePJHRA">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-1 overflow-y-auto p-gutter technical-grid">
+<div class="grid grid-cols-12 gap-gutter max-w-[1440px] mx-auto">
+<!-- HEADER MODULE: Quick Metrics -->
+<section class="col-span-12 grid grid-cols-4 gap-4 mb-2">
+<div class="glass-panel p-4 flex flex-col justify-between border-l-4 border-l-primary">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Global Avg ΔT</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="qm-delta-t">…</span>
+<span class="font-data-mono text-[10px] text-error" id="qm-delta-t-tag">vs 30-yr normal</span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Humidity Stress Index</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="qm-humidity">…</span>
+<span class="font-data-mono text-[10px] text-primary" id="qm-humidity-tag">% stations in 50–70% RH band</span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Wet Bulb Exposure (IND)</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="qm-wetbulb">…</span>
+<span class="font-data-mono text-[10px] text-error" id="qm-wetbulb-tag"></span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Active Catastrophic Events</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="qm-events">…</span>
+<span class="font-data-mono text-[10px] text-secondary" id="qm-events-tag">Tracking...</span>
+</div>
+</div>
+</section>
+<!-- MAIN MODULE: Global Meteorological Schematic (live interactive map) -->
+<section class="col-span-8 h-[600px] glass-panel relative overflow-hidden group" style="box-shadow: none; transition: 0.3s;">
+<div class="absolute top-4 left-6 z-[700] pointer-events-none">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Global Meteorological Schematic</h2>
+<p class="font-label-caps text-[10px] text-secondary" id="map-subtitle">Active Layers: Wind Vectors | Live Radar — click anywhere for stress diagnostics</p>
+</div>
+<div class="absolute top-4 right-4 z-[700] flex space-x-2">
+<button class="wovl-btn px-2 py-1 bg-surface border border-outline-variant text-[10px] font-label-caps hover:bg-primary-container transition-colors" data-wovl="radar">Radar</button>
+<button class="wovl-btn px-2 py-1 bg-surface border border-outline-variant text-[10px] font-label-caps hover:bg-primary-container transition-colors" data-wovl="satellite">Satellite</button>
+<button class="wovl-btn px-2 py-1 bg-surface border border-outline-variant text-[10px] font-label-caps hover:bg-primary-container transition-colors" data-wovl="none">None</button>
+</div>
+<!-- Interactive Leaflet map -->
+<div class="w-full h-full relative">
+<div class="absolute inset-0 z-0" id="weather-map"></div>
+<div class="absolute bottom-4 right-4 glass-panel p-3 z-[700] border-primary/30"><h4 class="font-label-caps text-[9px] text-primary mb-2 tracking-widest">Global Metrics Legend</h4><div class="space-y-2"><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Wind Speed</span><span class="font-data-mono text-[9px] text-on-surface" id="leg-wind">…</span></div><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Temperature</span><span class="font-data-mono text-[9px] text-on-surface" id="leg-temp">…</span></div><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Pressure</span><span class="font-data-mono text-[9px] text-on-surface" id="leg-pressure">…</span></div></div><div class="mt-2 h-1 w-full bg-gradient-to-r from-primary/20 via-primary to-error rounded-full"></div></div>
+<div class="absolute top-16 left-2 z-[700] pointer-events-none"><span class="font-data-mono text-[8px] text-outline bg-surface/60 px-1" id="wm-cursor">CURSOR: — | WGS84</span></div>
+</div>
+<div class="absolute bottom-4 left-6 z-[700] flex space-x-8 pointer-events-none">
+<div>
+<p class="text-[9px] font-label-caps text-secondary">Atmospheric Pressure</p>
+<p class="font-data-mono text-sm" id="env-pressure">…</p>
+</div>
+<div>
+<p class="text-[9px] font-label-caps text-secondary">Tropospheric Stability</p>
+<p class="font-data-mono text-sm" id="env-stability">…</p>
+</div>
+</div>
+</section>
+<!-- MODULE: India Regional Weather Diagnostics -->
+<section class="col-span-4 h-[600px] flex flex-col space-y-gutter">
+<div class="glass-panel flex-1 p-6 relative overflow-hidden" style="box-shadow: none; transition: 0.3s;">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm">India Regional Diagnostics</h3>
+<p class="font-label-caps text-[10px] text-secondary">Monsoon Cycle Analysis</p>
+</div>
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div class="space-y-4">
+<div class="p-3 border border-outline-variant bg-surface-container-low">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-[10px]">Thermal Expansion Lead</span>
+<span class="font-data-mono text-[10px] text-error" id="ind-thermal">…</span>
+</div>
+<div class="w-full bg-outline-variant h-[2px]">
+<div class="bg-primary h-full w-[85%]" id="ind-thermal-bar"></div>
+</div>
+</div>
+<div class="p-3 border border-outline-variant bg-surface-container-low">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-[10px]">Wet Bulb Threshold</span>
+<span class="font-data-mono text-[10px] text-on-surface" id="ind-wetbulb">…</span>
+</div>
+<div class="w-full bg-outline-variant h-[2px]">
+<div class="bg-on-surface h-full w-[62%]" id="ind-wetbulb-bar"></div>
+</div>
+</div>
+</div>
+<!-- Technical Graph Representation -->
+<div class="mt-8 h-32 border-b border-l border-outline-variant relative">
+<svg class="w-full h-full" id="ind-precip-svg" preserveAspectRatio="none" viewBox="0 0 240 128">
+<path d="" fill="none" stroke="#725a3d" stroke-width="1.5" id="ind-precip-path"></path>
+<path d="" fill="none" stroke="#d1c4b8" stroke-dasharray="4" stroke-width="1" id="ind-precip-path2"></path>
+</svg>
+<div class="absolute bottom-[-15px] left-0 right-0 flex justify-between font-data-mono text-[8px] text-secondary" id="ind-graph-labels">
+<span class="">D+1</span><span class="">D+2</span><span class="">D+3</span><span class="">D+4</span><span class="">D+5</span><span class="">D+6</span><span class="">D+7</span>
+</div>
+</div>
+<p class="mt-10 font-body-md text-xs text-on-surface-variant leading-relaxed" id="ind-note">
+                            Loading monsoon cycle telemetry…
+                        </p>
+</div>
+<div class="glass-panel p-6 border-t-4 border-t-error" style="box-shadow: none; transition: 0.3s;">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: &quot;FILL&quot; 1;">warning</span>
+<h3 class="font-label-caps text-label-caps text-error">Catastrophic Event Monitoring</h3>
+</div>
+<div class="space-y-3" id="events-list">
+<div class="flex items-center justify-between text-xs font-data-mono py-2 border-b border-outline-variant/30">
+<span class="text-on-surface">Scanning event feeds…</span>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[9px]">…</span>
+</div>
+</div>
+</div>
+</section>
+<!-- BOTTOM ROW MODULES: Stress Analytics -->
+<section class="col-span-4 glass-panel p-6" style="box-shadow: none; transition: 0.3s;">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-label-caps text-label-caps">Wind Shear Analytics</h3>
+<span class="font-data-mono text-[10px] text-secondary" id="ws-current">kN/m2</span>
+</div>
+<div class="flex items-end gap-2 h-32 px-4" id="ws-bars">
+<div class="w-full bg-primary/20 h-[10%] transition-all"></div>
+</div>
+<div class="mt-4 flex justify-between font-data-mono text-[9px] text-secondary">
+<span class="">H-24</span><span class="">H-18</span><span class="">H-12</span><span class="">H-06</span><span class="">NOW</span>
+</div>
+</section>
+<section class="col-span-4 glass-panel p-6 aluminum-texture" style="box-shadow: none; transition: 0.3s;">
+<h3 class="font-label-caps text-label-caps mb-6">Humidity Impact on Carbonation</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="font-data-mono text-xs">Carbonation Front pH</span>
+<span class="font-headline-sm text-headline-sm text-primary" id="carb-ph">…</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[9px] font-label-caps text-secondary">Risk Status</span>
+<span class="font-data-mono text-[10px] text-on-surface" id="carb-label">…</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="border border-outline-variant p-2">
+<p class="text-[8px] font-label-caps text-secondary mb-1">Calcium Leaching</p>
+<p class="font-data-mono text-xs text-on-surface" id="carb-leach">…</p>
+</div>
+<div class="border border-outline-variant p-2">
+<p class="text-[8px] font-label-caps text-secondary mb-1">Steel Passivity</p>
+<p class="font-data-mono text-xs text-error" id="carb-steel">…</p>
+</div>
+</div>
+</div>
+</section>
+<section class="col-span-4 glass-panel p-6">
+<h3 class="font-label-caps text-label-caps mb-6">Thermal Loading (24h)</h3>
+<div class="relative h-24 flex items-center justify-center">
+<!-- Stylized circular technical readout -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-20 h-20 rounded-full border-2 border-outline-variant border-t-primary animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute w-16 h-16 rounded-full border border-dashed border-outline-variant"></div>
+</div>
+<div class="text-center z-10">
+<p class="font-headline-sm text-headline-sm" id="th-peak">…</p>
+<p class="font-label-caps text-[8px] text-secondary" id="th-peak-label">Peak Cycle</p>
+</div>
+</div>
+<div class="mt-4 flex justify-around">
+<div class="text-center">
+<p class="font-data-mono text-[10px]">MIN</p>
+<p class="font-data-mono text-sm" id="th-min">…</p>
+</div>
+<div class="text-center">
+<p class="font-data-mono text-[10px]">AVG</p>
+<p class="font-data-mono text-sm" id="th-avg">…</p>
+</div>
+<div class="text-center">
+<p class="font-data-mono text-[10px]">MAX</p>
+<p class="font-data-mono text-sm" id="th-max">…</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Context Status -->
+<footer class="h-8 bg-surface-dim border-t border-outline-variant px-margin-desktop flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full" id="stream-dot"></span>
+<span class="font-data-mono text-[10px] text-secondary" id="stream-status">Data Stream: CONNECTING…</span>
+</div>
+<span class="text-outline border-l border-outline-variant h-4"></span>
+<span class="font-data-mono text-[10px] text-secondary" id="sync-time">Last Sync: —</span>
+</div>
+<div class="flex items-center space-x-4 font-data-mono text-[10px] text-primary">
+<span class="" id="foot-lat">Lat: 20.5937° N</span>
+<span class="" id="foot-lon">Long: 78.9629° E</span>
+</div>
+</footer>
+</div>
+<script>
+        // Micro-interaction for hover effects on glass panels
+        document.querySelectorAll('.glass-panel').forEach(panel => {
+            panel.addEventListener('mouseenter', () => {
+                panel.style.boxShadow = '0 10px 25px -5px rgba(114, 90, 61, 0.05)';
+                panel.style.transition = 'all 0.3s ease';
+            });
+            panel.addEventListener('mouseleave', () => {
+                panel.style.boxShadow = 'none';
+            });
+        });
+
+        // ============================================================
+        // Environmental Dynamics — live wiring
+        // Backend: FastAPI (soil_backend) on :8000, data from Open-Meteo
+        // ============================================================
+        const API_BASE = 'http://localhost:8000';
+        // Structural stress site: geographic centre of India (footer coords)
+        const SITE = { lat: 20.5937, lon: 78.9629 };
+        const $ = (id) => document.getElementById(id);
+
+        // --- Interactive weather map: Leaflet + CARTO basemap, with live
+        //     RainViewer radar / IR clouds and NASA GIBS satellite overlays
+        const wmap = L.map('weather-map', {
+            center: [21, 60], zoom: 3, minZoom: 2, maxZoom: 11,
+            worldCopyJump: true, attributionControl: false,
+        });
+        L.control.attribution({ position: 'bottomleft', prefix: false }).addTo(wmap);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO | Radar: RainViewer | Satellite: NASA GIBS',
+            subdomains: 'abcd',
+        }).addTo(wmap);
+        const vectorGroup = L.layerGroup().addTo(wmap);
+
+        let weatherOverlay = null, rainviewerData = null;
+        async function setWeatherOverlay(key) {
+            document.querySelectorAll('.wovl-btn').forEach(b =>
+                b.classList.toggle('active', b.dataset.wovl === key));
+            if (weatherOverlay) { wmap.removeLayer(weatherOverlay); weatherOverlay = null; }
+            if (key === 'none') return;
+            if (key === 'satellite') {
+                // NASA GIBS true-colour MODIS; yesterday's tiles are complete
+                const d = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+                weatherOverlay = L.tileLayer(
+                    `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${d}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
+                    { maxNativeZoom: 9, opacity: 0.85 }).addTo(wmap);
+                return;
+            }
+            if (!rainviewerData) {
+                rainviewerData = await fetch('https://api.rainviewer.com/public/weather-maps.json')
+                    .then(r => r.json()).catch(() => null);
+            }
+            if (!rainviewerData) return;
+            const frames = rainviewerData.radar?.past;
+            const frame = frames && frames.length ? frames[frames.length - 1] : null;
+            if (!frame) return;
+            weatherOverlay = L.tileLayer(
+                `${rainviewerData.host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`,
+                { opacity: 0.7 }).addTo(wmap);
+        }
+        document.querySelectorAll('.wovl-btn').forEach(btn =>
+            btn.addEventListener('click', () => setWeatherOverlay(btn.dataset.wovl)));
+        setWeatherOverlay('radar');
+
+        // Click anywhere on earth: run structural stress diagnostics there and
+        // show the live conditions in a popup right on the map
+        const stressIcon = L.divIcon({ className: 'stress-ping', iconSize: [14, 14] });
+        let stressMarker = null;
+        wmap.on('click', (e) => {
+            if (wAreaMode || wSuppressClick) { wSuppressClick = false; return; }
+            const { lat, lng } = e.latlng;
+            if (stressMarker) wmap.removeLayer(stressMarker);
+            if (wAreaRect) { wmap.removeLayer(wAreaRect); wAreaRect = null; }
+            stressMarker = L.marker([lat, lng], { icon: stressIcon }).addTo(wmap);
+            runStress(lat, lng, `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`, e.latlng);
+        });
+        wmap.on('mousemove', (e) => {
+            $('wm-cursor').textContent =
+                `CURSOR: ${e.latlng.lat.toFixed(2)}°N ${e.latlng.lng.toFixed(2)}°E | WGS84`;
+        });
+
+        function conditionsPopupHtml(d, label) {
+            const m = d.meteorology, st = d.structural;
+            const range = m.temperature_range_c ? ` (${m.temperature_range_c[0]}…${m.temperature_range_c[1]}°C)` : '';
+            const samples = d.query.samples_ok ? `<div style="color:#8a7a6d">${d.query.samples_ok} grid samples — worst-case structural values</div>` : '';
+            return `<div style="font-family:'Inter',monospace;font-size:11px;line-height:1.7;min-width:210px">
+                <div style="font-weight:700;letter-spacing:0.05em">${label}</div>${samples}
+                <div>TEMP ${m.temperature_c}°C${range} · RH ${m.relative_humidity_pct}% · WB ${st.wet_bulb_c}°C</div>
+                <div>WIND ${m.wind_speed_kmh} km/h (gust ${m.wind_gusts_kmh ?? '—'}) → q ${st.wind_shear.dynamic_pressure_kn_m2} kN/m²</div>
+                <div>PRESS ${m.surface_pressure_hpa} hPa · 7D PRECIP ${st.monsoon_outlook_7d.total_7d_mm} mm (${st.monsoon_outlook_7d.label})</div>
+                <div>CARBONATION ${st.carbonation.risk_label} (×${st.carbonation.ph_degradation_multiplier})</div>
+                ${st.thermal_loading_24h ? `<div>THERMAL Δ${st.thermal_loading_24h.swing_c}°C/24h → ${st.thermal_loading_24h.expansion_mm_per_10m} mm/10m</div>` : ''}
+            </div>`;
+        }
+
+        async function runStress(lat, lon, label, popupAt) {
+            $('map-subtitle').textContent = `STRESS SITE: ${label} — querying…`;
+            $('ws-current').textContent = '…';
+            try {
+                const r = await fetch(`${API_BASE}/api/v1/environment/stress/?lat=${lat}&lon=${lon}`);
+                if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+                const data = await r.json();
+                renderStress(data);
+                $('map-subtitle').textContent = `STRESS SITE: ${label} — wind shear, carbonation & thermal modules updated`;
+                $('foot-lat').textContent = `Lat: ${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`;
+                $('foot-lon').textContent = `Long: ${Math.abs(lon).toFixed(4)}° ${lon >= 0 ? 'E' : 'W'}`;
+                if (popupAt) {
+                    L.popup({ offset: [0, -8], maxWidth: 280 })
+                        .setLatLng(popupAt).setContent(conditionsPopupHtml(data, label)).openOn(wmap);
+                }
+            } catch (err) {
+                $('map-subtitle').textContent = `STRESS QUERY FAILED: ${err.message}`;
+            }
+        }
+
+        // --- Area analysis: drag a rectangle for aggregate weather + governing
+        //     (worst-case) structural conditions across the selection
+        let wAreaMode = false, wAreaRect = null, wAreaStart = null, wSuppressClick = false;
+        const WAreaControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd() {
+                const div = L.DomUtil.create('div', 'leaflet-bar');
+                const a = L.DomUtil.create('a', '', div);
+                a.href = '#'; a.id = 'warea-btn';
+                a.title = 'Select area — drag a rectangle for aggregate environmental analysis';
+                a.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;line-height:30px;color:#725a3d;">highlight_alt</span>';
+                L.DomEvent.on(a, 'click', (e) => { L.DomEvent.stop(e); toggleWAreaMode(); });
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            },
+        });
+        wmap.addControl(new WAreaControl());
+
+        function toggleWAreaMode(on = !wAreaMode) {
+            wAreaMode = on;
+            const btn = document.getElementById('warea-btn');
+            btn.style.background = on ? '#725a3d' : '';
+            btn.querySelector('span').style.color = on ? '#fff8f4' : '#725a3d';
+            wmap.getContainer().style.cursor = on ? 'crosshair' : '';
+            wmap.getContainer().classList.toggle('area-selecting', on);
+            if (on) { wmap.closePopup(); wmap.dragging.disable(); } else { wmap.dragging.enable(); }
+        }
+
+        wmap.on('mousedown', (e) => {
+            if (!wAreaMode) return;
+            wAreaStart = e.latlng;
+            if (wAreaRect) wmap.removeLayer(wAreaRect);
+            wAreaRect = L.rectangle([wAreaStart, wAreaStart], {
+                color: '#725a3d', weight: 1.5, dashArray: '5 4', fillOpacity: 0.08,
+            }).addTo(wmap);
+        });
+        wmap.on('mousemove', (e) => {
+            if (wAreaMode && wAreaStart && wAreaRect) {
+                wAreaRect.setBounds(L.latLngBounds(wAreaStart, e.latlng));
+            }
+        });
+        wmap.on('mouseup', (e) => {
+            if (!wAreaMode || !wAreaStart) return;
+            const bounds = L.latLngBounds(wAreaStart, e.latlng);
+            wAreaStart = null;
+            wSuppressClick = true;
+            toggleWAreaMode(false);
+            if (bounds.getNorth() - bounds.getSouth() < 0.1 && bounds.getEast() - bounds.getWest() < 0.1) {
+                if (wAreaRect) { wmap.removeLayer(wAreaRect); wAreaRect = null; }
+                return;  // accidental click, not a selection
+            }
+            if (stressMarker) { wmap.removeLayer(stressMarker); stressMarker = null; }
+            runStressArea(bounds);
+        });
+
+        async function runStressArea(bounds) {
+            const label = `AREA ${bounds.getSouth().toFixed(1)}–${bounds.getNorth().toFixed(1)}°N / ` +
+                          `${bounds.getWest().toFixed(1)}–${bounds.getEast().toFixed(1)}°E`;
+            $('map-subtitle').textContent = `ANALYSING ${label} — sampling 3×3 weather grid…`;
+            $('ws-current').textContent = '…';
+            try {
+                const qs = `min_lat=${bounds.getSouth()}&min_lon=${bounds.getWest()}` +
+                           `&max_lat=${bounds.getNorth()}&max_lon=${bounds.getEast()}`;
+                const r = await fetch(`${API_BASE}/api/v1/environment/stress/area/?${qs}`);
+                if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+                const data = await r.json();
+                renderStress(data);
+                $('map-subtitle').textContent =
+                    `${label} — ${data.query.samples_ok}/${data.query.samples_requested} samples | governing wind ` +
+                    `${data.meteorology.wind_speed_kmh} km/h | modules show area worst-case`;
+                L.popup({ offset: [0, -8], maxWidth: 280 })
+                    .setLatLng(bounds.getCenter()).setContent(conditionsPopupHtml(data, label)).openOn(wmap);
+            } catch (err) {
+                $('map-subtitle').textContent = `AREA ANALYSIS FAILED: ${err.message}`;
+            }
+        }
+
+        function renderGlobal(g) {
+            // --- Metric cards
+            const dt = g.cards.avg_delta_t_c;
+            $('qm-delta-t').textContent = dt == null ? 'N/A' : `${dt >= 0 ? '+' : ''}${dt.toFixed(2)}°C`;
+            $('qm-delta-t-tag').textContent = dt == null ? 'normals pending' :
+                dt >= 2 ? 'Critical Peak' : dt >= 1 ? 'Elevated' : 'Within Variance';
+            $('qm-delta-t-tag').className = `font-data-mono text-[10px] ${dt >= 1 ? 'text-error' : 'text-primary'}`;
+
+            const hs = g.cards.humidity_stress_index;
+            $('qm-humidity').textContent = hs == null ? 'N/A' : hs.toFixed(1);
+            $('qm-humidity-tag').textContent = hs >= 50 ? 'Carbonation Band — Elevated' : '% stations in 50–70% RH band';
+            $('qm-humidity-tag').className = `font-data-mono text-[10px] ${hs >= 50 ? 'text-error' : 'text-primary'}`;
+
+            const wb = g.cards.wet_bulb_max_india_c;
+            $('qm-wetbulb').textContent = wb == null ? 'N/A' : `${wb.toFixed(1)}°C`;
+            $('qm-wetbulb-tag').textContent = wb >= 31 ? 'EMERGENCY THRESHOLD' : wb >= 28 ? 'Warning Threshold' : 'Safe Range';
+            $('qm-wetbulb-tag').className = `font-data-mono text-[10px] ${wb >= 28 ? 'text-error' : 'text-primary'}`;
+
+            $('qm-events').textContent = String(g.cards.active_events).padStart(2, '0');
+            $('qm-events-tag').textContent = g.cards.active_events ? 'Tracking...' : 'All Clear';
+
+            // --- Wind vector markers, geo-anchored on the interactive map
+            vectorGroup.clearLayers();
+            g.vectors.forEach(v => {
+                if (v.wind_speed_kmh == null) return;
+                const speedMs = v.wind_speed_kmh / 3.6;
+                const size = Math.min(30, 14 + speedMs * 1.4);
+                const strong = speedMs >= 8;
+                const icon = L.divIcon({
+                    className: 'wind-arrow',
+                    iconSize: [70, size + 14],
+                    iconAnchor: [35, (size + 14) / 2],
+                    html: `<span class="material-symbols-outlined ${strong ? 'text-error' : 'text-primary'} animate-pulse"
+                                 style="font-size:${size}px; display:inline-block;
+                                        transform: rotate(${(v.wind_direction_deg + 180) % 360}deg);
+                                        font-variation-settings: 'FILL' 1;">navigation</span>
+                           <div class="font-data-mono text-[7px] text-on-surface bg-surface/70 px-0.5 leading-tight inline-block">${v.name} ${speedMs.toFixed(1)}m/s</div>`,
+                });
+                L.marker([v.lat, v.lon], { icon })
+                    .addTo(vectorGroup)
+                    .bindTooltip(`${v.name}: ${v.wind_speed_kmh.toFixed(0)} km/h @ ${v.wind_direction_deg}° | ${v.temperature_c}°C | ${v.relative_humidity_pct}% RH`,
+                                 { direction: 'top' })
+                    .on('click', (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        runStress(v.lat, v.lon, v.name, [v.lat, v.lon]);
+                    });
+            });
+
+            // --- Legend + baseline atmospherics
+            $('leg-wind').textContent = `${g.legend.mean_wind_ms} m/s`;
+            $('leg-temp').textContent = `${g.legend.mean_temperature_c} °C`;
+            $('leg-pressure').textContent = `${g.legend.mean_pressure_hpa} hPa`;
+            $('env-pressure').textContent = `${g.legend.mean_pressure_hpa} hPa`;
+            $('env-stability').textContent =
+                g.legend.mean_wind_ms >= 8 ? 'Convective (Level 3)' :
+                g.legend.mean_wind_ms >= 4 ? 'Stable (Level 2)' : 'Stable (Level 1)';
+
+            // --- India regional diagnostics: worst thermal swing + wet bulb
+            const worstThermal = g.india.reduce((a, c) =>
+                (c.thermal_loading_24h?.expansion_mm_per_10m ?? 0) > (a?.thermal_loading_24h?.expansion_mm_per_10m ?? -1) ? c : a, null);
+            if (worstThermal?.thermal_loading_24h) {
+                const t = worstThermal.thermal_loading_24h;
+                $('ind-thermal').textContent = `+${t.expansion_mm_per_10m}mm/10m (${worstThermal.city})`;
+                $('ind-thermal-bar').style.width = `${Math.min(100, t.expansion_mm_per_10m / 3 * 100)}%`;
+            }
+            const worstWb = g.india.reduce((a, c) => c.wet_bulb_c > (a?.wet_bulb_c ?? -99) ? c : a, null);
+            if (worstWb) {
+                $('ind-wetbulb').textContent = `${worstWb.wet_bulb_c}°C / 32.2°C limit (${worstWb.city})`;
+                $('ind-wetbulb-bar').style.width = `${Math.min(100, worstWb.wet_bulb_c / 32.2 * 100)}%`;
+            }
+
+            // --- 7-day precipitation curves: wettest city (solid) vs national
+            //     average (dashed), scaled to the SVG viewBox (240x128)
+            const days = 7;
+            const avg = Array.from({length: days}, (_, i) => {
+                const vals = g.india.map(c => c.daily_precip_7d_mm[i]).filter(v => v != null);
+                return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+            });
+            const wettest = g.india.reduce((a, c) =>
+                c.monsoon.total_7d_mm > (a?.monsoon.total_7d_mm ?? -1) ? c : a, null);
+            const wet = Array.from({length: days}, (_, i) => wettest?.daily_precip_7d_mm[i] ?? 0);
+            const maxVal = Math.max(...wet, ...avg, 1);
+            const toPath = (arr) => arr.map((v, i) =>
+                `${i === 0 ? 'M' : 'L'}${(i / (days - 1)) * 240},${120 - (v / maxVal) * 110}`).join(' ');
+            $('ind-precip-path').setAttribute('d', toPath(wet));
+            $('ind-precip-path2').setAttribute('d', toPath(avg));
+            $('ind-note').textContent =
+                `${wettest.city} carries the peak hydrological load (${wettest.monsoon.total_7d_mm}mm over 7 days — ${wettest.monsoon.label}). ` +
+                `${wettest.monsoon.note} National mean humidity stress currently ` +
+                `${g.cards.humidity_stress_index >= 50 ? 'accelerates' : 'is below the band that accelerates'} carbonation in reinforced sections.`;
+
+            // --- Catastrophic events
+            const list = $('events-list');
+            list.innerHTML = g.events.length ? '' :
+                '<div class="flex items-center justify-between text-xs font-data-mono py-2 border-b border-outline-variant/30">' +
+                '<span class="text-on-surface">No catastrophic events detected</span>' +
+                '<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[9px]">All Clear</span></div>';
+            g.events.forEach(ev => {
+                const badge = ev.level === 'error'
+                    ? 'bg-error-container text-on-error-container'
+                    : 'bg-secondary-container text-on-secondary-container';
+                list.insertAdjacentHTML('beforeend',
+                    `<div class="flex items-center justify-between text-xs font-data-mono py-2 border-b border-outline-variant/30">
+                     <span class="text-on-surface">${ev.title}</span>
+                     <span class="px-2 py-0.5 ${badge} text-[9px]">${ev.severity}</span></div>`);
+            });
+        }
+
+        function renderStress(s) {
+            // --- Wind shear analytics: past-24h dynamic pressure bars (8 buckets)
+            const series = s.structural.wind_pressure_series_24h_kn_m2;
+            const bars = $('ws-bars');
+            bars.innerHTML = '';
+            const bucketSize = Math.max(1, Math.floor(series.length / 8));
+            const buckets = Array.from({length: 8}, (_, i) => {
+                const slice = series.slice(i * bucketSize, (i + 1) * bucketSize);
+                return slice.length ? Math.max(...slice) : 0;
+            });
+            const qMax = Math.max(...buckets, 0.001);
+            buckets.forEach(q => {
+                bars.insertAdjacentHTML('beforeend',
+                    `<div class="w-full bg-primary/20 hover:bg-primary transition-all" title="${q.toFixed(4)} kN/m²"
+                          style="height:${Math.max(4, q / qMax * 100)}%"></div>`);
+            });
+            $('ws-current').textContent =
+                `q = ${s.structural.wind_shear.dynamic_pressure_kn_m2} kN/m² (${s.structural.wind_shear.exposure_class})`;
+
+            // --- Carbonation module
+            const c = s.structural.carbonation;
+            $('carb-ph').textContent = c.indicative_front_ph.toFixed(2);
+            $('carb-label').textContent = `${c.risk_label} (×${c.ph_degradation_multiplier})`;
+            $('carb-leach').textContent = `${c.calcium_leaching} Risk`;
+            $('carb-steel').textContent = c.steel_passivity;
+            $('carb-steel').className = `font-data-mono text-xs ${c.steel_passivity === 'STABLE' ? 'text-primary' : 'text-error'}`;
+
+            // --- Thermal loading dial
+            const t = s.structural.thermal_loading_24h;
+            if (t) {
+                $('th-peak').textContent = `${t.max_c}°`;
+                $('th-peak-label').textContent = `Peak Cycle · Δ${t.swing_c}°C (${t.cycle_class})`;
+                $('th-min').textContent = `${t.min_c}°`;
+                $('th-avg').textContent = `${t.avg_c}°`;
+                $('th-max').textContent = `${t.max_c}°`;
+            }
+        }
+
+        async function boot() {
+            try {
+                const g = await fetch(`${API_BASE}/api/v1/environment/global/`)
+                    .then(r => { if (!r.ok) throw new Error(`global ${r.status}`); return r.json(); });
+                renderGlobal(g);
+                $('stream-status').textContent = 'Data Stream: ACTIVE (Open-Meteo)';
+                $('sync-time').textContent = `Last Sync: ${new Date().toUTCString().slice(17, 25)} UTC`;
+            } catch (err) {
+                $('stream-status').textContent = `Data Stream: OFFLINE — ${err.message} (backend on :8000?)`;
+                $('stream-dot').className = 'w-1.5 h-1.5 bg-red-500 rounded-full';
+            }
+        }
+        boot();
+        setInterval(boot, 10 * 60 * 1000);  // refresh global stats every 10 minutes
+
+        // --- The structure selected anywhere in ArchPi is the stress site.
+        //     Selecting a building flies the map to it and runs the wind-shear,
+        //     carbonation and thermal-fatigue modules for its live weather.
+        let wStructMarker = null;
+        ArchPiStructure.onChange(site => {
+            SITE.lat = site.lat; SITE.lon = site.lon;
+            const meta = document.getElementById('side-structure-meta');
+            if (meta) meta.textContent = site.location + ' · ' + site.lat.toFixed(2) + '°, ' + site.lon.toFixed(2) + '°';
+            if (wStructMarker) wmap.removeLayer(wStructMarker);
+            wStructMarker = L.marker([site.lat, site.lon], { icon: stressIcon })
+                .addTo(wmap)
+                .bindTooltip(site.name, { direction: 'top', offset: [0, -10] });
+            wmap.flyTo([site.lat, site.lon], 6, { duration: 1.2 });
+            runStress(site.lat, site.lon, site.name, null);
+        });
+        ArchPiStructure.init().catch(err => {
+            $('stream-status').textContent = `Structure list unavailable — ${err.message} (forensic engine on :8010?)`;
+        });
+        setInterval(() => runStress(SITE.lat, SITE.lon, ArchPiStructure.current() ? ArchPiStructure.current().name : 'site', null),
+            10 * 60 * 1000);  // refresh the stress site with the same cadence
+
+        // Simulating live data pings
+        setInterval(() => {
+            const indicators = document.querySelectorAll('.animate-ping');
+            indicators.forEach(ind => {
+                ind.style.opacity = '1';
+                setTimeout(() => ind.style.opacity = '0.5', 500);
+            });
+        }, 3000);
+    </script>
+</body></html>

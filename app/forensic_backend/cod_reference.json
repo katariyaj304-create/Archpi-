@@ -1,0 +1,69 @@
+{
+  "source": "Theoretical line positions for Cu K-alpha (0.15418 nm), derived from Crystallography Open Database entries",
+  "wavelength_nm": 0.15418,
+  "phases": [
+    {
+      "id": "quartz",
+      "name": "Quartz (alpha-SiO2)",
+      "formula": "SiO2",
+      "cod_id": "1011097",
+      "rir": 3.41,
+      "ca_mass_fraction": 0.0,
+      "is_silica": true,
+      "lines": [
+        {"two_theta": 20.86, "rel_intensity": 22, "hkl": "100"},
+        {"two_theta": 26.64, "rel_intensity": 100, "hkl": "101"},
+        {"two_theta": 36.54, "rel_intensity": 8, "hkl": "110"},
+        {"two_theta": 39.47, "rel_intensity": 8, "hkl": "102"},
+        {"two_theta": 42.45, "rel_intensity": 6, "hkl": "200"},
+        {"two_theta": 45.79, "rel_intensity": 4, "hkl": "201"},
+        {"two_theta": 50.14, "rel_intensity": 14, "hkl": "112"},
+        {"two_theta": 54.87, "rel_intensity": 4, "hkl": "202"},
+        {"two_theta": 59.96, "rel_intensity": 9, "hkl": "211"},
+        {"two_theta": 67.74, "rel_intensity": 6, "hkl": "212"}
+      ]
+    },
+    {
+      "id": "calcite",
+      "name": "Calcite (CaCO3)",
+      "formula": "CaCO3",
+      "cod_id": "1010928",
+      "rir": 2.0,
+      "ca_mass_fraction": 0.4004,
+      "is_silica": false,
+      "lines": [
+        {"two_theta": 23.02, "rel_intensity": 12, "hkl": "012"},
+        {"two_theta": 29.41, "rel_intensity": 100, "hkl": "104"},
+        {"two_theta": 31.42, "rel_intensity": 3, "hkl": "006"},
+        {"two_theta": 35.97, "rel_intensity": 14, "hkl": "110"},
+        {"two_theta": 39.40, "rel_intensity": 18, "hkl": "113"},
+        {"two_theta": 43.15, "rel_intensity": 18, "hkl": "202"},
+        {"two_theta": 47.49, "rel_intensity": 17, "hkl": "018"},
+        {"two_theta": 48.51, "rel_intensity": 17, "hkl": "116"},
+        {"two_theta": 57.40, "rel_intensity": 8, "hkl": "122"},
+        {"two_theta": 60.68, "rel_intensity": 5, "hkl": "214"}
+      ]
+    },
+    {
+      "id": "gypsum",
+      "name": "Gypsum (CaSO4 . 2H2O)",
+      "formula": "CaSO4.2H2O",
+      "cod_id": "9013164",
+      "rir": 1.8,
+      "ca_mass_fraction": 0.2328,
+      "is_silica": false,
+      "lines": [
+        {"two_theta": 11.63, "rel_intensity": 100, "hkl": "020"},
+        {"two_theta": 20.72, "rel_intensity": 55, "hkl": "021"},
+        {"two_theta": 23.40, "rel_intensity": 25, "hkl": "040"},
+        {"two_theta": 29.11, "rel_intensity": 45, "hkl": "041"},
+        {"two_theta": 31.10, "rel_intensity": 25, "hkl": "121"},
+        {"two_theta": 33.34, "rel_intensity": 15, "hkl": "051"},
+        {"two_theta": 35.97, "rel_intensity": 8, "hkl": "200"},
+        {"two_theta": 40.62, "rel_intensity": 5, "hkl": "132"},
+        {"two_theta": 43.66, "rel_intensity": 5, "hkl": "141"},
+        {"two_theta": 47.80, "rel_intensity": 8, "hkl": "062"}
+      ]
+    }
+  ]
+}

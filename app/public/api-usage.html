@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | API Usage Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#e2dfde",
+                    "error": "#ba1a1a",
+                    "secondary": "#5f5e5e",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "surface-dim": "#e0d9d4",
+                    "primary-fixed-dim": "#e1c19d",
+                    "surface-container": "#f4ece8",
+                    "tertiary": "#5e5e5e",
+                    "tertiary-fixed": "#e4e2e2",
+                    "secondary-fixed": "#e5e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "inverse-primary": "#e1c19d",
+                    "inverse-on-surface": "#f7efeb",
+                    "on-tertiary-container": "#3b3c3c",
+                    "on-surface-variant": "#4e453c",
+                    "primary": "#725a3d",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-tint": "#725a3d",
+                    "surface": "#fff8f4",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e8e1dd",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#faf2ee",
+                    "on-background": "#1e1b19",
+                    "on-primary-fixed": "#291803",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "inverse-surface": "#33302d",
+                    "on-secondary-container": "#636262",
+                    "on-primary-container": "#4d381d",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffddb8",
+                    "primary-container": "#bfa17f",
+                    "surface-container-highest": "#e8e1dd",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#80756b",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#a7a6a6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#eee7e2",
+                    "surface-bright": "#fff8f4",
+                    "on-surface": "#1e1b19",
+                    "background": "#fff8f4",
+                    "outline-variant": "#d1c4b8",
+                    "on-primary-fixed-variant": "#594327"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "section-gap": "80px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .linen-texture {
+            background-color: #FDFDFD;
+            background-image: url("https://www.transparenttextures.com/patterns/linen-paper.png");
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(253, 253, 253, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .vertical-line {
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #bfa17f 10%, #bfa17f 90%, transparent);
+        }
+        /* Loading animation */
+        .loading-pulse {
+            animation: pulse-gold 2s ease-in-out infinite;
+        }
+        @keyframes pulse-gold {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .loading-bar {
+            background: linear-gradient(90deg, transparent, #bfa17f, transparent);
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spin-icon {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="linen-texture text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<a href="index.html" class="flex items-center gap-3 cursor-pointer transition-transform duration-200 active:scale-95">
+<span class="material-symbols-outlined text-primary text-3xl">architecture</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tighter">ArchPi</span>
+</a>
+<div class="hidden md:flex gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="index.html">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="globe.html">Globe</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="analysis.html">Analysis</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="#">Materials</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="#">History</a>
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="api-usage.html">API Usage</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+<span class="font-label-caps text-[10px] text-primary">JD</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Sidebar -->
+<aside class="hidden lg:flex flex-col py-8 px-4 w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low border-r border-outline-variant z-40">
+<div class="flex flex-col gap-2 mb-10">
+<span class="font-headline-sm text-headline-sm text-on-surface">ArchPi</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Structural Intelligence</span>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+</aside>
+
+<main class="lg:ml-64 pt-24 min-h-screen">
+
+<!-- Hero Header -->
+<header class="px-margin-mobile md:px-margin-desktop mb-12 max-w-[1200px]">
+<span class="font-label-caps text-label-caps text-primary mb-4 block">System Telemetry</span>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 leading-tight">API Intelligence<br/>Dashboard</h1>
+<div class="h-px w-32 bg-primary mb-8"></div>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+    Real-time monitoring of all outbound API calls, performance metrics, and data throughput across the ArchPi intelligence engine.
+</p>
+</header>
+
+<!-- Loading State -->
+<div id="loading-state" class="px-margin-mobile md:px-margin-desktop max-w-[1200px]">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary spin-icon">progress_activity</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant loading-pulse">Fetching usage telemetry...</span>
+</div>
+<div class="w-full max-w-md h-[2px] bg-outline-variant/20 overflow-hidden rounded">
+    <div class="loading-bar h-full w-1/3"></div>
+</div>
+</div>
+
+<!-- Error State -->
+<div id="error-state" class="px-margin-mobile md:px-margin-desktop max-w-[1200px] hidden">
+<div class="glass-panel border border-error/30 rounded-lg p-8 flex items-start gap-4">
+<span class="material-symbols-outlined text-error text-3xl">error</span>
+<div>
+    <h3 class="font-headline-sm text-headline-sm text-error mb-2">Connection Error</h3>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-4" id="error-message">Unable to fetch API usage data. Please check your connection and try again.</p>
+    <button onclick="fetchUsageData()" class="bg-primary hover:bg-primary-container text-on-primary font-label-caps text-label-caps py-3 px-6 rounded-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
+        <span class="material-symbols-outlined text-sm">refresh</span>
+        <span>RETRY</span>
+    </button>
+</div>
+</div>
+</div>
+
+<!-- Dashboard Content (hidden until data loads) -->
+<div id="dashboard-content" class="hidden">
+
+<!-- Auto-Refresh Controls -->
+<div class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-8 flex items-center justify-between">
+<div class="flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest" id="last-updated">Last updated: --:--:--</span>
+</div>
+<button onclick="fetchUsageData()" id="refresh-btn" class="glass-panel border border-outline-variant hover:border-primary rounded-lg py-2.5 px-5 font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
+    <span class="material-symbols-outlined text-sm" id="refresh-icon">refresh</span>
+    <span>REFRESH DATA</span>
+</button>
+</div>
+
+<!-- Primary Summary Cards -->
+<section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Total API Calls -->
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low hover:border-primary transition-all duration-300 group fade-in">
+    <div class="flex items-center justify-between mb-4">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total API Calls</span>
+        <span class="material-symbols-outlined text-primary opacity-60 group-hover:opacity-100 transition-opacity">api</span>
+    </div>
+    <p class="font-headline-md text-headline-md text-primary" id="stat-total-calls">—</p>
+</div>
+<!-- Success Rate -->
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low hover:border-primary transition-all duration-300 group fade-in" style="animation-delay: 0.1s">
+    <div class="flex items-center justify-between mb-4">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Success Rate</span>
+        <span class="material-symbols-outlined text-primary opacity-60 group-hover:opacity-100 transition-opacity">check_circle</span>
+    </div>
+    <p class="font-headline-md text-headline-md text-primary" id="stat-success-rate">—</p>
+</div>
+<!-- Avg Response Time -->
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low hover:border-primary transition-all duration-300 group fade-in" style="animation-delay: 0.2s">
+    <div class="flex items-center justify-between mb-4">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Avg Response Time</span>
+        <span class="material-symbols-outlined text-primary opacity-60 group-hover:opacity-100 transition-opacity">speed</span>
+    </div>
+    <p class="font-headline-md text-headline-md text-primary" id="stat-avg-response">—</p>
+</div>
+<!-- Data Processed -->
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low hover:border-primary transition-all duration-300 group fade-in" style="animation-delay: 0.3s">
+    <div class="flex items-center justify-between mb-4">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Data Processed</span>
+        <span class="material-symbols-outlined text-primary opacity-60 group-hover:opacity-100 transition-opacity">database</span>
+    </div>
+    <p class="font-headline-md text-headline-md text-primary" id="stat-data-processed">—</p>
+</div>
+</div>
+</section>
+
+<!-- Secondary Stats Row -->
+<section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-12">
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-gutter">
+<!-- Remaining Calls -->
+<div class="glass-panel border border-outline-variant/50 rounded-lg p-4 hover:border-primary/50 transition-all duration-300 fade-in" style="animation-delay: 0.3s">
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-2">Remaining Calls</span>
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-lg">data_usage</span>
+        <span class="font-data-mono text-data-mono text-on-surface" id="stat-remaining-calls">—</span>
+    </div>
+</div>
+<!-- Total Analyses -->
+<div class="glass-panel border border-outline-variant/50 rounded-lg p-4 hover:border-primary/50 transition-all duration-300 fade-in" style="animation-delay: 0.35s">
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-2">Total Analyses</span>
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-lg">analytics</span>
+        <span class="font-data-mono text-data-mono text-on-surface" id="stat-total-analyses">—</span>
+    </div>
+</div>
+<!-- Failed Calls -->
+<div class="glass-panel border border-outline-variant/50 rounded-lg p-4 hover:border-primary/50 transition-all duration-300 fade-in" style="animation-delay: 0.4s">
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-2">Failed Calls</span>
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-error text-lg">error_outline</span>
+        <span class="font-data-mono text-data-mono text-on-surface" id="stat-failed-calls">—</span>
+    </div>
+</div>
+<!-- Est. Tokens -->
+<div class="glass-panel border border-outline-variant/50 rounded-lg p-4 hover:border-primary/50 transition-all duration-300 fade-in" style="animation-delay: 0.45s">
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-2">Est. Tokens</span>
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-lg">token</span>
+        <span class="font-data-mono text-data-mono text-on-surface" id="stat-est-tokens">—</span>
+    </div>
+</div>
+<!-- Uptime -->
+<div class="glass-panel border border-outline-variant/50 rounded-lg p-4 hover:border-primary/50 transition-all duration-300 fade-in" style="animation-delay: 0.5s">
+    <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-2">Uptime</span>
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-lg">schedule</span>
+        <span class="font-data-mono text-data-mono text-on-surface" id="stat-uptime">—</span>
+    </div>
+</div>
+</div>
+</section>
+
+<!-- Provider Quotas & Limits -->
+<section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-12 pt-8 border-t border-outline-variant/30">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-sm text-headline-sm">Model &amp; API Quotas</h2>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Free-tier limits · live where available</span>
+</div>
+<div id="quota-grid" class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Provider cards injected here -->
+</div>
+</section>
+
+<!-- Database Storage -->
+<section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-12 pt-8 border-t border-outline-variant/30">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-sm text-headline-sm">Database Storage <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest ml-2">Supabase · PostGIS</span></h2>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest" id="db-status-chip">checking…</span>
+</div>
+<div id="db-panel" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low">
+    <div class="flex items-center justify-between mb-3">
+        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Storage Used</span>
+        <span class="material-symbols-outlined text-primary opacity-60">database</span>
+    </div>
+    <p class="font-headline-md text-headline-md text-primary mb-1"><span id="db-used">—</span><span class="text-sm text-on-surface-variant"> / <span id="db-limit">500</span> MB</span></p>
+    <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden mb-2">
+        <div id="db-bar" class="h-full bg-primary rounded-full transition-all duration-700" style="width:0%"></div>
+    </div>
+    <p class="font-data-mono text-[11px] text-on-surface-variant"><span id="db-remaining">—</span> MB remaining on the free plan · PostGIS <span id="db-postgis">—</span></p>
+</div>
+<div class="border border-outline-variant rounded-lg p-6 bg-surface-container-low">
+    <span class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-4">Tables in Database</span>
+    <table class="w-full text-left font-data-mono text-data-mono">
+        <thead><tr class="border-b border-outline-variant/50">
+            <th class="py-2 pr-4 font-label-caps text-[10px] text-on-surface-variant uppercase">Table</th>
+            <th class="py-2 pr-4 font-label-caps text-[10px] text-on-surface-variant uppercase text-right">Rows</th>
+            <th class="py-2 font-label-caps text-[10px] text-on-surface-variant uppercase text-right">Size</th>
+        </tr></thead>
+        <tbody id="db-tables"><tr><td class="py-3 text-on-surface-variant" colspan="3">Loading…</td></tr></tbody>
+    </table>
+</div>
+</div>
+</section>
+
+<!-- Recent API Calls Table -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap max-w-[1200px] border-t border-outline-variant/30">
+<div class="flex items-center justify-between mb-12">
+<h2 class="font-headline-sm text-headline-sm">Recent API Calls</h2>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest" id="call-count">0 records</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline">
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Timestamp</th>
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Service</th>
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Endpoint</th>
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant">Query</th>
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Response Size</th>
+    <th class="py-4 pr-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Duration</th>
+    <th class="py-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Status</th>
+</tr>
+</thead>
+<tbody id="calls-tbody" class="font-data-mono text-data-mono">
+<!-- Dynamic rows injected here -->
+</tbody>
+</table>
+</div>
+<!-- Empty State for table -->
+<div id="table-empty" class="hidden py-16 text-center">
+<span class="material-symbols-outlined text-outline text-5xl mb-4 block">inbox</span>
+<p class="font-body-md text-body-md text-on-surface-variant">No API calls recorded yet.</p>
+</div>
+</section>
+
+</div><!-- end dashboard-content -->
+
+<!-- Footer -->
+<footer class="px-margin-mobile md:px-margin-desktop py-20 bg-inverse-surface text-inverse-on-surface">
+<div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+<div>
+<h2 class="font-headline-md text-headline-md mb-4">API Analytics</h2>
+<p class="font-body-md text-body-md opacity-70">Monitor and optimize your ArchPi intelligence pipeline performance.</p>
+</div>
+<button onclick="fetchUsageData()" class="bg-primary-container px-10 py-4 font-label-caps text-label-caps text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300 cursor-pointer">
+    REFRESH DASHBOARD
+</button>
+</div>
+<div class="max-w-[1200px] mx-auto mt-20 pt-10 border-t border-white/10 flex justify-between items-center">
+<span class="font-label-caps text-[10px] opacity-40">&copy; 2024 ARCHPI STRUCTURAL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
+<div class="flex gap-6">
+<span class="material-symbols-outlined opacity-40 cursor-pointer">share</span>
+<span class="material-symbols-outlined opacity-40 cursor-pointer">download</span>
+</div>
+</div>
+</footer>
+
+</main>
+
+<!-- Scroll to top FAB -->
+<button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible active:scale-95 cursor-pointer" id="scroll-to-top">
+<span class="material-symbols-outlined">arrow_upward</span>
+</button>
+
+<script>
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+    fetchUsageData();
+
+    // =========================================================
+    // FORMAT UPTIME (seconds string -> Xh Ym)
+    // =========================================================
+    function formatUptime(uptimeStr) {
+        var seconds = parseInt(String(uptimeStr).replace('s', ''), 10);
+        if (isNaN(seconds)) return uptimeStr;
+        var hours = Math.floor(seconds / 3600);
+        var minutes = Math.floor((seconds % 3600) / 60);
+        if (hours > 0 && minutes > 0) {
+            return hours + 'h ' + minutes + 'm';
+        } else if (hours > 0) {
+            return hours + 'h 0m';
+        } else {
+            return minutes + 'm';
+        }
+    }
+
+    // =========================================================
+    // FORMAT TIMESTAMP (ISO string -> HH:MM:SS)
+    // =========================================================
+    function formatTimestamp(isoStr) {
+        try {
+            var d = new Date(isoStr);
+            if (isNaN(d.getTime())) return isoStr;
+            var hh = String(d.getHours());
+            if (hh.length < 2) hh = '0' + hh;
+            var mm = String(d.getMinutes());
+            if (mm.length < 2) mm = '0' + mm;
+            var ss = String(d.getSeconds());
+            if (ss.length < 2) ss = '0' + ss;
+            return hh + ':' + mm + ':' + ss;
+        } catch (e) {
+            return isoStr;
+        }
+    }
+
+    // =========================================================
+    // FORMAT BYTES (e.g., 5000 -> '4.9 KB')
+    // =========================================================
+    function formatBytes(bytes) {
+        if (typeof bytes === 'string') return bytes;
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+
+    // =========================================================
+    // FORMAT NUMBERS WITH COMMAS
+    // =========================================================
+    function formatNumber(num) {
+        if (num === null || num === undefined) return '—';
+        return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    // =========================================================
+    // UTILITY: HTML ESCAPING
+    // =========================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // =========================================================
+    // FETCH DATA FROM BACKEND
+    // =========================================================
+    function fetchUsageData() {
+        var loadingState = document.getElementById('loading-state');
+        var errorState = document.getElementById('error-state');
+        var dashboardContent = document.getElementById('dashboard-content');
+        var refreshIcon = document.getElementById('refresh-icon');
+
+        // Show loading, hide others
+        loadingState.classList.remove('hidden');
+        errorState.classList.add('hidden');
+        dashboardContent.classList.add('hidden');
+
+        // Animate refresh icon
+        if (refreshIcon) {
+            refreshIcon.classList.add('spin-icon');
+        }
+
+        // Quotas and DB stats load independently — a dead soil backend must
+        // not blank the whole dashboard
+        fetch('/api/usage-limits')
+            .then(function(r) { return r.json(); })
+            .then(renderQuotas)
+            .catch(function(e) { console.error('Quota fetch error:', e); });
+        fetch('http://localhost:8000/api/v1/database/stats')
+            .then(function(r) { return r.json(); })
+            .then(renderDbStats)
+            .catch(function() { renderDbStats({ configured: false, reason: 'soil backend (:8000) offline' }); });
+
+        fetch('/api/usage')
+        .then(function(response) {
+            if (!response.ok) throw new Error('Failed to fetch usage data (HTTP ' + response.status + ')');
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('Usage data received:', data);
+            renderDashboard(data);
+        })
+        .catch(function(error) {
+            console.error('Fetch error:', error);
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            dashboardContent.classList.add('hidden');
+            document.getElementById('error-message').innerText = 'Unable to fetch API usage data: ' + error.message;
+            if (refreshIcon) {
+                refreshIcon.classList.remove('spin-icon');
+            }
+        });
+    }
+
+    // =========================================================
+    // RENDER DASHBOARD
+    // =========================================================
+    function renderDashboard(data) {
+        var loadingState = document.getElementById('loading-state');
+        var errorState = document.getElementById('error-state');
+        var dashboardContent = document.getElementById('dashboard-content');
+        var refreshIcon = document.getElementById('refresh-icon');
+
+        loadingState.classList.add('hidden');
+        errorState.classList.add('hidden');
+        dashboardContent.classList.remove('hidden');
+
+        if (refreshIcon) {
+            refreshIcon.classList.remove('spin-icon');
+        }
+
+        var summary = data.summary || {};
+        var recentCalls = data.recentCalls || [];
+
+        // --- Primary Cards ---
+        document.getElementById('stat-total-calls').innerText = formatNumber(summary.totalApiCalls);
+
+        // Success rate calculation
+        var successRate = '—';
+        if (summary.totalApiCalls && summary.totalApiCalls > 0) {
+            var rate = ((summary.successfulCalls || 0) / summary.totalApiCalls * 100).toFixed(1);
+            successRate = rate + '%';
+        }
+        document.getElementById('stat-success-rate').innerText = successRate;
+
+        document.getElementById('stat-avg-response').innerText = summary.avgResponseTime || '—';
+        document.getElementById('stat-data-processed').innerText = summary.totalDataProcessed || '—';
+
+        // --- Secondary Cards ---
+        document.getElementById('stat-remaining-calls').innerText = formatNumber(summary.remainingCalls !== undefined ? summary.remainingCalls : '—');
+        document.getElementById('stat-total-analyses').innerText = formatNumber(summary.totalAnalyses);
+        document.getElementById('stat-failed-calls').innerText = formatNumber(summary.failedCalls);
+        document.getElementById('stat-est-tokens').innerText = formatNumber(summary.estimatedTokens);
+        document.getElementById('stat-uptime').innerText = formatUptime(summary.uptime || '0s');
+
+        // --- Last Updated ---
+        var now = new Date();
+        var hh = String(now.getHours());
+        if (hh.length < 2) hh = '0' + hh;
+        var mm = String(now.getMinutes());
+        if (mm.length < 2) mm = '0' + mm;
+        var ss = String(now.getSeconds());
+        if (ss.length < 2) ss = '0' + ss;
+        document.getElementById('last-updated').innerText = 'Last updated: ' + hh + ':' + mm + ':' + ss;
+
+        // --- Recent API Calls Table ---
+        renderCallsTable(recentCalls);
+    }
+
+    // =========================================================
+    // RENDER PROVIDER QUOTA CARDS
+    // =========================================================
+    function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.innerText = String(s == null ? '' : s);
+        return div.innerHTML;
+    }
+
+    function renderQuotas(data) {
+        var grid = document.getElementById('quota-grid');
+        if (!grid || !data.providers) return;
+        grid.innerHTML = data.providers.map(function(p) {
+            var used = p.period === 'day' ? p.usedToday : p.usedThisMonth;
+            var periodLabel = p.period === 'day' ? 'today' : (p.period === 'month' ? 'this month' : '');
+            var statusBadge = p.status === 'exhausted'
+                ? '<span class="font-label-caps text-[10px] uppercase tracking-widest text-error border border-error/40 rounded px-2 py-0.5">Quota exhausted</span>'
+                : '<span class="font-label-caps text-[10px] uppercase tracking-widest text-primary border border-primary/40 rounded px-2 py-0.5">OK</span>';
+            var bar = '';
+            if (p.limit) {
+                var pct = p.percentUsed || 0;
+                var barColor = pct >= 90 ? 'bg-error' : (pct >= 70 ? 'bg-tertiary' : 'bg-primary');
+                bar = '<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden my-3">'
+                    + '<div class="h-full ' + barColor + ' rounded-full transition-all duration-700" style="width:' + pct + '%"></div></div>'
+                    + '<p class="font-data-mono text-[11px] text-on-surface-variant">' + formatNumber(used) + ' used ' + periodLabel
+                    + ' · <span class="text-on-surface">' + formatNumber(p.remaining) + ' remaining</span> of ' + formatNumber(p.limit) + ' ' + p.unit + '</p>';
+            } else if (p.liveCredits) {
+                var rem = p.liveCredits.remaining;
+                bar = '<p class="font-data-mono text-[11px] text-on-surface-variant my-3">Live balance: '
+                    + '<span class="' + (rem !== null && rem <= 0 ? 'text-error' : 'text-on-surface') + '">$' + (rem === null ? '?' : rem.toFixed(2)) + '</span>'
+                    + ' ($' + (p.liveCredits.totalUsage || 0).toFixed(2) + ' spent of $' + (p.liveCredits.totalCredits || 0).toFixed(2) + ' purchased)</p>';
+            } else {
+                bar = '<p class="font-data-mono text-[11px] text-on-surface-variant my-3">' + formatNumber(p.usedToday) + ' calls today · '
+                    + formatNumber(p.usedThisMonth) + ' this month · no hard limit</p>';
+            }
+            var err = p.lastError
+                ? '<p class="font-data-mono text-[10px] text-error/80 mt-2 truncate" title="' + escapeHtml(p.lastError.message) + '">Last error: ' + escapeHtml(p.lastError.message.substring(0, 90)) + '</p>'
+                : '';
+            return '<div class="border border-outline-variant rounded-lg p-5 bg-surface-container-low hover:border-primary transition-all duration-300">'
+                + '<div class="flex items-center justify-between mb-1">'
+                + '<span class="font-label-caps text-label-caps text-on-surface uppercase">' + escapeHtml(p.label) + '</span>' + statusBadge + '</div>'
+                + '<p class="font-body-md text-[12px] text-on-surface-variant">' + escapeHtml(p.plan) + '</p>'
+                + bar + err + '</div>';
+        }).join('');
+    }
+
+    // =========================================================
+    // RENDER DATABASE STORAGE PANEL
+    // =========================================================
+    function renderDbStats(db) {
+        var chip = document.getElementById('db-status-chip');
+        var tbody = document.getElementById('db-tables');
+        if (!chip || !tbody) return;
+        if (!db.configured || db.error) {
+            chip.innerText = db.error ? 'error' : 'not configured';
+            chip.classList.add('text-error');
+            tbody.innerHTML = '<tr><td class="py-3 text-on-surface-variant" colspan="3">'
+                + escapeHtml(db.error || db.reason || 'DATABASE_URL not set') + '</td></tr>';
+            return;
+        }
+        chip.innerText = 'connected · ' + db.database;
+        document.getElementById('db-used').innerText = db.used_mb;
+        document.getElementById('db-limit').innerText = db.limit_mb;
+        document.getElementById('db-remaining').innerText = db.remaining_mb;
+        document.getElementById('db-postgis').innerText = db.postgis_version || 'n/a';
+        var bar = document.getElementById('db-bar');
+        bar.style.width = db.percent_used + '%';
+        if (db.percent_used >= 90) bar.classList.replace('bg-primary', 'bg-error');
+        tbody.innerHTML = (db.tables || []).map(function(t) {
+            return '<tr class="border-b border-outline-variant/30">'
+                + '<td class="py-2 pr-4 text-on-surface">' + escapeHtml(t.name) + '</td>'
+                + '<td class="py-2 pr-4 text-right text-on-surface-variant">' + formatNumber(t.rows) + '</td>'
+                + '<td class="py-2 text-right text-on-surface-variant">' + (t.size_kb >= 1024 ? (t.size_kb / 1024).toFixed(1) + ' MB' : t.size_kb + ' KB') + '</td></tr>';
+        }).join('') || '<tr><td class="py-3 text-on-surface-variant" colspan="3">No tables found.</td></tr>';
+    }
+
+    // =========================================================
+    // RENDER RECENT CALLS TABLE
+    // =========================================================
+    function renderCallsTable(calls) {
+        var tbody = document.getElementById('calls-tbody');
+        var tableEmpty = document.getElementById('table-empty');
+        var callCount = document.getElementById('call-count');
+
+        tbody.innerHTML = '';
+
+        if (!calls || calls.length === 0) {
+            tableEmpty.classList.remove('hidden');
+            callCount.innerText = '0 records';
+            return;
+        }
+
+        tableEmpty.classList.add('hidden');
+        callCount.innerText = calls.length + (calls.length === 1 ? ' record' : ' records');
+
+        for (var i = 0; i < calls.length; i++) {
+            var call = calls[i];
+            var statusDotColor = call.success ? 'bg-green-500' : 'bg-red-500';
+            var statusText = call.success ? 'OK' : 'FAIL';
+            var statusTextColor = call.success ? 'text-green-700' : 'text-error';
+
+            var queryText = call.query || '—';
+            // Truncate long queries
+            if (queryText.length > 40) {
+                queryText = queryText.substring(0, 40) + '...';
+            }
+
+            var row = '';
+            row += '<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors" style="transition: transform 0.2s ease;">';
+            row += '<td class="py-4 pr-4 whitespace-nowrap">' + escapeHtml(formatTimestamp(call.timestamp)) + '</td>';
+            row += '<td class="py-4 pr-4 whitespace-nowrap text-primary font-semibold">' + escapeHtml(call.service) + '</td>';
+            row += '<td class="py-4 pr-4 whitespace-nowrap">' + escapeHtml(call.endpoint) + '</td>';
+            row += '<td class="py-4 pr-4 text-on-surface-variant max-w-[200px] truncate" title="' + escapeHtml(call.query || '') + '">' + escapeHtml(queryText) + '</td>';
+            row += '<td class="py-4 pr-4 whitespace-nowrap">' + formatBytes(call.responseSize) + '</td>';
+            row += '<td class="py-4 pr-4 whitespace-nowrap">' + (call.durationMs !== undefined ? call.durationMs + 'ms' : '—') + '</td>';
+            row += '<td class="py-4 whitespace-nowrap">';
+            row += '  <span class="flex items-center gap-2">';
+            row += '    <span class="w-2 h-2 rounded-full ' + statusDotColor + '"></span>';
+            row += '    <span class="font-label-caps text-[10px] ' + statusTextColor + '">' + statusText + '</span>';
+            row += '  </span>';
+            row += '</td>';
+            row += '</tr>';
+
+            tbody.innerHTML += row;
+        }
+
+        // Table row hover effect (translateX)
+        var rows = document.querySelectorAll('#calls-tbody tr');
+        for (var r = 0; r < rows.length; r++) {
+            (function(row) {
+                row.addEventListener('mouseenter', function() { row.style.transform = 'translateX(8px)'; });
+                row.addEventListener('mouseleave', function() { row.style.transform = 'translateX(0)'; });
+            })(rows[r]);
+        }
+    }
+
+    // =========================================================
+    // SCROLL-TO-TOP BUTTON
+    // =========================================================
+    var scrollBtn = document.getElementById('scroll-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 500) {
+            scrollBtn.classList.remove('opacity-0', 'invisible');
+            scrollBtn.classList.add('opacity-100', 'visible');
+        } else {
+            scrollBtn.classList.add('opacity-0', 'invisible');
+            scrollBtn.classList.remove('opacity-100', 'visible');
+        }
+    });
+    scrollBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+</body></html>

@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Architectural History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "error": "#ba1a1a",
+                  "surface-container-high": "#eee7e2",
+                  "surface": "#fff8f4",
+                  "secondary-container": "#e2dfde",
+                  "inverse-primary": "#e1c19d",
+                  "tertiary-fixed-dim": "#c7c6c6",
+                  "outline": "#80756b",
+                  "on-secondary-fixed": "#1c1b1b",
+                  "primary-fixed": "#ffddb8",
+                  "inverse-on-surface": "#f7efeb",
+                  "surface-container-low": "#faf2ee",
+                  "on-surface": "#1e1b19",
+                  "tertiary-container": "#a7a6a6",
+                  "on-background": "#1e1b19",
+                  "secondary-fixed": "#e5e2e1",
+                  "on-secondary-container": "#636262",
+                  "surface-variant": "#e8e1dd",
+                  "surface-tint": "#725a3d",
+                  "primary": "#725a3d",
+                  "on-primary-fixed-variant": "#594327",
+                  "surface-bright": "#fff8f4",
+                  "outline-variant": "#d1c4b8",
+                  "surface-container": "#f4ece8",
+                  "secondary": "#5f5e5e",
+                  "on-tertiary-fixed-variant": "#464747",
+                  "tertiary": "#5e5e5e",
+                  "primary-fixed-dim": "#e1c19d",
+                  "primary-container": "#bfa17f",
+                  "secondary-fixed-dim": "#c8c6c5",
+                  "on-primary": "#ffffff",
+                  "on-primary-fixed": "#291803",
+                  "on-secondary-fixed-variant": "#474746",
+                  "surface-container-highest": "#e8e1dd",
+                  "on-surface-variant": "#4e453c",
+                  "on-tertiary-container": "#3b3c3c",
+                  "on-primary-container": "#4d381d",
+                  "tertiary-fixed": "#e4e2e2",
+                  "surface-dim": "#e0d9d4",
+                  "surface-container-lowest": "#ffffff",
+                  "inverse-surface": "#33302d",
+                  "background": "#fff8f4",
+                  "on-error-container": "#93000a",
+                  "on-error": "#ffffff",
+                  "on-tertiary": "#ffffff",
+                  "on-secondary": "#ffffff",
+                  "on-tertiary-fixed": "#1b1c1c",
+                  "error-container": "#ffdad6"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-desktop": "48px",
+                  "gutter": "24px",
+                  "unit": "4px",
+                  "section-gap": "80px",
+                  "margin-mobile": "16px"
+          },
+          "fontFamily": {
+                  "data-mono": ["Inter"],
+                  "headline-md": ["Playfair Display"],
+                  "headline-lg": ["Playfair Display"],
+                  "headline-sm": ["Playfair Display"],
+                  "headline-lg-mobile": ["Playfair Display"],
+                  "body-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "label-caps": ["Inter"]
+          },
+          "fontSize": {
+                  "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                  "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                  "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+</script>
+<style>
+    /* ── Linen Paper Texture ── */
+    .linen-texture {
+        background-color: #fff8f4;
+        background-image: url("https://www.transparenttextures.com/patterns/linen-paper.png");
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    /* ── Glass Panel ── */
+    .glass-panel {
+        background: rgba(255, 248, 244, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(209, 196, 184, 0.3);
+    }
+    /* ── Architectural Grid Overlay ── */
+    .architectural-grid {
+        background-image:
+            linear-gradient(to right, rgba(128, 117, 107, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(128, 117, 107, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+    /* ── Blueprint Grid Overlay ── */
+    .blueprint-grid::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(to right, rgba(114, 90, 61, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(114, 90, 61, 0.06) 1px, transparent 1px);
+        background-size: 32px 32px;
+        pointer-events: none;
+        z-index: 2;
+    }
+    /* ── Corner Markers ── */
+    .corner-markers { position: relative; }
+    .corner-markers::before,
+    .corner-markers::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-color: #725a3d;
+        pointer-events: none;
+        z-index: 5;
+    }
+    .corner-markers::before {
+        top: 8px; left: 8px;
+        border-top: 2px solid; border-left: 2px solid;
+    }
+    .corner-markers::after {
+        bottom: 8px; right: 8px;
+        border-bottom: 2px solid; border-right: 2px solid;
+    }
+    .corner-markers-inner::before,
+    .corner-markers-inner::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-color: #725a3d;
+        pointer-events: none;
+        z-index: 5;
+    }
+    .corner-markers-inner::before {
+        top: 8px; right: 8px;
+        border-top: 2px solid; border-right: 2px solid;
+    }
+    .corner-markers-inner::after {
+        bottom: 8px; left: 8px;
+        border-bottom: 2px solid; border-left: 2px solid;
+    }
+    /* ── Timeline Vertical Line ── */
+    .timeline-line {
+        width: 2px;
+        background: linear-gradient(to bottom, transparent, #bfa17f 5%, #bfa17f 95%, transparent);
+    }
+    .timeline-dot {
+        width: 14px;
+        height: 14px;
+        border: 2px solid #725a3d;
+        border-radius: 50%;
+        background: #fff8f4;
+        position: absolute;
+        left: -8px;
+        top: 4px;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+    .timeline-dot.active {
+        background: #725a3d;
+        box-shadow: 0 0 0 5px rgba(114, 90, 61, 0.15);
+    }
+    /* ── Loading / Shimmer ── */
+    .shimmer {
+        background: linear-gradient(90deg, #eee7e2 25%, #faf2ee 50%, #eee7e2 75%);
+        background-size: 400% 100%;
+        animation: shimmer 1.8s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .loading-pulse {
+        animation: pulse-gold 2s ease-in-out infinite;
+    }
+    @keyframes pulse-gold {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+    .loading-bar {
+        background: linear-gradient(90deg, transparent, #bfa17f, transparent);
+        animation: loading-slide 1.5s ease-in-out infinite;
+    }
+    @keyframes loading-slide {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    /* ── Fade-in animation ── */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .fade-in-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    /* ── Grayscale hover images ── */
+    .img-grayscale {
+        filter: grayscale(100%);
+        transition: filter 0.7s ease-in-out;
+    }
+    .img-grayscale:hover {
+        filter: grayscale(0%);
+    }
+    /* ── Section divider ── */
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent, #d1c4b8, transparent);
+    }
+    /* ── Scrollbar styling ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #faf2ee; }
+    ::-webkit-scrollbar-thumb { background: #d1c4b8; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #bfa17f; }
+</style>
+</head>
+<body class="linen-texture text-on-surface antialiased architectural-grid">
+
+<!-- ================================================================ -->
+<!-- TOP NAVIGATION BAR                                               -->
+<!-- ================================================================ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2 cursor-pointer transition-transform duration-200 active:scale-95">
+            <span class="material-symbols-outlined text-primary text-2xl">architecture</span>
+            <span class="font-headline-md text-headline-sm text-on-surface tracking-tighter">ArchPi</span>
+        </a>
+        <div class="hidden md:flex gap-6 items-center h-full">
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="index.html">Home</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="globe.html">Globe</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" id="nav-analysis" href="#">Analysis</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" id="nav-materials" href="#">Materials</a>
+            <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" id="nav-history" href="#">History</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+            <span class="font-label-caps text-[10px] text-primary">JD</span>
+        </div>
+    </div>
+</div>
+</nav>
+
+<!-- ================================================================ -->
+<!-- SIDEBAR                                                          -->
+<!-- ================================================================ -->
+<aside class="hidden lg:flex flex-col py-8 px-4 w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low border-r border-outline-variant/30 z-40">
+    <div class="flex flex-col gap-2 mb-10">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">architecture</span>
+            <span class="font-headline-sm text-headline-sm text-on-surface">ArchPi</span>
+        </div>
+        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest ml-8">Structural Intelligence</span>
+    </div>
+    <nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+</aside>
+
+<!-- ================================================================ -->
+<!-- MAIN CONTENT                                                     -->
+<!-- ================================================================ -->
+<main class="lg:ml-64 pt-24 min-h-screen">
+
+    <!-- ============================================================ -->
+    <!-- HERO SECTION                                                 -->
+    <!-- ============================================================ -->
+    <header class="px-margin-mobile md:px-margin-desktop mb-16 max-w-[1200px]">
+        <span id="hero-label" class="font-label-caps text-label-caps text-primary mb-4 block loading-pulse">Conducting Architectural Research...</span>
+        <h1 id="hero-title" class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 leading-tight max-w-3xl">Architectural History</h1>
+        <div class="h-px w-32 bg-primary mb-6"></div>
+        <p id="hero-summary" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-2">
+            Please wait while the AI research engine gathers historical and engineering data...
+        </p>
+
+        <!-- Model Badge (hidden by default) -->
+        <div id="model-badge" class="mt-4 hidden">
+            <span class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-high border border-outline-variant/40 rounded-full">
+                <span class="material-symbols-outlined text-primary text-[16px]">auto_awesome</span>
+                <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest" id="model-badge-text">Powered by HuggingFace</span>
+            </span>
+        </div>
+
+        <!-- Loading Bar -->
+        <div id="loading-bar-container" class="mt-6 w-full max-w-md h-[2px] bg-outline-variant/20 overflow-hidden rounded">
+            <div class="loading-bar h-full w-1/3"></div>
+        </div>
+
+        <!-- Shimmer skeleton (shown while loading) -->
+        <div id="shimmer-skeleton" class="mt-10 space-y-6 max-w-3xl">
+            <div class="flex gap-8">
+                <div class="w-1/2 aspect-[4/3] shimmer rounded-lg"></div>
+                <div class="w-1/2 space-y-3 pt-2">
+                    <div class="h-4 shimmer rounded w-3/4"></div>
+                    <div class="h-3 shimmer rounded w-full"></div>
+                    <div class="h-3 shimmer rounded w-full"></div>
+                    <div class="h-3 shimmer rounded w-5/6"></div>
+                    <div class="h-3 shimmer rounded w-2/3"></div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="h-4 shimmer rounded w-1/3"></div>
+                <div class="h-24 shimmer rounded w-full"></div>
+            </div>
+            <div class="space-y-3">
+                <div class="h-4 shimmer rounded w-1/4"></div>
+                <div class="h-24 shimmer rounded w-full"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- ERROR STATE (hidden by default)                              -->
+    <!-- ============================================================ -->
+    <div id="error-state" class="hidden px-margin-mobile md:px-margin-desktop max-w-[1200px] mb-16">
+        <div class="border border-error/30 bg-error-container/20 rounded-lg p-8 flex items-start gap-4">
+            <span class="material-symbols-outlined text-error text-3xl mt-0.5">error</span>
+            <div>
+                <h3 class="font-headline-sm text-headline-sm text-on-error-container mb-2">Research Error</h3>
+                <p id="error-message" class="font-body-md text-body-md text-on-surface-variant">Unable to complete architectural research. Please check your connection and try again.</p>
+                <button onclick="window.location.reload()" class="mt-4 px-6 py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded hover:bg-primary-container hover:text-on-primary-container transition-all">
+                    RETRY ANALYSIS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ALL DATA SECTIONS (hidden until data loads)                   -->
+    <!-- ============================================================ -->
+    <div id="data-sections" style="display:none;">
+
+        <!-- ======================================================== -->
+        <!-- BLUEPRINT IMAGE + OVERVIEW SECTION                       -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto mb-section-gap fade-in-up">
+            <div class="flex items-center gap-4 mb-10">
+                <div class="h-px flex-1 bg-outline-variant/30"></div>
+                <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-[0.2em]">Architectural Overview</h2>
+                <div class="h-px flex-1 bg-outline-variant/30"></div>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-10 lg:gap-16">
+                <!-- LEFT: Blueprint Image -->
+                <div class="w-full lg:w-1/2">
+                    <div class="relative overflow-hidden rounded-lg corner-markers corner-markers-inner blueprint-grid group">
+                        <img id="blueprint-image" alt="Architectural Blueprint" class="w-full aspect-[4/3] object-cover img-grayscale" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop"/>
+                        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-inverse-surface/70 to-transparent z-10">
+                            <span class="font-label-caps text-[10px] text-inverse-on-surface tracking-widest uppercase">Architectural Blueprint</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- RIGHT: Overview Text -->
+                <div class="w-full lg:w-1/2 flex flex-col justify-center">
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            <h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Overview</h3>
+                        </div>
+                        <p id="overview-text" class="font-body-md text-body-md text-on-surface-variant leading-relaxed border-l-2 border-primary-container pl-5 ml-1"></p>
+                    </div>
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary">palette</span>
+                            <h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Design Philosophy</h3>
+                        </div>
+                        <p id="philosophy-text" class="font-body-md text-body-md text-on-surface-variant leading-relaxed border-l-2 border-primary-container pl-5 ml-1"></p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary">foundation</span>
+                            <h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Structural System</h3>
+                        </div>
+                        <p id="structural-text" class="font-body-md text-body-md text-on-surface-variant leading-relaxed border-l-2 border-primary-container pl-5 ml-1"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- QUICK STATS BAR                                          -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto mb-section-gap fade-in-up">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+                <div class="glass-panel rounded-lg p-6 flex items-center gap-4 group hover:border-primary transition-all duration-300">
+                    <span class="material-symbols-outlined text-primary text-3xl">straighten</span>
+                    <div>
+                        <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1" id="qs-label-1">—</p>
+                        <p class="font-data-mono text-data-mono text-primary text-xl" id="qs-value-1">—</p>
+                    </div>
+                </div>
+                <div class="glass-panel rounded-lg p-6 flex items-center gap-4 group hover:border-primary transition-all duration-300">
+                    <span class="material-symbols-outlined text-primary text-3xl">calendar_month</span>
+                    <div>
+                        <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1" id="qs-label-2">—</p>
+                        <p class="font-data-mono text-data-mono text-primary text-xl" id="qs-value-2">—</p>
+                    </div>
+                </div>
+                <div class="glass-panel rounded-lg p-6 flex items-center gap-4 group hover:border-primary transition-all duration-300">
+                    <span class="material-symbols-outlined text-primary text-3xl">category</span>
+                    <div>
+                        <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1" id="qs-label-3">—</p>
+                        <p class="font-data-mono text-data-mono text-primary text-xl" id="qs-value-3">—</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- CONSTRUCTION TIMELINE                                    -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto mb-section-gap fade-in-up">
+            <div class="flex items-center gap-4 mb-12">
+                <span class="material-symbols-outlined text-primary text-3xl">timeline</span>
+                <div>
+                    <h2 class="font-headline-md text-headline-md">Construction Timeline</h2>
+                    <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Structural Evolution Phases</p>
+                </div>
+            </div>
+            <div class="relative pl-8 md:pl-12">
+                <!-- Timeline vertical line -->
+                <div class="absolute left-[14px] md:left-[22px] top-0 bottom-0 timeline-line"></div>
+                <!-- Timeline cards container -->
+                <div id="timeline-container" class="flex flex-col gap-16">
+                    <!-- Dynamic timeline cards injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TECHNICAL SPECIFICATIONS TABLE                           -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30 fade-in-up">
+            <div class="flex items-center gap-4 mb-12">
+                <span class="material-symbols-outlined text-primary text-3xl">engineering</span>
+                <div>
+                    <h2 class="font-headline-md text-headline-md">Technical Specifications</h2>
+                    <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Comparative Engineering Data</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto glass-panel rounded-lg">
+                <table class="w-full text-left">
+                    <thead>
+                    <tr class="border-b border-outline-variant">
+                        <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">Metric</th>
+                        <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">Value</th>
+                        <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">Unit</th>
+                        <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant">Significance</th>
+                    </tr>
+                    </thead>
+                    <tbody id="specs-tbody" class="font-data-mono text-data-mono">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- FEATURES GRID                                            -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30 fade-in-up">
+            <div class="flex items-center gap-4 mb-12">
+                <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+                <div>
+                    <h2 class="font-headline-md text-headline-md">Architectural Features</h2>
+                    <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Design Elements & Highlights</p>
+                </div>
+            </div>
+            <div id="features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                <!-- Dynamic feature cards injected here -->
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- FULL RESEARCH REPORT                                     -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30 fade-in-up">
+            <div class="flex items-center gap-4 mb-12">
+                <span class="material-symbols-outlined text-primary text-3xl">description</span>
+                <div>
+                    <h2 class="font-headline-md text-headline-md">Complete Research Dossier</h2>
+                    <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">In-Depth Structural Analysis</p>
+                </div>
+            </div>
+            <div id="report-content" class="space-y-12">
+                <!-- Dynamic report sections injected here -->
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- SOURCES SECTION                                          -->
+        <!-- ======================================================== -->
+        <section class="px-margin-mobile md:px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30 fade-in-up" id="sources-section" style="display:none;">
+            <div class="flex items-center gap-4 mb-10">
+                <span class="material-symbols-outlined text-primary text-3xl">link</span>
+                <div>
+                    <h2 class="font-headline-sm text-headline-sm">Research Sources</h2>
+                    <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">References & Citations</p>
+                </div>
+            </div>
+            <div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic source links injected here -->
+            </div>
+        </section>
+
+    </div><!-- /data-sections -->
+
+    <!-- ============================================================ -->
+    <!-- FOOTER                                                       -->
+    <!-- ============================================================ -->
+    <footer class="px-margin-mobile md:px-margin-desktop py-20 bg-inverse-surface text-inverse-on-surface">
+        <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div>
+                <h2 class="font-headline-md text-headline-md mb-4">Request Historical Dossier</h2>
+                <p class="font-body-md text-body-md opacity-70">Obtain the complete architectural history report for institutional review.</p>
+            </div>
+            <button class="bg-primary-container px-10 py-4 font-label-caps text-label-caps text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300 rounded active:scale-95">
+                DOWNLOAD PDF ARCHIVE
+            </button>
+        </div>
+        <div class="max-w-[1200px] mx-auto mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <span class="font-label-caps text-[10px] opacity-40">© 2024 ARCHPI STRUCTURAL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
+            <div class="flex gap-6">
+                <span class="material-symbols-outlined opacity-40 cursor-pointer hover:opacity-70 transition-opacity">share</span>
+                <span class="material-symbols-outlined opacity-40 cursor-pointer hover:opacity-70 transition-opacity">download</span>
+            </div>
+        </div>
+    </footer>
+
+</main>
+
+<!-- ================================================================ -->
+<!-- SCROLL-TO-TOP FAB                                                -->
+<!-- ================================================================ -->
+<button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible active:scale-95 hover:bg-primary-container hover:text-on-primary-container z-50" id="scroll-to-top">
+    <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+
+<!-- ================================================================ -->
+<!-- JAVASCRIPT                                                       -->
+<!-- ================================================================ -->
+<script>
+    // =========================================================
+    // UTILITIES
+    // =========================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+    function escapeAttr(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    var fallbackImages = [
+        "https://images.unsplash.com/photo-1541976535033-5c71995a9b0b?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518684079-3c830dcef090?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1431576901776-e539bd916ba2?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1448630360428-65456659e1bd?q=80&w=1200&auto=format&fit=crop"
+    ];
+
+    var featureIcons = [
+        'visibility', 'elevator', 'restaurant', 'lightbulb', 'radio_button_checked',
+        'settings_suggest', 'deck', 'landscape', 'water', 'bolt',
+        'wb_sunny', 'ac_unit', 'park', 'stairs', 'meeting_room'
+    ];
+
+    // =========================================================
+    // INITIALIZATION
+    // =========================================================
+    var urlParams = new URLSearchParams(window.location.search);
+    var buildingName = urlParams.get('q');
+
+    if (buildingName) {
+        document.title = 'ArchPi | ' + buildingName + ' — History';
+        document.getElementById('hero-title').innerHTML = escapeHtml(buildingName);
+        setupNavLinks(buildingName);
+        fetchData(buildingName);
+    } else {
+        document.getElementById('hero-label').innerText = 'No Structure Selected';
+        document.getElementById('hero-label').classList.remove('loading-pulse');
+        document.getElementById('hero-summary').innerText = 'Please return to the home page and search for a building to analyze.';
+        document.getElementById('loading-bar-container').style.display = 'none';
+        document.getElementById('shimmer-skeleton').style.display = 'none';
+    }
+
+    // =========================================================
+    // SETUP NAVIGATION LINKS
+    // =========================================================
+    function setupNavLinks(name) {
+        var qParam = encodeURIComponent(name);
+        // Top nav
+        var navAnalysis = document.getElementById('nav-analysis');
+        var navMaterials = document.getElementById('nav-materials');
+        var navHistory = document.getElementById('nav-history');
+        if (navAnalysis) navAnalysis.href = 'analysis.html?q=' + qParam;
+        if (navMaterials) navMaterials.href = 'materials.html?q=' + qParam;
+        if (navHistory) navHistory.href = 'history.html?q=' + qParam;
+        // Sidebar
+        var sideAnalysis = document.getElementById('side-analysis');
+        var sideMaterials = document.getElementById('side-materials');
+        var sideHistory = document.getElementById('side-history');
+        var sideMaterialEfficiency = document.getElementById('side-material-efficiency');
+        if (sideAnalysis) sideAnalysis.href = 'analysis.html?q=' + qParam;
+        if (sideMaterials) sideMaterials.href = 'materials.html?q=' + qParam;
+        if (sideMaterialEfficiency) sideMaterialEfficiency.href = 'material-efficiency.html?q=' + qParam;
+        if (sideHistory) sideHistory.href = 'history.html?q=' + qParam;
+    }
+
+    // =========================================================
+    // FETCH DATA FROM BACKEND
+    // =========================================================
+    function fetchData(query) {
+        var cached = localStorage.getItem('archpi_data_' + query);
+        if (cached) {
+            try {
+                var data = JSON.parse(cached);
+                if (data.schemaVersion >= 2) {
+                    console.log('Loaded history data from cache');
+                    setTimeout(function() { renderData(data); }, 100);
+                    return;
+                }
+                console.log('Ignoring stale cache (schema v' + (data.schemaVersion || 1) + ')');
+            } catch (e) {
+                console.error('Cache read error', e);
+            }
+        }
+
+        fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ buildingName: query })
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Analysis request failed (HTTP ' + response.status + ')');
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('Architectural history data received:', data);
+            try {
+                localStorage.setItem('archpi_data_' + query, JSON.stringify(data));
+            } catch (e) { console.warn('Could not cache result:', e); }
+            renderData(data);
+        })
+        .catch(function(error) {
+            console.error('Fetch error:', error);
+            document.getElementById('hero-label').innerText = 'Research Error';
+            document.getElementById('hero-label').classList.remove('loading-pulse');
+            document.getElementById('loading-bar-container').style.display = 'none';
+            document.getElementById('shimmer-skeleton').style.display = 'none';
+            document.getElementById('error-state').classList.remove('hidden');
+            document.getElementById('error-message').innerText = 'Unable to complete architectural research: ' + error.message;
+        });
+    }
+
+    // =========================================================
+    // RENDER DATA INTO THE UI
+    // =========================================================
+    function renderData(data) {
+        // Hide loading elements
+        document.getElementById('loading-bar-container').style.display = 'none';
+        document.getElementById('shimmer-skeleton').style.display = 'none';
+
+        // Update Hero
+        var heroLabel = document.getElementById('hero-label');
+        heroLabel.innerText = data.title || ('Case Study: ' + buildingName);
+        heroLabel.classList.remove('loading-pulse');
+
+        var subtitleText = data.subtitle || ('Architectural History of ' + buildingName);
+        document.getElementById('hero-title').innerHTML = subtitleText.replace(/\\n/g, '<br/>').replace(/\n/g, '<br/>');
+        document.getElementById('hero-summary').innerText = data.summary || 'Research complete.';
+
+        // Model Badge
+        if (data.modelUsed) {
+            var badge = document.getElementById('model-badge');
+            badge.classList.remove('hidden');
+            document.getElementById('model-badge-text').innerText = 'Powered by HuggingFace · ' + data.modelUsed;
+        }
+
+        // Quick Stats
+        if (data.quickStats) {
+            var qs = data.quickStats;
+            if (qs.stat1) {
+                document.getElementById('qs-label-1').innerText = qs.stat1.label;
+                document.getElementById('qs-value-1').innerText = qs.stat1.value;
+            }
+            if (qs.stat2) {
+                document.getElementById('qs-label-2').innerText = qs.stat2.label;
+                document.getElementById('qs-value-2').innerText = qs.stat2.value;
+            }
+            if (qs.stat3) {
+                document.getElementById('qs-label-3').innerText = qs.stat3.label;
+                document.getElementById('qs-value-3').innerText = qs.stat3.value;
+            }
+        }
+
+        // Blueprint Image + Overview
+        renderBlueprintOverview(data);
+
+        // Timeline
+        renderTimeline(data.timeline || []);
+
+        // Specifications Table
+        renderSpecifications(data.specifications || []);
+
+        // Features Grid
+        renderFeatures(data.blueprint || {});
+
+        // Full Research Report
+        renderFullReport(data.fullReport || {});
+
+        // Sources
+        renderSources(data.fullReport ? data.fullReport.sources : []);
+
+        // Show all data sections
+        document.getElementById('data-sections').style.display = '';
+
+        // Initialize scroll animations
+        setTimeout(initScrollAnimations, 100);
+    }
+
+    // =========================================================
+    // BLUEPRINT IMAGE + OVERVIEW SECTION
+    // =========================================================
+    function renderBlueprintOverview(data) {
+        var blueprint = data.blueprint || {};
+        var imgSrc = blueprint.image || data.heroImage || fallbackImages[0];
+        var imgEl = document.getElementById('blueprint-image');
+        imgEl.src = imgSrc;
+        imgEl.onerror = function() { this.src = fallbackImages[0]; };
+
+        var overviewText = blueprint.overview || data.summary || '';
+        document.getElementById('overview-text').innerText = overviewText;
+        document.getElementById('philosophy-text').innerText = blueprint.designPhilosophy || 'Design philosophy information not available.';
+        document.getElementById('structural-text').innerText = blueprint.structuralSystem || 'Structural system information not available.';
+    }
+
+    // =========================================================
+    // CONSTRUCTION TIMELINE
+    // =========================================================
+    function renderTimeline(timeline) {
+        var container = document.getElementById('timeline-container');
+        container.innerHTML = '';
+
+        if (timeline.length === 0) {
+            container.innerHTML = '<p class="font-body-md text-on-surface-variant">No timeline data available.</p>';
+            return;
+        }
+
+        for (var i = 0; i < timeline.length; i++) {
+            var node = timeline[i];
+            var imgSrc = node.image || fallbackImages[i % fallbackImages.length];
+            var isFirst = (i === 0);
+
+            // Build stats grid HTML
+            var statsHtml = '';
+            if (node.stats && node.stats.length > 0) {
+                statsHtml = '<div class="bg-surface-container-high/50 p-5 rounded-lg border border-outline-variant/30 mt-5">';
+                statsHtml += '<div class="grid grid-cols-2 sm:grid-cols-' + Math.min(node.stats.length, 4) + ' gap-4">';
+                for (var j = 0; j < node.stats.length; j++) {
+                    var s = node.stats[j];
+                    statsHtml += '<div class="text-center sm:text-left">';
+                    statsHtml += '<p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">' + escapeHtml(s.label) + '</p>';
+                    statsHtml += '<p class="font-data-mono text-data-mono text-primary font-semibold">' + escapeHtml(s.value) + '</p>';
+                    statsHtml += '</div>';
+                }
+                statsHtml += '</div></div>';
+            }
+
+            var dotClass = isFirst ? 'timeline-dot active' : 'timeline-dot';
+
+            var cardHtml = '';
+            cardHtml += '<div class="relative fade-in-up timeline-card group" style="transition-delay: ' + (i * 0.1) + 's">';
+            // Dot indicator
+            cardHtml += '<div class="' + dotClass + '"></div>';
+            // Card content
+            cardHtml += '<div class="glass-panel rounded-lg overflow-hidden border border-outline-variant/30 hover:border-primary/40 transition-all duration-300">';
+            // Phase Image (16:9)
+            cardHtml += '<div class="relative overflow-hidden corner-markers corner-markers-inner">';
+            cardHtml += '<img alt="' + escapeAttr(node.title) + '" class="w-full aspect-video object-cover img-grayscale" src="' + escapeAttr(imgSrc) + '" onerror="this.src=\'' + escapeAttr(fallbackImages[i % fallbackImages.length]) + '\'"/>';
+            cardHtml += '<div class="absolute top-4 left-4 z-10">';
+            cardHtml += '<span class="inline-block px-3 py-1 bg-inverse-surface/80 text-inverse-on-surface font-label-caps text-[10px] tracking-widest rounded">' + escapeHtml(node.dateLabel || node.year) + '</span>';
+            cardHtml += '</div>';
+            cardHtml += '</div>';
+            // Text content
+            cardHtml += '<div class="p-6 md:p-8">';
+            cardHtml += '<div class="flex items-center gap-3 mb-3">';
+            cardHtml += '<span class="font-label-caps text-label-caps text-primary">' + escapeHtml(node.dateLabel || ('PHASE ' + (i + 1))) + '</span>';
+            cardHtml += '<div class="h-px flex-1 bg-outline-variant/30"></div>';
+            cardHtml += '<span class="font-data-mono text-[12px] text-outline">' + escapeHtml(node.year) + '</span>';
+            cardHtml += '</div>';
+            cardHtml += '<h3 class="font-headline-sm text-headline-sm mb-4">' + escapeHtml(node.title) + '</h3>';
+            
+            var paragraphs = (node.description || '').split('\n').filter(p => p.trim() !== '');
+            for (var p = 0; p < paragraphs.length; p++) {
+                cardHtml += '<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">' + escapeHtml(paragraphs[p]) + '</p>';
+            }
+            
+            cardHtml += statsHtml;
+            cardHtml += '</div>';
+            cardHtml += '</div>';
+            cardHtml += '</div>';
+
+            container.innerHTML += cardHtml;
+        }
+
+        // Initialize timeline intersection observer
+        setTimeout(initTimelineObserver, 150);
+    }
+
+    // =========================================================
+    // TIMELINE INTERSECTION OBSERVER
+    // =========================================================
+    function initTimelineObserver() {
+        var cards = document.querySelectorAll('.timeline-card');
+        if (cards.length === 0) return;
+
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    // Add visible class for fade-in
+                    entry.target.classList.add('visible');
+
+                    // Update active dot
+                    var allDots = document.querySelectorAll('.timeline-dot');
+                    for (var k = 0; k < allDots.length; k++) {
+                        allDots[k].classList.remove('active');
+                    }
+                    var thisDot = entry.target.querySelector('.timeline-dot');
+                    if (thisDot) thisDot.classList.add('active');
+                }
+            });
+        }, { root: null, threshold: 0.3 });
+
+        for (var n = 0; n < cards.length; n++) {
+            observer.observe(cards[n]);
+        }
+    }
+
+    // =========================================================
+    // SPECIFICATIONS TABLE
+    // =========================================================
+    function renderSpecifications(specs) {
+        var tbody = document.getElementById('specs-tbody');
+        tbody.innerHTML = '';
+
+        if (specs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="py-6 text-center text-on-surface-variant">No specifications data available.</td></tr>';
+            return;
+        }
+
+        for (var i = 0; i < specs.length; i++) {
+            var spec = specs[i];
+            var rowHtml = '';
+            rowHtml += '<tr class="border-b border-outline-variant/20 hover:bg-surface-container-low/60 transition-all duration-200 cursor-default" style="transition: transform 0.2s ease;">';
+            rowHtml += '<td class="py-4 px-6 font-semibold text-on-surface">' + escapeHtml(spec.metric) + '</td>';
+            rowHtml += '<td class="py-4 px-6 text-primary font-semibold text-lg">' + escapeHtml(spec.value) + '</td>';
+            rowHtml += '<td class="py-4 px-6 text-on-surface-variant">' + escapeHtml(spec.unit) + '</td>';
+            rowHtml += '<td class="py-4 px-6 text-on-surface-variant text-sm">' + escapeHtml(spec.significance) + '</td>';
+            rowHtml += '</tr>';
+            tbody.innerHTML += rowHtml;
+        }
+
+        // Row hover animation
+        var rows = document.querySelectorAll('#specs-tbody tr');
+        for (var r = 0; r < rows.length; r++) {
+            (function(row) {
+                row.addEventListener('mouseenter', function() { row.style.transform = 'translateX(6px)'; });
+                row.addEventListener('mouseleave', function() { row.style.transform = 'translateX(0)'; });
+            })(rows[r]);
+        }
+    }
+
+    // =========================================================
+    // FEATURES GRID
+    // =========================================================
+    function renderFeatures(blueprint) {
+        var container = document.getElementById('features-grid');
+        container.innerHTML = '';
+
+        var features = blueprint.features || [];
+        if (features.length === 0) {
+            container.innerHTML = '<p class="font-body-md text-on-surface-variant col-span-full">No feature data available.</p>';
+            return;
+        }
+
+        for (var i = 0; i < features.length; i++) {
+            var feature = features[i];
+            var icon = featureIcons[i % featureIcons.length];
+
+            var cardHtml = '';
+            cardHtml += '<div class="glass-panel rounded-lg p-6 group hover:border-primary transition-all duration-300 hover:shadow-md cursor-default">';
+            cardHtml += '<div class="flex items-start gap-4">';
+            cardHtml += '<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-container transition-colors">';
+            cardHtml += '<span class="material-symbols-outlined text-primary">' + icon + '</span>';
+            cardHtml += '</div>';
+            cardHtml += '<div>';
+            cardHtml += '<h4 class="font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary transition-colors">' + escapeHtml(feature) + '</h4>';
+            cardHtml += '</div>';
+            cardHtml += '</div>';
+            cardHtml += '</div>';
+
+            container.innerHTML += cardHtml;
+        }
+    }
+
+    // =========================================================
+    // FULL RESEARCH REPORT
+    // =========================================================
+    function renderFullReport(report) {
+        var container = document.getElementById('report-content');
+        container.innerHTML = '';
+
+        var sections = [
+            { icon: 'info', title: 'Historical Overview', content: report.overview },
+            { icon: 'timeline', title: 'Construction Timeline', content: report.constructionTimeline },
+            { icon: 'hardware', title: 'Materials & Cost Analysis', content: report.materialsAndCost },
+            { icon: 'foundation', title: 'Structural System', content: report.structuralSystem },
+            { icon: 'engineering', title: 'Engineering Challenges', content: report.engineeringChallenges },
+            { icon: 'architecture', title: 'Architectural Design', content: report.architecturalDesign },
+            { icon: 'diversity_3', title: 'Cultural Impact & Legacy', content: report.culturalImpact }
+        ];
+
+        var hasContent = false;
+        for (var i = 0; i < sections.length; i++) {
+            var sec = sections[i];
+            if (!sec.content || sec.content.trim().length < 10) continue;
+            hasContent = true;
+
+            var html = '';
+            html += '<div class="fade-in-up">';
+            html += '<div class="flex items-center gap-3 mb-5">';
+            html += '<div class="w-9 h-9 rounded-lg bg-primary-container/20 flex items-center justify-center">';
+            html += '<span class="material-symbols-outlined text-primary">' + sec.icon + '</span>';
+            html += '</div>';
+            html += '<h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">' + escapeHtml(sec.title) + '</h3>';
+            html += '</div>';
+            html += '<div class="border-l-2 border-primary-container pl-6 ml-4 mb-4">';
+            // Split into paragraphs if content has line breaks
+            var paragraphs = sec.content.split(/\n\n|\r\n\r\n/);
+            for (var p = 0; p < paragraphs.length; p++) {
+                var para = paragraphs[p].trim();
+                if (para.length > 0) {
+                    html += '<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">' + escapeHtml(para) + '</p>';
+                }
+            }
+            html += '</div>';
+            html += '</div>';
+
+            container.innerHTML += html;
+        }
+
+        if (!hasContent) {
+            container.innerHTML = '<p class="font-body-md text-on-surface-variant">No detailed report data available.</p>';
+        }
+    }
+
+    // =========================================================
+    // SOURCES SECTION
+    // =========================================================
+    function renderSources(sources) {
+        var section = document.getElementById('sources-section');
+        var grid = document.getElementById('sources-grid');
+        grid.innerHTML = '';
+
+        if (!sources || sources.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = '';
+
+        for (var i = 0; i < sources.length; i++) {
+            var src = sources[i];
+            var srcHtml = '';
+            srcHtml += '<a href="' + escapeAttr(src.url) + '" target="_blank" rel="noopener noreferrer" class="group flex items-start gap-3 p-4 glass-panel rounded-lg hover:border-primary transition-all duration-300 hover:shadow-md">';
+            srcHtml += '<span class="material-symbols-outlined text-outline text-sm mt-0.5 group-hover:text-primary transition-colors flex-shrink-0">open_in_new</span>';
+            srcHtml += '<div class="min-w-0">';
+            srcHtml += '<span class="font-body-md text-sm text-on-surface group-hover:text-primary transition-colors block truncate">' + escapeHtml(src.title || src.url) + '</span>';
+            srcHtml += '<span class="font-data-mono text-[11px] text-outline truncate block mt-1">' + escapeHtml(src.url || '') + '</span>';
+            srcHtml += '</div>';
+            srcHtml += '</a>';
+            grid.innerHTML += srcHtml;
+        }
+    }
+
+    // =========================================================
+    // SCROLL FADE-IN ANIMATIONS
+    // =========================================================
+    function initScrollAnimations() {
+        var elements = document.querySelectorAll('.fade-in-up:not(.timeline-card)');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, threshold: 0.1 });
+
+        for (var i = 0; i < elements.length; i++) {
+            observer.observe(elements[i]);
+        }
+    }
+
+    // =========================================================
+    // SCROLL-TO-TOP BUTTON
+    // =========================================================
+    var scrollBtn = document.getElementById('scroll-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 500) {
+            scrollBtn.classList.remove('opacity-0', 'invisible');
+            scrollBtn.classList.add('opacity-100', 'visible');
+        } else {
+            scrollBtn.classList.add('opacity-0', 'invisible');
+            scrollBtn.classList.remove('opacity-100', 'visible');
+        }
+    });
+    scrollBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+</body></html>

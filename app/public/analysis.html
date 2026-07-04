@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Structural Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#e2dfde",
+                    "error": "#ba1a1a",
+                    "secondary": "#5f5e5e",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "surface-dim": "#e0d9d4",
+                    "primary-fixed-dim": "#e1c19d",
+                    "surface-container": "#f4ece8",
+                    "tertiary": "#5e5e5e",
+                    "tertiary-fixed": "#e4e2e2",
+                    "secondary-fixed": "#e5e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "inverse-primary": "#e1c19d",
+                    "inverse-on-surface": "#f7efeb",
+                    "on-tertiary-container": "#3b3c3c",
+                    "on-surface-variant": "#4e453c",
+                    "primary": "#725a3d",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-tint": "#725a3d",
+                    "surface": "#fff8f4",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e8e1dd",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#faf2ee",
+                    "on-background": "#1e1b19",
+                    "on-primary-fixed": "#291803",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "inverse-surface": "#33302d",
+                    "on-secondary-container": "#636262",
+                    "on-primary-container": "#4d381d",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffddb8",
+                    "primary-container": "#bfa17f",
+                    "surface-container-highest": "#e8e1dd",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#80756b",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#a7a6a6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#eee7e2",
+                    "surface-bright": "#fff8f4",
+                    "on-surface": "#1e1b19",
+                    "background": "#fff8f4",
+                    "outline-variant": "#d1c4b8",
+                    "on-primary-fixed-variant": "#594327"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "section-gap": "80px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    .linen-texture {
+        background-color: #FDFDFD;
+        background-image: url("https://www.transparenttextures.com/patterns/linen-paper.png");
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-panel {
+        background: rgba(253, 253, 253, 0.8);
+        backdrop-filter: blur(20px);
+    }
+    .vertical-line {
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, #bfa17f 10%, #bfa17f 90%, transparent);
+    }
+    .node-active {
+        box-shadow: 0 0 0 4px rgba(191, 161, 127, 0.2);
+    }
+    .sticky-photo {
+        position: sticky;
+        top: 80px;
+        height: calc(100vh - 160px);
+    }
+    .loading-pulse { animation: pulse-gold 2s ease-in-out infinite; }
+    @keyframes pulse-gold { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .loading-bar {
+        background: linear-gradient(90deg, transparent, #bfa17f, transparent);
+        animation: shimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ============ RESEARCH DASHBOARD STYLES ============ */
+    .research-bg {
+        background: linear-gradient(135deg, #1a1510 0%, #2c241b 40%, #1e1915 100%);
+        min-height: 100vh;
+    }
+    .dark-glass {
+        background: rgba(30, 25, 20, 0.65);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(191, 161, 127, 0.12);
+    }
+    .dark-glass-strong {
+        background: rgba(20, 17, 13, 0.8);
+        backdrop-filter: blur(32px);
+        border: 1px solid rgba(191, 161, 127, 0.15);
+    }
+
+    /* Phase stepper pulse */
+    @keyframes phase-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(191, 161, 127, 0.5); }
+        50% { box-shadow: 0 0 20px 6px rgba(191, 161, 127, 0.3); }
+    }
+    .phase-active-glow { animation: phase-pulse 2s ease-in-out infinite; }
+
+    /* Spinning icon for active phase */
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .icon-spin { animation: spin-slow 2s linear infinite; }
+
+    /* Typewriter cursor */
+    @keyframes blink-caret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    .type-cursor::after {
+        content: '▊';
+        color: #bfa17f;
+        animation: blink-caret 0.8s step-end infinite;
+        margin-left: 2px;
+        font-size: 0.85em;
+    }
+
+    /* Source card slide in */
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .slide-in-right { animation: slideInRight 0.4s ease-out forwards; }
+
+    /* Finding chip pop in */
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.5); }
+        70% { transform: scale(1.08); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .pop-in { animation: popIn 0.35s ease-out forwards; }
+
+    /* LLM insight glow */
+    @keyframes glow-border {
+        0%, 100% { border-color: rgba(191, 161, 127, 0.3); box-shadow: 0 0 8px rgba(191, 161, 127, 0.1); }
+        50% { border-color: rgba(191, 161, 127, 0.7); box-shadow: 0 0 24px rgba(191, 161, 127, 0.25); }
+    }
+    .glow-border { animation: glow-border 3s ease-in-out infinite; }
+
+    /* Progress ring */
+    .progress-ring-circle {
+        transition: stroke-dashoffset 0.6s ease-out;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+    }
+
+    /* Dashboard → Report transition */
+    @keyframes fadeUpOut {
+        to { opacity: 0; transform: translateY(-30px) scale(0.97); }
+    }
+    @keyframes fadeUpIn {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .dashboard-exit { animation: fadeUpOut 0.7s ease-in forwards; }
+    .report-enter { animation: fadeUpIn 0.8s ease-out forwards; }
+
+    /* Thought stream scrollbar */
+    .thought-stream::-webkit-scrollbar { width: 4px; }
+    .thought-stream::-webkit-scrollbar-track { background: transparent; }
+    .thought-stream::-webkit-scrollbar-thumb { background: rgba(191, 161, 127, 0.3); border-radius: 4px; }
+
+    /* Status bar counters */
+    .stat-counter {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Responsive grid for dashboard */
+    @media (max-width: 1023px) {
+        .dashboard-grid { grid-template-columns: 1fr !important; }
+        .dashboard-grid > * { min-height: auto !important; }
+    }
+</style>
+</head>
+<body class="linen-texture text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<a href="index.html" class="font-headline-md text-headline-md text-on-surface tracking-tighter hover:text-primary transition-colors cursor-pointer">ArchPi</a>
+<div class="hidden md:flex gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="index.html">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="globe.html">Globe</a>
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="#">Analysis</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" id="nav-materials" href="#">Materials</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" id="nav-blueprints" href="#">History</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-transform active:scale-95">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+<span class="font-label-caps text-[10px] text-primary">JD</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Sidebar -->
+<aside class="hidden lg:flex flex-col py-8 px-4 w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low border-r border-outline-variant z-40">
+<div class="flex flex-col gap-2 mb-10">
+<span class="font-headline-sm text-headline-sm text-on-surface">ArchPi</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Structural Intelligence</span>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+</aside>
+
+<main class="lg:ml-64 pt-16 min-h-screen">
+
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  STATE 1: LIVE RESEARCH DASHBOARD                           ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="research-dashboard" class="research-bg" style="display:none;">
+
+  <!-- Dashboard Header -->
+  <div class="px-6 lg:px-12 pt-10 pb-6">
+    <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <!-- Left: Title -->
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+          <span class="font-label-caps text-label-caps text-[#bfa17f] uppercase tracking-[0.2em]">Live Research</span>
+        </div>
+        <h1 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-white/90 mb-1" id="dash-title">Deep Research in Progress</h1>
+        <p class="font-body-md text-body-md text-white/40" id="dash-building-name">Analyzing structure…</p>
+      </div>
+      <!-- Right: Progress ring + time -->
+      <div class="flex items-center gap-6">
+        <!-- Elapsed time -->
+        <div class="text-right">
+          <span class="font-label-caps text-[10px] text-white/30 uppercase tracking-widest block mb-1">Elapsed</span>
+          <span class="font-data-mono text-2xl text-white/80 stat-counter" id="elapsed-time">00:00</span>
+        </div>
+        <!-- Progress ring -->
+        <div class="relative w-20 h-20 flex-shrink-0">
+          <svg class="w-full h-full" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(191,161,127,0.1)" stroke-width="4"/>
+            <circle id="progress-ring" class="progress-ring-circle" cx="40" cy="40" r="34" fill="none" stroke="#bfa17f" stroke-width="4" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-data-mono text-sm text-white/90 stat-counter" id="progress-percent">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="px-6 lg:px-12 pb-8">
+    <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-4 dashboard-grid" style="min-height: calc(100vh - 260px);">
+
+      <!-- ── LEFT: Phase Stepper ── -->
+      <div class="dark-glass rounded-xl p-5 overflow-y-auto" style="max-height: calc(100vh - 260px);">
+        <h2 class="font-label-caps text-[10px] text-white/30 uppercase tracking-[0.2em] mb-5">Research Phases</h2>
+        <div id="phase-stepper" class="flex flex-col gap-1">
+          <!-- Phase items generated by JS -->
+        </div>
+      </div>
+
+      <!-- ── CENTER: Live Thought Stream ── -->
+      <div class="dark-glass rounded-xl flex flex-col overflow-hidden" style="max-height: calc(100vh - 260px);">
+        <div class="px-5 py-4 border-b border-white/5 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[#bfa17f] text-lg">neurology</span>
+          <h2 class="font-label-caps text-[10px] text-white/30 uppercase tracking-[0.2em]">AI Thought Stream</h2>
+          <div class="ml-auto flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div>
+            <span class="font-label-caps text-[9px] text-green-400/70">LIVE</span>
+          </div>
+        </div>
+        <div id="thought-stream" class="thought-stream flex-1 overflow-y-auto p-5 space-y-3">
+          <!-- Thought cards injected here -->
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Sources + Findings ── -->
+      <div class="flex flex-col gap-4" style="max-height: calc(100vh - 260px);">
+        <!-- Sources -->
+        <div class="dark-glass rounded-xl p-5 flex-1 overflow-y-auto" style="min-height: 40%;">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[#bfa17f] text-lg">travel_explore</span>
+            <h2 class="font-label-caps text-[10px] text-white/30 uppercase tracking-[0.2em]">Sources Found</h2>
+            <span class="ml-auto font-data-mono text-xs text-white/30 stat-counter" id="source-count">0</span>
+          </div>
+          <div id="sources-panel" class="space-y-2">
+            <!-- Source cards injected here -->
+          </div>
+        </div>
+        <!-- Findings -->
+        <div class="dark-glass rounded-xl p-5 flex-1 overflow-y-auto" style="min-height: 30%;">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[#bfa17f] text-lg">data_object</span>
+            <h2 class="font-label-caps text-[10px] text-white/30 uppercase tracking-[0.2em]">Key Findings</h2>
+            <span class="ml-auto font-data-mono text-xs text-white/30 stat-counter" id="finding-count">0</span>
+          </div>
+          <div id="findings-panel" class="flex flex-wrap gap-2">
+            <!-- Finding chips injected here -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LLM Insight Panel (appears when llm-insight events arrive) -->
+  <div id="llm-insight-container" class="px-6 lg:px-12 pb-4" style="display:none;">
+    <div class="max-w-[1400px] mx-auto">
+      <div id="llm-insight-card" class="dark-glass-strong rounded-xl p-6 border-2 border-[#bfa17f]/30 glow-border">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="material-symbols-outlined text-[#bfa17f] text-xl">psychology</span>
+          <span class="font-label-caps text-[10px] text-[#bfa17f] uppercase tracking-[0.2em]">AI Insight</span>
+        </div>
+        <div id="llm-insight-text" class="font-body-md text-sm text-white/70 leading-relaxed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Status Bar -->
+  <div class="px-6 lg:px-12 pb-6">
+    <div class="max-w-[1400px] mx-auto dark-glass rounded-lg px-5 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <span class="font-label-caps text-[10px] text-white/40">Tavily:</span>
+        <span class="font-data-mono text-xs text-white/60 stat-counter" id="stat-tavily">0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+        <span class="font-label-caps text-[10px] text-white/40">DuckDuckGo:</span>
+        <span class="font-data-mono text-xs text-white/60 stat-counter" id="stat-ddg">0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+        <span class="font-label-caps text-[10px] text-white/40">LLM Reasoning:</span>
+        <span class="font-data-mono text-xs text-white/60 stat-counter" id="stat-llm">0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+        <span class="font-label-caps text-[10px] text-white/40">Sources:</span>
+        <span class="font-data-mono text-xs text-white/60 stat-counter" id="stat-sources">0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+        <span class="font-label-caps text-[10px] text-white/40">Findings:</span>
+        <span class="font-data-mono text-xs text-white/60 stat-counter" id="stat-findings">0</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  NO QUERY STATE                                             ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="no-query-state" class="flex items-center justify-center px-margin-desktop" style="display:none; min-height: calc(100vh - 64px);">
+  <div class="text-center max-w-md">
+    <span class="material-symbols-outlined text-primary text-6xl mb-6 block opacity-30">location_searching</span>
+    <h2 class="font-headline-sm text-headline-sm mb-4">No Structure Selected</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-8">Please return to the Globe view and select a location to begin deep research analysis.</p>
+    <a href="globe.html" class="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 font-label-caps text-label-caps hover:bg-primary-container hover:text-on-primary-container transition-all duration-300">
+      <span class="material-symbols-outlined text-lg">public</span>
+      Open Globe View
+    </a>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗ -->
+<!-- ║  STATE 2: FULL ANALYSIS REPORT                              ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="report-state" style="display:none;">
+
+  <!-- Hero Header -->
+  <header id="hero-header" class="px-margin-desktop mb-20 max-w-[1200px] pt-8">
+    <span id="hero-title" class="font-label-caps text-label-caps text-primary mb-4 block">Case Study</span>
+    <h1 id="hero-subtitle" class="font-headline-lg text-headline-lg mb-6 leading-tight">Structural<br/>Intelligence</h1>
+    <div class="h-px w-32 bg-primary mb-8"></div>
+    <p id="hero-summary" class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Research complete.</p>
+    <!-- Model badge -->
+    <div id="model-badge" class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 border border-outline-variant/50 bg-surface-container-low rounded-full" style="display:none;">
+      <span class="material-symbols-outlined text-sm text-primary">smart_toy</span>
+      <span class="font-label-caps text-[10px] text-on-surface-variant" id="model-name"></span>
+    </div>
+  </header>
+
+  <!-- Split Content Timeline -->
+  <section id="main-content" class="flex flex-col md:flex-row px-margin-desktop max-w-[1440px] mx-auto gap-12 lg:gap-24 pb-section-gap">
+    <!-- Left Side: Visual Narratives (Sticky) -->
+    <div class="w-full md:w-1/2 relative">
+      <div class="sticky-photo flex flex-col justify-center">
+        <div class="relative overflow-hidden group border border-outline-variant aspect-[3/4] md:aspect-square">
+          <img alt="Structural Photography" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700 ease-in-out" id="dynamic-image" src="https://images.unsplash.com/photo-1541976535033-5c71995a9b0b?q=80&w=1000&auto=format&fit=crop"/>
+          <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background/90 to-transparent">
+            <span class="font-label-caps text-[10px] text-on-surface-variant tracking-widest uppercase" id="image-caption">Structural analysis</span>
+          </div>
+        </div>
+        <div id="quick-stats" class="mt-8 grid grid-cols-3 gap-4">
+          <div class="border border-outline-variant p-4 bg-surface-container-low">
+            <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-1">—</p>
+            <p class="font-data-mono text-data-mono text-primary" id="qs-value-1">—</p>
+          </div>
+          <div class="border border-outline-variant p-4 bg-surface-container-low">
+            <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-2">—</p>
+            <p class="font-data-mono text-data-mono text-primary" id="qs-value-2">—</p>
+          </div>
+          <div class="border border-outline-variant p-4 bg-surface-container-low">
+            <p class="font-label-caps text-[10px] text-on-surface-variant mb-1" id="qs-label-3">—</p>
+            <p class="font-data-mono text-data-mono text-primary" id="qs-value-3">—</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right Side: Structural Evolution Timeline -->
+    <div class="w-full md:w-1/2 relative pl-8">
+      <div class="absolute left-0 top-0 bottom-0 vertical-line"></div>
+      <div id="timeline-container" class="flex flex-col gap-24 py-10">
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Readout Table -->
+  <section id="specs-section" class="px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30">
+    <h2 class="font-headline-sm text-headline-sm mb-12">Comparative Technical Specifications</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-outline">
+            <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Metric</th>
+            <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Value</th>
+            <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Unit</th>
+            <th class="py-4 font-label-caps text-label-caps text-on-surface-variant">Significance</th>
+          </tr>
+        </thead>
+        <tbody id="specs-tbody" class="font-data-mono text-data-mono"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Cross Navigation Cards -->
+  <section id="cross-nav" class="px-margin-desktop py-12 max-w-[1200px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <a id="card-materials" href="#" class="group block border border-outline-variant p-8 bg-surface-container-low hover:border-primary transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="material-symbols-outlined text-primary text-3xl">hardware</span>
+          <div>
+            <h3 class="font-headline-sm text-headline-sm group-hover:text-primary transition-colors">Material Analysis</h3>
+            <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">View detailed material breakdown</p>
+          </div>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant">Explore the construction materials, quantities, and engineering specifications used in this structure.</p>
+      </a>
+      <a id="card-blueprints" href="#" class="group block border border-outline-variant p-8 bg-surface-container-low hover:border-primary transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="material-symbols-outlined text-primary text-3xl">architecture</span>
+          <div>
+            <h3 class="font-headline-sm text-headline-sm group-hover:text-primary transition-colors">Architectural Blueprints</h3>
+            <p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">View structural design details</p>
+          </div>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant">Examine the architectural design philosophy, structural systems, and key features of this building.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Full Research Report -->
+  <section id="full-report" class="px-margin-desktop py-section-gap max-w-[1200px] mx-auto border-t border-outline-variant/30">
+    <div class="flex items-center gap-4 mb-12">
+      <span class="material-symbols-outlined text-primary text-3xl">description</span>
+      <h2 class="font-headline-sm text-headline-sm">Complete Research Dossier</h2>
+    </div>
+    <div id="report-content" class="space-y-10"></div>
+    <div id="report-sources" class="mt-12 pt-8 border-t border-outline-variant/30">
+      <h3 class="font-label-caps text-label-caps text-outline uppercase tracking-widest mb-6">Research Sources</h3>
+      <div id="sources-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-margin-desktop py-20 bg-inverse-surface text-inverse-on-surface">
+    <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+      <div>
+        <h2 class="font-headline-md text-headline-md mb-4">Request Technical Dossier</h2>
+        <p class="font-body-md text-body-md opacity-70">Obtain the full structural engineering analysis for internal institutional review.</p>
+      </div>
+      <button class="bg-primary-container px-10 py-4 font-label-caps text-label-caps text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300">
+        DOWNLOAD PDF ARCHIVE
+      </button>
+    </div>
+    <div class="max-w-[1200px] mx-auto mt-20 pt-10 border-t border-white/10 flex justify-between items-center">
+      <span class="font-label-caps text-[10px] opacity-40">© 2024 ARCHPI STRUCTURAL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
+      <div class="flex gap-6">
+        <span class="material-symbols-outlined opacity-40 cursor-pointer">share</span>
+        <span class="material-symbols-outlined opacity-40 cursor-pointer">download</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</main>
+
+<!-- Scroll to top FAB -->
+<button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible active:scale-95" id="scroll-to-top">
+<span class="material-symbols-outlined">arrow_upward</span>
+</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════
+var urlParams = new URLSearchParams(window.location.search);
+var buildingName = urlParams.get('q');
+
+var fallbackImages = [
+    "https://images.unsplash.com/photo-1541976535033-5c71995a9b0b?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518684079-3c830dcef090?q=80&w=1000&auto=format&fit=crop"
+];
+
+// ═══════════════════════════════════════════════════════════════
+// PHASE DEFINITIONS
+// ═══════════════════════════════════════════════════════════════
+var PHASES = [
+    { phase: 1, title: 'Initial Reconnaissance', icon: 'search' },
+    { phase: 2, title: 'AI Knowledge Base', icon: 'psychology' },
+    { phase: 3, title: 'Structural Deep-Dive', icon: 'engineering' },
+    { phase: 4, title: 'Historical Timeline', icon: 'timeline' },
+    { phase: 5, title: 'Materials Analysis', icon: 'hardware' },
+    { phase: 6, title: 'Design & Architecture', icon: 'palette' },
+    { phase: 7, title: 'AI Synthesis', icon: 'smart_toy' }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE TRACKING
+// ═══════════════════════════════════════════════════════════════
+var state = {
+    tavilyCount: 0,
+    ddgCount: 0,
+    llmCount: 0,
+    sourceCount: 0,
+    findingCount: 0,
+    startTime: null,
+    elapsedInterval: null,
+    currentPhase: 0,
+    typewriterQueue: [],
+    isTyping: false,
+    eventSource: null,
+    retryCount: 0,
+    maxRetries: 5
+};
+
+// ═══════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════
+if (buildingName) {
+    document.title = 'ArchPi | ' + buildingName + ' — Deep Research';
+    initDashboard();
+    connectSSE();
+} else {
+    document.getElementById('no-query-state').style.display = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD INITIALIZATION
+// ═══════════════════════════════════════════════════════════════
+function initDashboard() {
+    var dashboard = document.getElementById('research-dashboard');
+    dashboard.style.display = '';
+
+    document.getElementById('dash-building-name').innerText = buildingName;
+
+    // Build phase stepper
+    var stepper = document.getElementById('phase-stepper');
+    stepper.innerHTML = '';
+    for (var i = 0; i < PHASES.length; i++) {
+        var p = PHASES[i];
+        var html = '';
+        html += '<div id="phase-item-' + p.phase + '" class="flex items-start gap-3 p-3 rounded-lg transition-all duration-500 opacity-40">';
+        html += '  <div id="phase-dot-' + p.phase + '" class="relative flex-shrink-0 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center mt-0.5 transition-all duration-500">';
+        html += '    <span id="phase-icon-' + p.phase + '" class="material-symbols-outlined text-white/30 text-base transition-all duration-500">' + p.icon + '</span>';
+        html += '    <span id="phase-check-' + p.phase + '" class="material-symbols-outlined text-green-400 text-base absolute" style="display:none;">check</span>';
+        html += '  </div>';
+        html += '  <div class="flex-1 min-w-0">';
+        html += '    <span class="font-label-caps text-[9px] text-white/20 uppercase tracking-widest">Phase ' + p.phase + '</span>';
+        html += '    <p id="phase-title-' + p.phase + '" class="font-body-md text-sm text-white/40 leading-snug transition-colors duration-500">' + p.title + '</p>';
+        html += '    <span id="phase-status-' + p.phase + '" class="font-label-caps text-[9px] text-white/15 uppercase mt-0.5 block">Pending</span>';
+        html += '  </div>';
+        html += '</div>';
+        // connector line
+        if (i < PHASES.length - 1) {
+            html += '<div class="ml-[19px] w-px h-3 bg-white/5 transition-all duration-500" id="phase-connector-' + p.phase + '"></div>';
+        }
+        stepper.innerHTML += html;
+    }
+
+    // Start elapsed timer
+    state.startTime = Date.now();
+    state.elapsedInterval = setInterval(updateElapsed, 1000);
+}
+
+function updateElapsed() {
+    if (!state.startTime) return;
+    var elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+    var m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    var s = String(elapsed % 60).padStart(2, '0');
+    document.getElementById('elapsed-time').innerText = m + ':' + s;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SSE CONNECTION
+// ═══════════════════════════════════════════════════════════════
+function connectSSE() {
+    var url = '/api/research-stream?q=' + encodeURIComponent(buildingName);
+    var es = new EventSource(url);
+    state.eventSource = es;
+
+    es.addEventListener('phase', function(e) {
+        try { handlePhase(JSON.parse(e.data)); } catch(err) { console.error('phase parse error:', err); }
+    });
+    es.addEventListener('thought', function(e) {
+        try { handleThought(JSON.parse(e.data)); } catch(err) { console.error('thought parse error:', err); }
+    });
+    es.addEventListener('source', function(e) {
+        try { handleSource(JSON.parse(e.data)); } catch(err) { console.error('source parse error:', err); }
+    });
+    es.addEventListener('finding', function(e) {
+        try { handleFinding(JSON.parse(e.data)); } catch(err) { console.error('finding parse error:', err); }
+    });
+    es.addEventListener('llm-insight', function(e) {
+        try { handleLLMInsight(JSON.parse(e.data)); } catch(err) { console.error('llm-insight parse error:', err); }
+    });
+    es.addEventListener('progress', function(e) {
+        try { handleProgress(JSON.parse(e.data)); } catch(err) { console.error('progress parse error:', err); }
+    });
+    es.addEventListener('result', function(e) {
+        try { handleResult(JSON.parse(e.data)); } catch(err) { console.error('result parse error:', err); }
+    });
+    es.addEventListener('done', function(e) {
+        handleDone();
+    });
+    es.addEventListener('error', function(e) {
+        // Check if it's a custom error event with data, or SSE connection error
+        if (e.data) {
+            try { handleError(JSON.parse(e.data)); } catch(err) { console.error('error parse:', err); }
+        } else {
+            // SSE connection error — retry with exponential backoff
+            es.close();
+            if (state.retryCount < state.maxRetries) {
+                state.retryCount++;
+                var delay = Math.min(1000 * Math.pow(2, state.retryCount), 30000);
+                addThoughtCard('⚠️ Connection lost. Retrying in ' + (delay/1000) + 's...', 'system');
+                setTimeout(connectSSE, delay);
+            } else {
+                addThoughtCard('❌ Connection failed after ' + state.maxRetries + ' retries.', 'system');
+            }
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════
+
+function handlePhase(data) {
+    var phaseNum = data.phase;
+    var status = data.status;
+
+    // Mark previous phases as complete if this is a new running phase
+    if (status === 'running') {
+        for (var i = 1; i < phaseNum; i++) {
+            setPhaseState(i, 'complete');
+        }
+        setPhaseState(phaseNum, 'running');
+        state.currentPhase = phaseNum;
+    } else if (status === 'complete') {
+        setPhaseState(phaseNum, 'complete');
+    }
+}
+
+function setPhaseState(num, newState) {
+    var item = document.getElementById('phase-item-' + num);
+    var dot = document.getElementById('phase-dot-' + num);
+    var icon = document.getElementById('phase-icon-' + num);
+    var check = document.getElementById('phase-check-' + num);
+    var title = document.getElementById('phase-title-' + num);
+    var statusEl = document.getElementById('phase-status-' + num);
+    var connector = document.getElementById('phase-connector-' + num);
+
+    if (!item) return;
+
+    if (newState === 'running') {
+        item.classList.remove('opacity-40');
+        item.classList.add('opacity-100');
+        dot.classList.add('phase-active-glow', 'border-[#bfa17f]');
+        dot.classList.remove('border-white/10', 'border-green-400/50');
+        dot.style.background = 'rgba(191, 161, 127, 0.15)';
+        icon.classList.add('icon-spin', 'text-[#bfa17f]');
+        icon.classList.remove('text-white/30', 'text-green-400');
+        icon.style.display = '';
+        check.style.display = 'none';
+        title.classList.add('text-white/90');
+        title.classList.remove('text-white/40', 'text-green-300/70');
+        statusEl.innerText = 'Running...';
+        statusEl.classList.add('text-[#bfa17f]');
+        statusEl.classList.remove('text-white/15', 'text-green-400/50');
+        if (connector) { connector.classList.add('bg-[#bfa17f]/30'); connector.classList.remove('bg-white/5'); }
+    } else if (newState === 'complete') {
+        item.classList.remove('opacity-40');
+        item.classList.add('opacity-100');
+        dot.classList.remove('phase-active-glow', 'border-[#bfa17f]');
+        dot.classList.add('border-green-400/50');
+        dot.style.background = 'rgba(74, 222, 128, 0.08)';
+        icon.classList.remove('icon-spin', 'text-[#bfa17f]');
+        icon.style.display = 'none';
+        check.style.display = '';
+        title.classList.remove('text-white/90');
+        title.classList.add('text-green-300/70');
+        statusEl.innerText = 'Complete';
+        statusEl.classList.remove('text-[#bfa17f]', 'text-white/15');
+        statusEl.classList.add('text-green-400/50');
+        if (connector) { connector.classList.add('bg-green-400/20'); connector.classList.remove('bg-white/5', 'bg-[#bfa17f]/30'); }
+    }
+}
+
+// ── THOUGHTS ──
+var thoughtTypeIcons = {
+    search: '🔍',
+    reasoning: '🧠',
+    extraction: '📊',
+    insight: '💡',
+    system: '⚙️'
+};
+
+function handleThought(data) {
+    var text = data.text || '';
+    var type = data.type || 'reasoning';
+
+    // Increment LLM count for reasoning type
+    if (type === 'reasoning' || type === 'insight') {
+        state.llmCount++;
+        document.getElementById('stat-llm').innerText = state.llmCount;
+    }
+
+    addThoughtCard(text, type);
+}
+
+function addThoughtCard(text, type) {
+    var stream = document.getElementById('thought-stream');
+    var icon = thoughtTypeIcons[type] || '💭';
+
+    var now = new Date();
+    var timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+
+    var card = document.createElement('div');
+    card.className = 'dark-glass-strong rounded-lg p-3 fade-in';
+    card.innerHTML =
+        '<div class="flex items-start gap-2">' +
+        '  <span class="text-sm flex-shrink-0 mt-0.5">' + icon + '</span>' +
+        '  <div class="flex-1 min-w-0">' +
+        '    <span class="font-label-caps text-[9px] text-white/20 block mb-1">' + timeStr + '</span>' +
+        '    <p class="font-body-md text-sm text-white/60 leading-relaxed type-cursor" id="thought-text-' + Date.now() + '"></p>' +
+        '  </div>' +
+        '</div>';
+
+    stream.appendChild(card);
+    stream.scrollTop = stream.scrollHeight;
+
+    // Queue typewriter effect
+    var textEl = card.querySelector('p');
+    state.typewriterQueue.push({ el: textEl, text: text, index: 0 });
+    if (!state.isTyping) processTypewriterQueue();
+}
+
+function processTypewriterQueue() {
+    if (state.typewriterQueue.length === 0) {
+        state.isTyping = false;
+        return;
+    }
+    state.isTyping = true;
+    var item = state.typewriterQueue[0];
+
+    function typeChar() {
+        if (item.index < item.text.length) {
+            item.el.textContent += item.text.charAt(item.index);
+            item.index++;
+            // Auto-scroll
+            var stream = document.getElementById('thought-stream');
+            stream.scrollTop = stream.scrollHeight;
+            setTimeout(typeChar, 18);
+        } else {
+            // Done with this item
+            item.el.classList.remove('type-cursor');
+            state.typewriterQueue.shift();
+            // Small pause before next, or process immediately if queue is getting long
+            setTimeout(processTypewriterQueue, state.typewriterQueue.length > 3 ? 0 : 150);
+        }
+    }
+    typeChar();
+}
+
+// ── SOURCES ──
+function handleSource(data) {
+    state.sourceCount++;
+    document.getElementById('source-count').innerText = state.sourceCount;
+    document.getElementById('stat-sources').innerText = state.sourceCount;
+
+    // Count by engine
+    if (data.engine === 'tavily') {
+        state.tavilyCount++;
+        document.getElementById('stat-tavily').innerText = state.tavilyCount;
+    } else if (data.engine === 'duckduckgo') {
+        state.ddgCount++;
+        document.getElementById('stat-ddg').innerText = state.ddgCount;
+    }
+
+    var panel = document.getElementById('sources-panel');
+    var domain = '';
+    try { domain = new URL(data.url).hostname.replace('www.', ''); } catch(e) { domain = data.url || ''; }
+    var initial = domain.charAt(0).toUpperCase();
+
+    var engineBadge = '';
+    if (data.engine === 'tavily') {
+        engineBadge = '<span class="font-label-caps text-[8px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300/80">TAV</span>';
+    } else {
+        engineBadge = '<span class="font-label-caps text-[8px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300/80">DDG</span>';
+    }
+
+    var card = document.createElement('a');
+    card.href = data.url || '#';
+    card.target = '_blank';
+    card.rel = 'noopener';
+    card.className = 'flex items-center gap-2.5 p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.05] hover:border-[#bfa17f]/30 hover:bg-white/[0.06] transition-all duration-300 slide-in-right group cursor-pointer';
+    card.style.opacity = '0';
+    card.innerHTML =
+        '<div class="w-7 h-7 rounded bg-white/[0.08] flex items-center justify-center flex-shrink-0">' +
+        '  <span class="font-label-caps text-[10px] text-white/40">' + escapeHtml(initial) + '</span>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+        '  <p class="font-body-md text-xs text-white/60 truncate group-hover:text-[#bfa17f] transition-colors">' + escapeHtml(data.title || domain) + '</p>' +
+        '  <p class="font-label-caps text-[8px] text-white/20 truncate mt-0.5">' + escapeHtml(domain) + '</p>' +
+        '</div>' +
+        engineBadge;
+
+    panel.appendChild(card);
+    // Scroll sources panel
+    card.closest('.overflow-y-auto').scrollTop = card.closest('.overflow-y-auto').scrollHeight;
+}
+
+// ── FINDINGS ──
+function handleFinding(data) {
+    state.findingCount++;
+    document.getElementById('finding-count').innerText = state.findingCount;
+    document.getElementById('stat-findings').innerText = state.findingCount;
+
+    var panel = document.getElementById('findings-panel');
+
+    var confColor = 'bg-gray-500/20 text-gray-300/70';
+    if (data.confidence === 'high') confColor = 'bg-amber-500/20 text-amber-300/80';
+    else if (data.confidence === 'medium') confColor = 'bg-slate-300/15 text-slate-200/70';
+
+    var srcIcon = '🌐';
+    if (data.source === 'llm') srcIcon = '🤖';
+    else if (data.source === 'mixed') srcIcon = '🔀';
+
+    var chip = document.createElement('div');
+    chip.className = 'pop-in inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04]';
+    chip.style.opacity = '0';
+    chip.innerHTML =
+        '<span class="text-[10px]">' + srcIcon + '</span>' +
+        '<span class="font-label-caps text-[10px] text-white/40">' + escapeHtml(data.key) + ':</span>' +
+        '<span class="font-data-mono text-xs text-white/80">' + escapeHtml(data.value) + '</span>' +
+        '<span class="font-label-caps text-[7px] px-1 py-0.5 rounded ' + confColor + ' ml-1">' + (data.confidence || '').toUpperCase() + '</span>';
+
+    panel.appendChild(chip);
+}
+
+// ── LLM INSIGHT ──
+function handleLLMInsight(data) {
+    state.llmCount++;
+    document.getElementById('stat-llm').innerText = state.llmCount;
+
+    var container = document.getElementById('llm-insight-container');
+    container.style.display = '';
+    var textEl = document.getElementById('llm-insight-text');
+    textEl.innerText = data.text || '';
+}
+
+// ── PROGRESS ──
+function handleProgress(data) {
+    var pct = data.percent || 0;
+    document.getElementById('progress-percent').innerText = Math.round(pct) + '%';
+
+    // Update SVG ring
+    var circle = document.getElementById('progress-ring');
+    var circumference = 2 * Math.PI * 34; // r=34
+    var offset = circumference - (pct / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+}
+
+// ── RESULT ──
+function handleResult(data) {
+    // Store result data, transition will happen on 'done'
+    state.resultData = data;
+    // Cache for the Materials / History pages so they reuse this exact research
+    try {
+        localStorage.setItem('archpi_data_' + buildingName, JSON.stringify(data));
+    } catch (e) {
+        console.warn('Could not cache research result:', e);
+    }
+}
+
+// ── DONE ──
+function handleDone() {
+    // Close SSE
+    if (state.eventSource) {
+        state.eventSource.close();
+        state.eventSource = null;
+    }
+    // Stop timer
+    if (state.elapsedInterval) {
+        clearInterval(state.elapsedInterval);
+        state.elapsedInterval = null;
+    }
+
+    // Complete all phases
+    for (var i = 1; i <= 7; i++) {
+        setPhaseState(i, 'complete');
+    }
+
+    // Set progress to 100%
+    handleProgress({ percent: 100 });
+
+    // Wait a beat, then transition
+    setTimeout(function() {
+        transitionToReport(state.resultData);
+    }, 1200);
+}
+
+// ── ERROR ──
+function handleError(data) {
+    addThoughtCard('❌ Error: ' + (data.message || 'Unknown error occurred'), 'system');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRANSITION: DASHBOARD → REPORT
+// ═══════════════════════════════════════════════════════════════
+function transitionToReport(data) {
+    if (!data) {
+        addThoughtCard('⚠️ No result data received. Research may have failed.', 'system');
+        return;
+    }
+
+    var dashboard = document.getElementById('research-dashboard');
+    var reportState = document.getElementById('report-state');
+
+    // Animate dashboard out
+    dashboard.classList.add('dashboard-exit');
+
+    setTimeout(function() {
+        dashboard.style.display = 'none';
+        // Show report
+        reportState.style.display = '';
+        reportState.classList.add('report-enter');
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Render report data
+        renderData(data);
+    }, 700);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// REPORT RENDERING (same logic as original analysis.html)
+// ═══════════════════════════════════════════════════════════════
+function renderData(data) {
+    // Update Hero
+    var heroTitle = document.getElementById('hero-title');
+    heroTitle.innerText = data.title || ('Case Study: ' + buildingName);
+
+    var subtitle = data.subtitle || ('Structural Analysis of ' + buildingName);
+    document.getElementById('hero-subtitle').innerHTML = subtitle.replace(/\\n/g, '<br/>').replace(/\n/g, '<br/>');
+    document.getElementById('hero-summary').innerText = data.summary || 'Research complete.';
+
+    // Model badge
+    if (data.modelUsed) {
+        document.getElementById('model-badge').style.display = '';
+        document.getElementById('model-name').innerText = data.modelUsed;
+    }
+
+    // Hero image
+    if (data.heroImage) {
+        document.getElementById('dynamic-image').src = data.heroImage;
+    }
+
+    // Update Quick Stats
+    if (data.quickStats) {
+        var qs = data.quickStats;
+        if (qs.stat1) {
+            document.getElementById('qs-label-1').innerText = qs.stat1.label;
+            document.getElementById('qs-value-1').innerText = qs.stat1.value;
+        }
+        if (qs.stat2) {
+            document.getElementById('qs-label-2').innerText = qs.stat2.label;
+            document.getElementById('qs-value-2').innerText = qs.stat2.value;
+        }
+        if (qs.stat3) {
+            document.getElementById('qs-label-3').innerText = qs.stat3.label;
+            document.getElementById('qs-value-3').innerText = qs.stat3.value;
+        }
+    }
+
+    // Setup cross-page navigation links (null-safe: not every id exists in this layout)
+    var qParam = encodeURIComponent(buildingName);
+    function setHref(id, href) {
+        var el = document.getElementById(id);
+        if (el) el.href = href;
+    }
+    setHref('nav-materials', 'materials.html?q=' + qParam);
+    setHref('nav-blueprints', 'history.html?q=' + qParam);
+    setHref('side-materials', 'materials.html?q=' + qParam);
+    setHref('side-material-efficiency', 'material-efficiency.html?q=' + qParam);
+    setHref('side-blueprints', 'history.html?q=' + qParam);
+    setHref('card-materials', 'materials.html?q=' + qParam);
+    setHref('card-blueprints', 'history.html?q=' + qParam);
+
+    document.title = 'ArchPi | ' + (data.title || buildingName) + ' Analysis';
+
+    // Render Timeline
+    renderTimeline(data.timeline || []);
+
+    // Render Specifications Table
+    renderSpecifications(data.specifications || []);
+
+    // Render Full Research Report
+    renderFullReport(data.fullReport || {}, data.fullReport ? data.fullReport.sources : []);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER TIMELINE
+// ═══════════════════════════════════════════════════════════════
+function renderTimeline(timeline) {
+    var container = document.getElementById('timeline-container');
+    container.innerHTML = '';
+
+    for (var i = 0; i < timeline.length; i++) {
+        var node = timeline[i];
+        var isFirst = (i === 0);
+        var imgSrc = node.image || fallbackImages[i % fallbackImages.length];
+
+        // Build stats grid HTML
+        var statsHtml = '';
+        if (node.stats && node.stats.length > 0) {
+            statsHtml = '<div class="bg-surface-container-high/40 p-5 border border-outline-variant/30"><div class="grid grid-cols-2 gap-y-4">';
+            for (var j = 0; j < node.stats.length; j++) {
+                var s = node.stats[j];
+                statsHtml += '<div>';
+                statsHtml += '<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">' + escapeHtml(s.label) + '</p>';
+                statsHtml += '<p class="font-data-mono text-data-mono">' + escapeHtml(s.value) + '</p>';
+                statsHtml += '</div>';
+            }
+            statsHtml += '</div></div>';
+        }
+
+        // Build node HTML
+        var dotClass = isFirst ? 'bg-primary node-active' : 'bg-background';
+        var nodeHtml = '';
+        nodeHtml += '<div class="relative timeline-node group fade-in" data-caption="' + escapeAttr(node.title) + '" data-img="' + escapeAttr(imgSrc) + '" data-year="' + escapeAttr(node.year) + '" style="animation-delay: ' + (i * 0.15) + 's">';
+        nodeHtml += '  <div class="absolute -left-[36.5px] top-2 w-4 h-4 ' + dotClass + ' border-2 border-primary rounded-full z-10 transition-transform group-hover:scale-125"></div>';
+        nodeHtml += '  <div class="mb-4">';
+        nodeHtml += '    <span class="font-label-caps text-label-caps text-primary">' + escapeHtml(node.dateLabel) + '</span>';
+        nodeHtml += '    <h3 class="font-headline-sm text-headline-sm mt-1">' + escapeHtml(node.title) + '</h3>';
+        nodeHtml += '  </div>';
+        
+        var paragraphs = (node.description || '').split('\n').filter(p => p.trim() !== '');
+        for (var p = 0; p < paragraphs.length; p++) {
+            nodeHtml += '  <p class="font-body-md text-body-md text-on-surface-variant mb-4">' + escapeHtml(paragraphs[p]) + '</p>';
+        }
+        
+        nodeHtml += '  <div class="mb-2"></div>'; // Spacing
+        nodeHtml += '  ' + statsHtml;
+        nodeHtml += '</div>';
+
+        container.innerHTML += nodeHtml;
+    }
+
+    setTimeout(initObserver, 100);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER SPECIFICATIONS TABLE
+// ═══════════════════════════════════════════════════════════════
+function renderSpecifications(specs) {
+    var tbody = document.getElementById('specs-tbody');
+    tbody.innerHTML = '';
+
+    for (var i = 0; i < specs.length; i++) {
+        var spec = specs[i];
+        var row = '';
+        row += '<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors" style="transition: transform 0.2s ease;">';
+        row += '<td class="py-4">' + escapeHtml(spec.metric) + '</td>';
+        row += '<td class="py-4 text-primary font-semibold">' + escapeHtml(spec.value) + '</td>';
+        row += '<td class="py-4">' + escapeHtml(spec.unit) + '</td>';
+        row += '<td class="py-4 text-on-surface-variant">' + escapeHtml(spec.significance) + '</td>';
+        row += '</tr>';
+        tbody.innerHTML += row;
+    }
+
+    // Table row hover effect
+    var rows = document.querySelectorAll('#specs-tbody tr');
+    for (var r = 0; r < rows.length; r++) {
+        (function(row) {
+            row.addEventListener('mouseenter', function() { row.style.transform = 'translateX(8px)'; });
+            row.addEventListener('mouseleave', function() { row.style.transform = 'translateX(0)'; });
+        })(rows[r]);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERSECTION OBSERVER FOR TIMELINE IMAGE SWITCHING
+// ═══════════════════════════════════════════════════════════════
+function initObserver() {
+    var nodes = document.querySelectorAll('.timeline-node');
+    var mainImg = document.getElementById('dynamic-image');
+    var imgCaption = document.getElementById('image-caption');
+
+    if (nodes.length === 0) return;
+
+    mainImg.src = nodes[0].getAttribute('data-img');
+    imgCaption.innerText = nodes[0].getAttribute('data-caption');
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var imgSrc = entry.target.getAttribute('data-img');
+                var captionText = entry.target.getAttribute('data-caption');
+
+                mainImg.style.opacity = '0';
+                setTimeout(function() {
+                    mainImg.src = imgSrc;
+                    mainImg.style.opacity = '1';
+                    imgCaption.innerText = captionText;
+                }, 300);
+
+                for (var k = 0; k < nodes.length; k++) {
+                    var dot = nodes[k].querySelector('div:first-child');
+                    dot.classList.remove('node-active', 'bg-primary');
+                    dot.classList.add('bg-background');
+                }
+                var activeDot = entry.target.querySelector('div:first-child');
+                activeDot.classList.add('node-active', 'bg-primary');
+                activeDot.classList.remove('bg-background');
+            }
+        });
+    }, { root: null, threshold: 0.5 });
+
+    for (var n = 0; n < nodes.length; n++) {
+        observer.observe(nodes[n]);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER FULL RESEARCH REPORT
+// ═══════════════════════════════════════════════════════════════
+function renderFullReport(report, sources) {
+    var container = document.getElementById('report-content');
+    container.innerHTML = '';
+
+    var sections = [
+        { icon: 'info', title: 'Historical Overview', content: report.overview },
+        { icon: 'timeline', title: 'Construction Timeline', content: report.constructionTimeline },
+        { icon: 'hardware', title: 'Materials & Cost Analysis', content: report.materialsAndCost },
+        { icon: 'foundation', title: 'Structural System', content: report.structuralSystem },
+        { icon: 'engineering', title: 'Engineering Challenges', content: report.engineeringChallenges },
+        { icon: 'architecture', title: 'Architectural Design', content: report.architecturalDesign },
+        { icon: 'diversity_3', title: 'Cultural Impact & Legacy', content: report.culturalImpact }
+    ];
+
+    for (var i = 0; i < sections.length; i++) {
+        var sec = sections[i];
+        if (!sec.content || sec.content.trim().length < 10) continue;
+
+        var html = '';
+        html += '<div class="fade-in" style="animation-delay: ' + (i * 0.1) + 's">';
+        html += '  <div class="flex items-center gap-3 mb-4">';
+        html += '    <span class="material-symbols-outlined text-primary">' + sec.icon + '</span>';
+        html += '    <h3 class="font-label-caps text-label-caps text-primary uppercase tracking-widest">' + escapeHtml(sec.title) + '</h3>';
+        html += '  </div>';
+        html += '  <div class="border-l-2 border-primary-container pl-6 ml-3">';
+        
+        var paragraphs = (sec.content || '').split('\n').filter(p => p.trim() !== '');
+        for (var p = 0; p < paragraphs.length; p++) {
+            html += '    <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">' + escapeHtml(paragraphs[p]) + '</p>';
+        }
+        
+        html += '  </div>';
+        html += '</div>';
+
+        container.innerHTML += html;
+    }
+
+    // Sources
+    var sourcesList = document.getElementById('sources-list');
+    sourcesList.innerHTML = '';
+    if (sources && sources.length > 0) {
+        for (var s = 0; s < sources.length; s++) {
+            var src = sources[s];
+            var srcHtml = '';
+            srcHtml += '<a href="' + escapeAttr(src.url) + '" target="_blank" rel="noopener" class="flex items-start gap-2 p-3 border border-outline-variant/30 bg-surface-container-low hover:border-primary hover:bg-surface-container transition-all group">';
+            srcHtml += '  <span class="material-symbols-outlined text-outline text-sm mt-0.5 group-hover:text-primary">open_in_new</span>';
+            srcHtml += '  <span class="font-body-md text-sm text-on-surface-variant group-hover:text-primary truncate">' + escapeHtml(src.title || src.url) + '</span>';
+            srcHtml += '</a>';
+            sourcesList.innerHTML += srcHtml;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function escapeAttr(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCROLL-TO-TOP BUTTON
+// ═══════════════════════════════════════════════════════════════
+var scrollBtn = document.getElementById('scroll-to-top');
+window.addEventListener('scroll', function() {
+    if (window.scrollY > 500) {
+        scrollBtn.classList.remove('opacity-0', 'invisible');
+        scrollBtn.classList.add('opacity-100', 'visible');
+    } else {
+        scrollBtn.classList.add('opacity-0', 'invisible');
+        scrollBtn.classList.remove('opacity-100', 'visible');
+    }
+});
+scrollBtn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body></html>

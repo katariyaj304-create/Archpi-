@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi Terminal - India Soil Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#e1c19d",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "secondary-container": "#e2dfde",
+                        "surface-container-highest": "#e8e1dd",
+                        "on-tertiary-container": "#3b3c3c",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-secondary-container": "#636262",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474746",
+                        "primary-fixed": "#ffddb8",
+                        "surface-bright": "#fff8f4",
+                        "on-background": "#1e1b19",
+                        "surface-tint": "#725a3d",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "primary-container": "#bfa17f",
+                        "on-surface-variant": "#4e453c",
+                        "on-primary-fixed": "#291803",
+                        "error-container": "#ffdad6",
+                        "outline": "#80756b",
+                        "surface-dim": "#e0d9d4",
+                        "surface-container-low": "#faf2ee",
+                        "secondary": "#5f5e5e",
+                        "on-surface": "#1e1b19",
+                        "inverse-surface": "#33302d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#4d381d",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "outline-variant": "#d1c4b8",
+                        "tertiary-container": "#a7a6a6",
+                        "surface": "#fff8f4",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#eee7e2",
+                        "tertiary": "#5e5e5e",
+                        "on-error-container": "#93000a",
+                        "primary": "#725a3d",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-primary-fixed-variant": "#594327",
+                        "background": "#fff8f4",
+                        "surface-container": "#f4ece8",
+                        "primary-fixed-dim": "#e1c19d",
+                        "surface-variant": "#e8e1dd",
+                        "inverse-on-surface": "#f7efeb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #fff8f4; color: #1e1b19; overflow-x: hidden; }
+        .thin-border { border: 1px solid #d1c4b8; }
+        .glass-panel { backdrop-filter: blur(20px); background: rgba(255, 248, 244, 0.8); }
+        .aluminum-texture { background-color: #f6f6f6; position: relative; }
+        .aluminum-texture::after {
+            content: ""; position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, #000 1px, #000 2px);
+        }
+        .map-container { position: relative; width: 100%; height: 600px; background: #faf2ee; overflow: hidden; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 10px; font-family: 'Inter'; text-transform: uppercase; letter-spacing: 0.05em; }
+        .legend-color { width: 12px; height: 12px; }
+        /* Live Leaflet map, tuned to the editorial palette */
+        .leaflet-container { background: #faf2ee; font-family: 'Inter'; }
+        .warm-tiles { filter: sepia(0.3) saturate(0.85) contrast(0.97); }
+        .leaflet-ping { width: 14px; height: 14px; background: #725a3d; border: 2px solid #fff8f4; border-radius: 50%; box-shadow: 0 0 0 3px rgba(191,161,127,0.4); cursor: pointer; transition: transform 0.2s, background 0.2s; }
+        .leaflet-ping:hover { transform: scale(1.4); background: #bfa17f; }
+        .leaflet-ping-query { background: #ba1a1a !important; }
+        .area-selecting .leaflet-marker-icon { pointer-events: none !important; }
+        .ovl-chip { cursor: pointer; user-select: none; padding: 2px 6px; border: 1px solid transparent; transition: all 0.2s; }
+        .ovl-chip:hover { border-color: #d1c4b8; }
+        .ovl-chip.active { border-color: #725a3d; background: rgba(114,90,61,0.08); }
+        .leaflet-control-zoom a { color: #725a3d !important; }
+        .leaflet-control-attribution { background: rgba(255,248,244,0.8) !important; font-size: 9px !important; }
+    </style>
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="structures.js"></script>
+</head>
+<body class="font-body-md text-on-surface">
+
+<!-- ================================================================ -->
+<!-- TOP NAVIGATION BAR                                               -->
+<!-- ================================================================ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2 cursor-pointer transition-transform duration-200 active:scale-95">
+            <span class="material-symbols-outlined text-primary text-2xl">architecture</span>
+            <span class="font-headline-md text-headline-sm text-on-surface tracking-tighter">ArchPi</span>
+        </a>
+        <div class="hidden md:flex gap-6 items-center h-full">
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="index.html">Home</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="globe.html">Globe</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="analysis.html">Analysis</a>
+            <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-5" href="soil.html">Soil</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="weather.html">Weather</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-5" href="api-usage.html">API Usage</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center border border-outline-variant">
+            <span class="font-label-caps text-[10px] text-primary">JD</span>
+        </div>
+    </div>
+</div>
+</nav>
+
+<!-- ================================================================ -->
+<!-- SIDEBAR                                                          -->
+<!-- ================================================================ -->
+<aside class="hidden lg:flex flex-col py-8 px-4 w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low border-r border-outline-variant/30 z-40">
+    <div class="flex flex-col gap-2 mb-10">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">architecture</span>
+            <span class="font-headline-sm text-headline-sm text-on-surface">ArchPi</span>
+        </div>
+        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest ml-8">Structural Intelligence</span>
+    </div>
+    <div class="mb-6">
+        <label class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mb-1 block" for="side-structure">Active Structure</label>
+        <select class="js-structure-select w-full bg-surface-container border border-outline-variant/60 px-3 py-2 font-data-mono text-xs text-on-surface focus:border-primary focus:outline-none" id="side-structure"></select>
+        <p class="font-data-mono text-[10px] text-on-surface-variant mt-1" id="side-structure-meta">Loading…</p>
+    </div>
+    <nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+</aside>
+
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-24 p-margin-desktop min-h-screen">
+<!-- Header -->
+<div class="mb-gutter border-l-4 border-primary pl-6">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">India Soil Analytics &amp; Geotechnical Intelligence</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">High-fidelity geotechnical diagnostics for structural engineering, featuring real-time load-bearing capacity and seismic risk profiles.</p>
+<div class="mt-3 font-data-mono text-[11px] text-outline" id="query-status">Click a site ping — or anywhere on the map — to run live diagnostics.</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Map Panel (Primary) -->
+<div class="col-span-12 lg:col-span-8 thin-border bg-white overflow-hidden relative group">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-[#f6f6f6]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">map</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-tighter">Interactive Regional Schematic</span>
+</div>
+<div class="flex gap-2 items-center">
+<span class="font-data-mono text-[9px] text-outline mr-1">SOILGRIDS OVERLAY:</span>
+<div class="legend-item ovl-chip" data-ovl="types"><span class="legend-color bg-[#bf6b54]"></span> Soil Types</div>
+<div class="legend-item ovl-chip" data-ovl="clay"><span class="legend-color bg-[#8c5a32]"></span> Clay %</div>
+<div class="legend-item ovl-chip" data-ovl="sand"><span class="legend-color bg-[#d4b96a]"></span> Sand %</div>
+<div class="legend-item ovl-chip" data-ovl="ph"><span class="legend-color bg-[#7b9e87]"></span> pH</div>
+<div class="legend-item ovl-chip" data-ovl="none"><span class="legend-color bg-[#e8e0d8]"></span> None</div>
+</div>
+</div>
+<div class="map-container">
+<!-- Live Leaflet map: CARTO light basemap + ISRIC SoilGrids WMS rasters -->
+<div class="absolute inset-0 z-0" id="soil-map"></div>
+<!-- Schematic UI Overlays -->
+<div class="absolute inset-0 pointer-events-none border-[12px] border-white/40 z-[650]"></div>
+<!-- Telemetry Floating Panel -->
+<div class="absolute bottom-6 left-6 glass-panel thin-border p-4 w-64 pointer-events-auto z-[700]">
+<div class="font-label-caps text-[10px] text-outline mb-3" id="telemetry-title">SITE TELEMETRY: MUMBAI_CZ_09</div>
+<div class="space-y-3">
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span class="text-[10px] font-bold">SOIL TYPE</span>
+<span class="font-data-mono text-[10px] text-primary" id="telemetry-soil-type">MARINE CLAY</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span class="text-[10px] font-bold">PH LEVEL</span>
+<span class="font-data-mono text-[10px] text-primary" id="telemetry-ph">7.24 (NEUTRAL)</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span class="text-[10px] font-bold">LIQUEFACTION</span>
+<span class="font-data-mono text-[10px] text-error" id="telemetry-liquefaction">CRITICAL (0.84)</span>
+</div>
+<div class="flex justify-between pb-1">
+<span class="text-[10px] font-bold">REGION</span>
+<span class="font-data-mono text-[10px] text-primary" id="telemetry-region">WESTERN COASTAL</span>
+</div>
+</div>
+</div>
+<!-- Compass Overlay -->
+<div class="absolute top-6 right-6 opacity-40 pointer-events-none z-[650]">
+<span class="material-symbols-outlined text-6xl font-light text-primary">explore</span>
+</div>
+<!-- WMS Legend Panel -->
+<div class="absolute top-6 left-14 glass-panel thin-border z-[700] hidden" id="wms-legend">
+<div class="flex justify-between items-center px-3 py-2 border-b border-outline-variant/30">
+<span class="font-label-caps text-[9px] text-outline" id="wms-legend-title">LEGEND</span>
+<span class="material-symbols-outlined text-[14px] text-outline cursor-pointer" id="wms-legend-close">close</span>
+</div>
+<div class="p-2 max-h-[420px] overflow-y-auto">
+<img alt="Soil layer legend" id="wms-legend-img" src="" style="max-width: 190px;"/>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 p-4 font-data-mono text-[10px] text-outline bg-white/80 z-[700]" id="map-coords">
+                    LIVE MAP | DATUM: WGS84
+                </div>
+</div>
+<!-- Diagnostics Sidebar -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Regional Diagnostics -->
+<div class="thin-border bg-white flex-1 overflow-hidden flex flex-col">
+<div class="p-6 aluminum-texture border-b border-outline-variant">
+<h3 class="font-label-caps text-label-caps text-on-surface">Regional Soil Diagnostics</h3>
+<p class="text-[10px] text-on-surface-variant/70 mt-1">FAILURE REASON ANALYSIS BY ZONE</p>
+</div>
+<div class="p-6 space-y-6 flex-1 bg-surface">
+<!-- Diagnostic Row 1 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-caps text-[10px] font-bold">COASTAL ZONES</span>
+<span class="font-data-mono text-xs text-error">HIGH LIQUEFACTION RISK</span>
+</div>
+<div class="w-full bg-outline-variant/20 h-1">
+<div class="bg-error w-[88%] h-full"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-2 leading-relaxed italic">Saline infiltration leading to high pore-water pressure and loss of effective stress during seismic events.</p>
+</div>
+<!-- Diagnostic Row 2 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-caps text-[10px] font-bold">DECCAN TRAP</span>
+<span class="font-data-mono text-xs text-primary">EXPANSIVE CLAY (BC)</span>
+</div>
+<div class="w-full bg-outline-variant/20 h-1">
+<div class="bg-primary-container w-[64%] h-full"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-2 leading-relaxed italic">High swelling index (Montmorillonite) causing significant vertical heave in foundation strata.</p>
+</div>
+<!-- Diagnostic Row 3 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-caps text-[10px] font-bold">THAR REGION</span>
+<span class="font-data-mono text-xs text-outline">THERMAL INSTABILITY</span>
+</div>
+<div class="w-full bg-outline-variant/20 h-1">
+<div class="bg-outline w-[42%] h-full"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-2 leading-relaxed italic">Extreme diurnal temperature variation affecting curing cycles and thermal expansion of footings.</p>
+</div>
+</div>
+</div>
+<!-- Load Bearing (SBC) Terminal -->
+<div class="thin-border bg-inverse-surface text-inverse-on-surface p-6">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-caps text-[10px] tracking-[0.2em]">SBC PERFORMANCE (kN/m²)</span>
+<span class="material-symbols-outlined text-sm">show_chart</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-data-mono text-4xl font-bold tracking-tighter" id="sbc-value">428.5</span>
+<span class="font-data-mono text-xs opacity-50" id="sbc-caption">AVG CAP</span>
+</div>
+<div class="mt-6 space-y-2">
+<div class="flex justify-between text-[10px] font-data-mono">
+<span class="opacity-60">OPTIMAL RANGE</span>
+<span class="text-primary-fixed">380 - 520</span>
+</div>
+<div class="h-12 flex items-end gap-1">
+<div class="flex-1 bg-primary/20 h-4 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-6 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-10 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-8 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-9 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-5 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-12 hover:bg-primary transition-all"></div>
+<div class="flex-1 bg-primary/20 h-7 hover:bg-primary transition-all"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Mineral Composition & Technical Readouts -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-gutter mt-4">
+<div class="thin-border bg-white p-6">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 border border-outline-variant bg-[#f6f6f6]">
+<span class="material-symbols-outlined text-primary">biotech</span>
+</div>
+<div>
+<h4 class="font-label-caps text-[11px] font-bold uppercase tracking-widest">Soil Composition</h4>
+<p class="text-[10px] text-outline uppercase">ISRIC SoilGrids topsoil data</p>
+</div>
+</div>
+<table class="w-full text-left font-data-mono text-[11px]">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="pb-2 font-bold opacity-60">FRACTION</th>
+<th class="pb-2 font-bold opacity-60">CONC.</th>
+<th class="pb-2 font-bold opacity-60">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30" id="mineral-tbody">
+<tr>
+<td class="py-3">Silica (SiO₂)</td>
+<td class="py-3">42.8%</td>
+<td class="py-3 text-primary">STABLE</td>
+</tr>
+<tr>
+<td class="py-3">Iron (Fe₂O₃)</td>
+<td class="py-3">15.2%</td>
+<td class="py-3 text-primary">STABLE</td>
+</tr>
+<tr>
+<td class="py-3">Alumina (Al₂O₃)</td>
+<td class="py-3">22.1%</td>
+<td class="py-3 text-outline">TRACE</td>
+</tr>
+<tr>
+<td class="py-3">Calcium (CaO)</td>
+<td class="py-3">4.5%</td>
+<td class="py-3 text-error">ALKALINE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="thin-border bg-white p-6">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 border border-outline-variant bg-[#f6f6f6]">
+<span class="material-symbols-outlined text-primary">water_drop</span>
+</div>
+<div>
+<h4 class="font-label-caps text-[11px] font-bold uppercase tracking-widest">Hydrological Profile</h4>
+<p class="text-[10px] text-outline uppercase">Water table saturation</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-[11px] font-data-mono">SATURATION INDEX</span>
+<span class="text-xs font-bold" id="hydro-depth">18.4m</span>
+</div>
+<div class="relative h-20 bg-surface-container-high overflow-hidden border border-outline-variant/30">
+<div class="absolute bottom-0 w-full bg-primary/40 h-[18%]" id="hydro-bar" style="animation: wave 4s ease-in-out infinite;"></div>
+<div class="absolute top-1/2 left-4 -translate-y-1/2 font-data-mono text-[9px] uppercase tracking-tighter opacity-40">Saturation Threshold</div>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[10px] font-data-mono">
+<div class="p-2 bg-surface text-center">Permeability: <span class="font-bold" id="hydro-permeability">0.82</span></div>
+<div class="p-2 bg-surface text-center">Bulk Density: <span class="font-bold" id="hydro-bdod">1.28 g/cm³</span></div>
+</div>
+</div>
+</div>
+<div class="thin-border bg-white p-6 flex flex-col">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 border border-outline-variant bg-[#f6f6f6]">
+<span class="material-symbols-outlined text-primary">security</span>
+</div>
+<div>
+<h4 class="font-label-caps text-[11px] font-bold uppercase tracking-widest">Seismic Risk Matrix</h4>
+<p class="text-[10px] text-outline uppercase">Structural vulnerability</p>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-center py-4">
+<div class="relative w-32 h-32">
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="64" cy="64" fill="transparent" r="60" stroke="#e8e1dd" stroke-width="8"></circle>
+<circle cx="64" cy="64" fill="transparent" r="60" stroke="#725a3d" stroke-dasharray="377" stroke-dashoffset="120" stroke-linecap="square" stroke-width="8" id="seismic-arc" style="transition: stroke-dashoffset 0.8s ease;"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center transform rotate-90">
+<span class="font-data-mono text-2xl font-bold" id="seismic-zone">III</span>
+<span class="text-[8px] font-bold uppercase" id="seismic-label">Moderate</span>
+</div>
+</div>
+</div>
+<div class="mt-4 p-3 bg-surface-container-lowest border-l-2 border-primary">
+<p class="text-[10px] leading-relaxed italic text-on-surface-variant" id="seismic-note">Zone III Classification: Design for earthquake force 0.16g. Base isolation recommended for primary load paths.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // ============================================================
+        // Geotechnical Diagnostic Hub — live wiring
+        // Backend: FastAPI service (soil_backend) on :8000
+        // ============================================================
+        const API_BASE = 'http://localhost:8000';
+
+        // --- Live interactive map: Leaflet + CARTO basemap + ISRIC SoilGrids WMS
+        const SITES = [
+            { name: 'NEW_DELHI_S4',   title: 'New Delhi Site v4',    lat: 28.61, lon: 77.21 },
+            { name: 'HYDERABAD_CORE', title: 'Hyderabad Core',       lat: 17.38, lon: 78.48 },
+            { name: 'MUMBAI_CZ_09',   title: 'Mumbai Coastal Zone',  lat: 19.08, lon: 72.88 },
+            { name: 'GUWAHATI_SLOPE', title: 'Guwahati Slope Site',  lat: 26.14, lon: 91.74 },
+        ];
+
+        const map = L.map('soil-map', {
+            center: [22.8, 80.5], zoom: 5, minZoom: 3, maxZoom: 13,
+            // Widened to reach the Mediterranean study structures as well as India.
+            maxBounds: [[-5.0, -25.0], [62.0, 105.0]], maxBoundsViscosity: 0.6,
+            attributionControl: false,
+        });
+        L.control.attribution({ position: 'bottomleft', prefix: false }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO | Soil raster: ISRIC SoilGrids',
+            subdomains: 'abcd', className: 'warm-tiles',
+        }).addTo(map);
+
+        // ISRIC SoilGrids WMS rasters, toggled by the legend chips in the
+        // panel header. "types" is the WRB most-probable soil class map —
+        // the full classified soil map of India (Vertisols = black cotton,
+        // Fluvisols = alluvial, Arenosols = desert sand, ...).
+        const SOIL_WMS = {
+            types: { map: 'wrb',   layer: 'MostProbable',    title: 'WRB SOIL TYPES', opacity: 0.65 },
+            clay:  { map: 'clay',  layer: 'clay_0-5cm_mean', title: 'CLAY % (0-5cm)', opacity: 0.6 },
+            sand:  { map: 'sand',  layer: 'sand_0-5cm_mean', title: 'SAND % (0-5cm)', opacity: 0.6 },
+            ph:    { map: 'phh2o', layer: 'phh2o_0-5cm_mean', title: 'SOIL pH (0-5cm)', opacity: 0.6 },
+        };
+        let overlayLayer = null;
+        const legendEl = document.getElementById('wms-legend');
+        let legendDismissed = false;
+        function setOverlay(key) {
+            if (overlayLayer) { map.removeLayer(overlayLayer); overlayLayer = null; }
+            document.querySelectorAll('.ovl-chip').forEach(c =>
+                c.classList.toggle('active', c.dataset.ovl === key));
+            if (key === 'none') { legendEl.classList.add('hidden'); return; }
+            const cfg = SOIL_WMS[key];
+            const wmsBase = `https://maps.isric.org/mapserv?map=/map/${cfg.map}.map`;
+            overlayLayer = L.tileLayer.wms(wmsBase, {
+                layers: cfg.layer, format: 'image/png', transparent: true,
+                version: '1.3.0', opacity: cfg.opacity,
+            }).addTo(map);
+            document.getElementById('wms-legend-title').textContent = `LEGEND — ${cfg.title}`;
+            document.getElementById('wms-legend-img').src =
+                `${wmsBase}&SERVICE=WMS&VERSION=1.3.0&SLD_VERSION=1.1.0&REQUEST=GetLegendGraphic&LAYER=${cfg.layer}&FORMAT=image/png`;
+            if (!legendDismissed) legendEl.classList.remove('hidden');
+        }
+        document.querySelectorAll('.ovl-chip').forEach(chip =>
+            chip.addEventListener('click', () => { legendDismissed = false; setOverlay(chip.dataset.ovl); }));
+        document.getElementById('wms-legend-close').addEventListener('click', () => {
+            legendDismissed = true;
+            legendEl.classList.add('hidden');
+        });
+        setOverlay('types');
+
+        // Surveyed site pings
+        const pingIcon = L.divIcon({ className: 'leaflet-ping', iconSize: [14, 14] });
+        const queryIcon = L.divIcon({ className: 'leaflet-ping leaflet-ping-query', iconSize: [14, 14] });
+        SITES.forEach(site => {
+            L.marker([site.lat, site.lon], { icon: pingIcon, title: site.title })
+                .addTo(map)
+                .bindTooltip(site.title, { direction: 'top', offset: [0, -10] })
+                .on('click', () => runDiagnostics(site.lat, site.lon, site.name));
+        });
+
+        // Click anywhere: drop a query marker and run diagnostics there
+        let queryMarker = null;
+        map.on('click', (e) => {
+            if (areaMode || suppressClick) { suppressClick = false; return; }
+            const { lat, lng } = e.latlng;
+            if (queryMarker) map.removeLayer(queryMarker);
+            if (areaRect) { map.removeLayer(areaRect); areaRect = null; }
+            queryMarker = L.marker([lat, lng], { icon: queryIcon }).addTo(map);
+            runDiagnostics(lat, lng, `GRID_${lat.toFixed(2)}N_${lng.toFixed(2)}E`);
+        });
+
+        // --- Area analysis: toggle the select tool, drag a rectangle, get
+        //     aggregate diagnostics for everything inside it
+        let areaMode = false, areaRect = null, areaStart = null, suppressClick = false;
+        const AreaControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd() {
+                const div = L.DomUtil.create('div', 'leaflet-bar');
+                const a = L.DomUtil.create('a', '', div);
+                a.href = '#'; a.id = 'area-btn';
+                a.title = 'Select area — drag a rectangle for aggregate regional analysis';
+                a.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;line-height:30px;">highlight_alt</span>';
+                L.DomEvent.on(a, 'click', (e) => { L.DomEvent.stop(e); toggleAreaMode(); });
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            },
+        });
+        map.addControl(new AreaControl());
+
+        function toggleAreaMode(on = !areaMode) {
+            areaMode = on;
+            const btn = document.getElementById('area-btn');
+            btn.style.background = on ? '#725a3d' : '';
+            btn.style.color = on ? '#fff8f4' : '#725a3d';
+            map.getContainer().style.cursor = on ? 'crosshair' : '';
+            map.getContainer().classList.toggle('area-selecting', on);
+            if (on) { map.dragging.disable(); } else { map.dragging.enable(); }
+        }
+
+        map.on('mousedown', (e) => {
+            if (!areaMode) return;
+            areaStart = e.latlng;
+            if (areaRect) map.removeLayer(areaRect);
+            areaRect = L.rectangle([areaStart, areaStart], {
+                color: '#725a3d', weight: 1.5, dashArray: '5 4', fillOpacity: 0.08,
+            }).addTo(map);
+        });
+        map.on('mousemove', (e) => {
+            if (areaMode && areaStart && areaRect) {
+                areaRect.setBounds(L.latLngBounds(areaStart, e.latlng));
+            }
+        });
+        map.on('mouseup', (e) => {
+            if (!areaMode || !areaStart) return;
+            const bounds = L.latLngBounds(areaStart, e.latlng);
+            areaStart = null;
+            suppressClick = true;
+            toggleAreaMode(false);
+            // Treat a tiny drag as an accidental click, not a selection
+            if (bounds.getNorth() - bounds.getSouth() < 0.05 && bounds.getEast() - bounds.getWest() < 0.05) {
+                if (areaRect) { map.removeLayer(areaRect); areaRect = null; }
+                return;
+            }
+            if (queryMarker) { map.removeLayer(queryMarker); queryMarker = null; }
+            runAreaDiagnostics(bounds);
+        });
+
+        async function runAreaDiagnostics(bounds) {
+            const label = `AREA ${bounds.getSouth().toFixed(1)}–${bounds.getNorth().toFixed(1)}°N / ` +
+                          `${bounds.getWest().toFixed(1)}–${bounds.getEast().toFixed(1)}°E`;
+            setBusy(label);
+            $('query-status').textContent = `ANALYSING ${label} … sampling 3×3 grid [SoilGrids + PostGIS + Terzaghi]`;
+            try {
+                const qs = `min_lat=${bounds.getSouth()}&min_lon=${bounds.getWest()}` +
+                           `&max_lat=${bounds.getNorth()}&max_lon=${bounds.getEast()}`;
+                const res = await fetch(`${API_BASE}/api/v1/diagnostics/area/?${qs}`);
+                if (!res.ok) {
+                    const detail = (await res.json().catch(() => ({}))).detail || res.statusText;
+                    throw new Error(detail);
+                }
+                const data = await res.json();
+                render(data, label);
+                $('query-status').textContent =
+                    `AREA OK — ${data.query.regions_covered.join(', ')} | ` +
+                    `${data.query.samples_ok}/${data.query.samples_requested} samples | ` +
+                    `SBC ${data.bearing_capacity.range_kn_m2[0].toFixed(0)}–${data.bearing_capacity.range_kn_m2[1].toFixed(0)} kN/m² | ` +
+                    `${data.meta.elapsed_ms} ms`;
+            } catch (err) {
+                $('query-status').textContent = `AREA ANALYSIS FAILED: ${err.message}`;
+            }
+        }
+
+        // Live cursor readout in the panel footer
+        const coordsEl = document.getElementById('map-coords');
+        map.on('mousemove', (e) => {
+            coordsEl.textContent =
+                `CURSOR: ${e.latlng.lat.toFixed(3)}°N ${e.latlng.lng.toFixed(3)}°E | ZOOM ${map.getZoom()} | DATUM: WGS84`;
+        });
+
+        const $ = (id) => document.getElementById(id);
+
+        function phLabel(ph) {
+            if (ph == null) return 'N/A';
+            const tag = ph < 6.0 ? 'ACIDIC' : ph > 7.5 ? 'ALKALINE' : 'NEUTRAL';
+            return `${ph.toFixed(2)} (${tag})`;
+        }
+
+        function setBusy(label) {
+            $('query-status').textContent = `QUERYING ${label} … [SoilGrids + PostGIS + Terzaghi]`;
+            $('telemetry-title').textContent = `SITE TELEMETRY: ${label}`;
+            ['telemetry-soil-type', 'telemetry-ph', 'telemetry-liquefaction', 'telemetry-region']
+                .forEach(id => { $(id).textContent = '…'; });
+            $('sbc-value').textContent = '···';
+        }
+
+        async function runDiagnostics(lat, lon, label) {
+            setBusy(label);
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/diagnostics/?lat=${lat}&lon=${lon}`);
+                if (!res.ok) {
+                    const detail = (await res.json().catch(() => ({}))).detail || res.statusText;
+                    throw new Error(detail);
+                }
+                render(await res.json(), label);
+            } catch (err) {
+                $('query-status').textContent = `DIAGNOSTICS FAILED: ${err.message} — is the backend running on :8000?`;
+                $('telemetry-soil-type').textContent = 'ERROR';
+            }
+        }
+
+        function render(data, label) {
+            const soil = data.soil_profile;
+            const region = data.region;
+            const sbc = data.bearing_capacity;
+            const hazards = data.hazards;
+
+            // --- Telemetry panel
+            $('telemetry-title').textContent = `SITE TELEMETRY: ${label}`;
+            $('telemetry-soil-type').textContent = soil.wrb_class
+                ? `${soil.wrb_common_name ? soil.wrb_common_name.toUpperCase() + ' · ' : ''}${soil.wrb_class.toUpperCase()}`
+                : soil.texture_class;
+            $('telemetry-ph').textContent = phLabel(soil.ph);
+            const liq = $('telemetry-liquefaction');
+            liq.textContent = `${hazards.liquefaction_label} (${hazards.liquefaction_index.toFixed(2)})`;
+            liq.className = 'font-data-mono text-[10px] ' +
+                (hazards.liquefaction_index >= 0.4 ? 'text-error' : 'text-primary');
+            $('telemetry-region').textContent = region.name.toUpperCase();
+
+            // --- SBC terminal
+            $('sbc-value').textContent = sbc.safe_bearing_capacity_kn_m2.toFixed(1);
+            $('sbc-caption').textContent = sbc.range_kn_m2
+                ? `RANGE ${sbc.range_kn_m2[0].toFixed(0)}–${sbc.range_kn_m2[1].toFixed(0)} | FS=${sbc.factor_of_safety}`
+                : `FS=${sbc.factor_of_safety} | φ=${sbc.parameters.friction_angle_deg}°`;
+
+            // --- Mineral / texture composition table
+            const rows = [
+                ['Clay', soil.clay_pct, '%', soil.clay_pct >= 40 ? 'EXPANSIVE' : 'COHESIVE'],
+                ['Sand', soil.sand_pct, '%', soil.sand_pct >= 60 ? 'LIQUEFIABLE' : 'GRANULAR'],
+                ['Silt', soil.silt_pct, '%', 'FINES'],
+                ['Bulk Density', soil.bulk_density_g_cm3, ' g/cm³', soil.bulk_density_g_cm3 >= 1.4 ? 'DENSE' : 'LOOSE'],
+            ];
+            $('mineral-tbody').innerHTML = rows.map(([name, val, unit, status]) => `
+                <tr>
+                <td class="py-3">${name}</td>
+                <td class="py-3">${val != null ? val.toFixed(1) + unit : '—'}</td>
+                <td class="py-3 ${status === 'EXPANSIVE' || status === 'LIQUEFIABLE' ? 'text-error' : 'text-primary'}">${status}</td>
+                </tr>`).join('');
+
+            // --- Hydrological widget: fines fraction drives the saturation proxy
+            const fines = Math.min(95, Math.max(8, (soil.clay_pct + soil.silt_pct)));
+            $('hydro-bar').style.height = `${fines}%`;
+            $('hydro-depth').textContent = `${(fines / 100).toFixed(2)}`;
+            $('hydro-permeability').textContent =
+                soil.sand_pct >= 60 ? 'HIGH' : soil.sand_pct >= 35 ? 'MODERATE' : 'LOW';
+            $('hydro-bdod').textContent = `${soil.bulk_density_g_cm3.toFixed(2)} g/cm³`;
+
+            // --- Seismic risk donut (377 = full circumference)
+            const score = region.seismic_risk_score;
+            $('seismic-arc').setAttribute('stroke-dashoffset', String(377 * (1 - score)));
+            $('seismic-zone').textContent = region.seismic_zone;
+            $('seismic-label').textContent =
+                score >= 0.8 ? 'Severe' : score >= 0.6 ? 'High' : score >= 0.35 ? 'Moderate' : 'Low';
+            $('seismic-note').textContent =
+                `Zone ${region.seismic_zone} Classification (risk ${score.toFixed(2)}): ` +
+                `${region.dominant_soil || 'mixed strata'}. ` +
+                (score >= 0.6 ? 'Base isolation recommended for primary load paths.'
+                              : 'Standard ductile detailing per IS 13920 applies.');
+
+            // --- Status line
+            $('query-status').textContent =
+                `OK — ${region.name} | soil source: ${soil.source} | region source: ${region.source} | ${data.meta.elapsed_ms} ms`;
+        }
+
+        // Simple wave animation style
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes wave {
+                0%, 100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
+                50% { clip-path: polygon(0 15%, 100% 0, 100% 100%, 0% 100%); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // --- The structure selected anywhere in ArchPi drives the diagnostics.
+        //     Selecting a building flies the map to its construction site and
+        //     runs the full SoilGrids + PostGIS + Terzaghi pipeline there.
+        let structureMarker = null;
+        ArchPiStructure.onChange(site => {
+            const meta = document.getElementById('side-structure-meta');
+            if (meta) meta.textContent = site.location + ' · ' + site.lat.toFixed(2) + '°, ' + site.lon.toFixed(2) + '°';
+            if (structureMarker) map.removeLayer(structureMarker);
+            structureMarker = L.marker([site.lat, site.lon], { icon: queryIcon })
+                .addTo(map)
+                .bindTooltip(site.name, { direction: 'top', offset: [0, -10] });
+            map.flyTo([site.lat, site.lon], 9, { duration: 1.2 });
+            runDiagnostics(site.lat, site.lon, site.name);
+        });
+        ArchPiStructure.init().catch(err => {
+            $('query-status').textContent =
+                `STRUCTURE LIST UNAVAILABLE: ${err.message} — is the forensic engine running on :8010?`;
+        });
+    </script>
+</body></html>

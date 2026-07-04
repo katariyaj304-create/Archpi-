@@ -1,0 +1,420 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ArchPi | Global Weather &amp; Environmental Dynamics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#1e1b19",
+                        "on-primary-fixed-variant": "#594327",
+                        "error-container": "#ffdad6",
+                        "primary": "#725a3d",
+                        "inverse-on-surface": "#f7efeb",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "surface": "#fff8f4",
+                        "surface-variant": "#e8e1dd",
+                        "surface-dim": "#e0d9d4",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d1c4b8",
+                        "on-background": "#1e1b19",
+                        "surface-tint": "#725a3d",
+                        "surface-container-high": "#eee7e2",
+                        "inverse-surface": "#33302d",
+                        "surface-container-highest": "#e8e1dd",
+                        "on-primary-fixed": "#291803",
+                        "surface-container-low": "#faf2ee",
+                        "secondary-container": "#e2dfde",
+                        "on-primary-container": "#4d381d",
+                        "primary-fixed-dim": "#e1c19d",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-secondary-fixed-variant": "#474746",
+                        "tertiary-container": "#a7a6a6",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary": "#5f5e5e",
+                        "background": "#fff8f4",
+                        "surface-bright": "#fff8f4",
+                        "tertiary": "#5e5e5e",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-secondary-container": "#636262",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary-container": "#bfa17f",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#3b3c3c",
+                        "on-surface-variant": "#4e453c",
+                        "primary-fixed": "#ffddb8",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f4ece8",
+                        "on-primary": "#ffffff",
+                        "outline": "#80756b",
+                        "inverse-primary": "#e1c19d",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "data-mono": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .aluminum-texture {
+            background-color: #f6f6f6;
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.05) 50%, transparent 50%),
+                              linear-gradient(rgba(255,255,255,0.05) 50%, transparent 50%);
+            background-size: 2px 2px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 248, 244, 0.8);
+            border: 1px solid #e0d9d4;
+        }
+        .technical-grid {
+            background-image: radial-gradient(#d1c4b8 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .scale-98 { transform: scale(0.98); }
+        .label-caps { text-transform: uppercase; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 bottom-0 z-40 flex flex-col py-8 bg-surface-container-low border-r border-outline-variant w-72 h-screen">
+<div class="px-6 mb-10">
+<h1 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">architecture</span>
+                ArchPi
+            </h1>
+<div class="mt-4">
+<p class="font-label-caps text-label-caps text-primary opacity-80">Project Alpha</p>
+<p class="text-[10px] font-data-mono text-secondary">Forensic ID: 8829-X</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 space-x-4 text-secondary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-secondary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-primary bg-primary/5 border-r-2 border-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">psychology</span>
+<span class="font-label-caps text-label-caps">Environment</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-secondary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+</nav>
+<div class="px-6 mt-auto pt-8 border-t border-outline-variant/30">
+<button class="w-full py-3 bg-primary-container text-on-primary-container font-label-caps text-label-caps tracking-widest hover:brightness-95 transition-all">
+                Export Technical Data
+            </button>
+<div class="mt-6 flex flex-col space-y-4">
+<a class="flex items-center space-x-3 text-secondary text-sm" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="">Documentation</span>
+</a>
+<a class="flex items-center space-x-3 text-secondary text-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<div class="ml-72 flex flex-col h-screen overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-margin-desktop w-full h-16 border-b border-outline-variant bg-surface/80 backdrop-blur-xl">
+<div class="flex items-center space-x-8">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Environment</span>
+<nav class="flex space-x-6">
+<a class="text-on-surface-variant font-label-caps text-label-caps hover:text-primary transition-colors duration-200" href="#">Lab</a>
+<a class="text-on-surface-variant font-label-caps text-label-caps hover:text-primary transition-colors duration-200" href="#">Reports</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-caps text-label-caps" href="#">Compliance</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<button class="bg-primary text-white px-4 py-1.5 font-label-caps text-[11px] rounded shadow-sm hover:brightness-110 transition-all">New Case</button>
+<div class="flex items-center space-x-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">settings</span>
+<div class="w-8 h-8 rounded-full bg-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional structural engineer profile portrait in a minimalist grey studio, soft architectural lighting highlighting features, wearing a modern charcoal turtleneck, high-end editorial photography style with muted tones and sharp focus on eyes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARFPkYCQTckDG3bHWzemOuXWog5ma1gjEzVQLIttAb-9lZ50J8WK_qo-P2cYtQyDl1F0acO09SveBzAzb6dEKUhXtpJmp1cgHtJjP9UnAGll0k63vUk2FYqpmeGxLIivHtPx5HKH_NZFD2AqdsIrZc7OsAVQthjwKWzYFJ2dakjA9-GmRbx1ZHA59yGZDGA8Tw2qcGLX6kBPrA3ORRSHVJ-qSc7Z8yDLfLEHFeps7NRX5zgWUYePJHRA">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-1 overflow-y-auto p-gutter technical-grid">
+<div class="grid grid-cols-12 gap-gutter max-w-[1440px] mx-auto">
+<!-- HEADER MODULE: Quick Metrics -->
+<section class="col-span-12 grid grid-cols-4 gap-4 mb-2">
+<div class="glass-panel p-4 flex flex-col justify-between border-l-4 border-l-primary">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Global Avg ΔT</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">+1.24°C</span>
+<span class="font-data-mono text-[10px] text-error">Critical Peak</span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Humidity Stress Index</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">68.2</span>
+<span class="font-data-mono text-[10px] text-primary">Normal Range</span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Wet Bulb Exposure (IND)</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">31.4°C</span>
+<span class="font-data-mono text-[10px] text-error">Warning Threshold</span>
+</div>
+</div>
+<div class="glass-panel p-4 flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-secondary mb-2">Active Catastrophic Events</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">03</span>
+<span class="font-data-mono text-[10px] text-secondary">Tracking...</span>
+</div>
+</div>
+</section>
+<!-- MAIN MODULE: Global Meteorological Schematic -->
+<section class="col-span-8 h-[600px] glass-panel relative overflow-hidden group" style="box-shadow: none; transition: 0.3s;">
+<div class="absolute top-4 left-6 z-10">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Global Meteorological Schematic</h2>
+<p class="font-label-caps text-[10px] text-secondary">Active Layers: Wind Vectors | Thermal Gradients</p>
+</div>
+<div class="absolute top-4 right-4 z-10 flex space-x-2">
+<button class="px-2 py-1 bg-surface border border-outline-variant text-[10px] font-label-caps hover:bg-primary-container transition-colors">Satellite</button>
+<button class="px-2 py-1 bg-primary text-white text-[10px] font-label-caps">Vector</button>
+</div>
+<!-- Placeholder for Interactive Map Schematic -->
+<div class="w-full h-full relative"><div class="absolute inset-0 z-0"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG8Cw5RXeI9QarsJA5nV78_VHeXgrU-hGfY9QI6pQ_-VBH0xWOqWcEs0NdHX53U_yjTQggbPYICQ0XHAtCs8ixfsUM6wnIBw5E8hEEreUa10WHHZvzCZIL4ZOLb9HiasJXnw01tO2C91_mxe_2yuvcw2o0-NZYGFIFP77ISOh9E9DZI-CJNb4BNludrOtEOugOJqif7VDbetwP8FRroBJ0GUrfZHhpArOMrbQ9OlwGKkJClMRrL3g-iA" alt="Global Weather Engineering Data Map" class="w-full h-full object-cover opacity-90 mix-blend-multiply"></div><div class="absolute inset-0 technical-grid opacity-20 z-10 pointer-events-none"></div><div class="absolute inset-0 z-20 opacity-30 pointer-events-none"><svg class="w-full h-full"><path d="M0 100 Q 200 50, 400 150 T 800 100 T 1200 200" fill="none" stroke="#725a3d" stroke-width="0.5" class="animate-pulse"></path><path d="M0 300 Q 300 250, 600 350 T 1200 300" fill="none" stroke="#725a3d" stroke-width="0.5" class="animate-pulse" style="animation-delay: 1s"></path></svg></div><div class="absolute bottom-4 right-4 glass-panel p-3 z-30 border-primary/30"><h4 class="font-label-caps text-[9px] text-primary mb-2 tracking-widest">Global Metrics Legend</h4><div class="space-y-2"><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Wind Speed</span><span class="font-data-mono text-[9px] text-on-surface">12.4 m/s</span></div><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Temperature</span><span class="font-data-mono text-[9px] text-on-surface">14.2 °C</span></div><div class="flex items-center justify-between gap-6"><span class="font-data-mono text-[8px] text-secondary">Pressure</span><span class="font-data-mono text-[9px] text-on-surface">1012.8 hPa</span></div></div><div class="mt-2 h-1 w-full bg-gradient-to-r from-primary/20 via-primary to-error rounded-full"></div></div><div class="absolute top-2 left-2 z-30 flex flex-col gap-1"><span class="font-data-mono text-[8px] text-outline bg-surface/60 px-1">90°N / 180°W</span><span class="font-data-mono text-[8px] text-outline bg-surface/60 px-1">0°N / 0°E</span></div></div>
+<div class="absolute bottom-4 left-6 z-10 flex space-x-8">
+<div>
+<p class="text-[9px] font-label-caps text-secondary">Atmospheric Pressure</p>
+<p class="font-data-mono text-sm">1013.2 hPa</p>
+</div>
+<div>
+<p class="text-[9px] font-label-caps text-secondary">Tropospheric Stability</p>
+<p class="font-data-mono text-sm">Stable (Level 2)</p>
+</div>
+</div>
+</section>
+<!-- MODULE: India Regional Weather Diagnostics -->
+<section class="col-span-4 h-[600px] flex flex-col space-y-gutter">
+<div class="glass-panel flex-1 p-6 relative overflow-hidden" style="box-shadow: none; transition: 0.3s;">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm">India Regional Diagnostics</h3>
+<p class="font-label-caps text-[10px] text-secondary">Monsoon Cycle Analysis</p>
+</div>
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div class="space-y-4">
+<div class="p-3 border border-outline-variant bg-surface-container-low">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-[10px]">Thermal Expansion Lead</span>
+<span class="font-data-mono text-[10px] text-error">+4.2mm/10m</span>
+</div>
+<div class="w-full bg-outline-variant h-[2px]">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+<div class="p-3 border border-outline-variant bg-surface-container-low">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-[10px]">Wet Bulb Threshold</span>
+<span class="font-data-mono text-[10px] text-on-surface">32.2°C (Target)</span>
+</div>
+<div class="w-full bg-outline-variant h-[2px]">
+<div class="bg-on-surface h-full w-[62%]"></div>
+</div>
+</div>
+</div>
+<!-- Technical Graph Representation -->
+<div class="mt-8 h-32 border-b border-l border-outline-variant relative">
+<svg class="w-full h-full">
+<path d="M0 80 Q 40 10, 80 70 T 160 30 T 240 90" fill="none" stroke="#725a3d" stroke-width="1.5"></path>
+<path d="M0 100 Q 40 40, 80 90 T 160 50 T 240 110" fill="none" stroke="#d1c4b8" stroke-dasharray="4" stroke-width="1"></path>
+</svg>
+<div class="absolute bottom-[-15px] left-0 right-0 flex justify-between font-data-mono text-[8px] text-secondary">
+<span class="">MAY</span><span class="">JUN</span><span class="">JUL</span><span class="">AUG</span><span class="">SEP</span>
+</div>
+</div>
+<p class="mt-10 font-body-md text-xs text-on-surface-variant leading-relaxed">
+                            Structural vulnerability high in coastal clusters. Humidity cycles currently accelerate carbonation rates in reinforced concrete sections at +12% YoY.
+                        </p>
+</div>
+<div class="glass-panel p-6 border-t-4 border-t-error" style="box-shadow: none; transition: 0.3s;">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: &quot;FILL&quot; 1;">warning</span>
+<h3 class="font-label-caps text-label-caps text-error">Catastrophic Event Monitoring</h3>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between text-xs font-data-mono py-2 border-b border-outline-variant/30">
+<span class="text-on-surface">Cyclone 'Vayu-2'</span>
+<span class="px-2 py-0.5 bg-error-container text-on-error-container text-[9px]">Lvl 4 Intensity</span>
+</div>
+<div class="flex items-center justify-between text-xs font-data-mono py-2 border-b border-outline-variant/30">
+<span class="text-on-surface">Northeast Monsoon Surge</span>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[9px]">Active Monitoring</span>
+</div>
+</div>
+</div>
+</section>
+<!-- BOTTOM ROW MODULES: Stress Analytics -->
+<section class="col-span-4 glass-panel p-6" style="box-shadow: none; transition: 0.3s;">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-label-caps text-label-caps">Wind Shear Analytics</h3>
+<span class="font-data-mono text-[10px] text-secondary">kN/m2</span>
+</div>
+<div class="flex items-end gap-2 h-32 px-4">
+<div class="w-full bg-primary/20 h-[40%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[60%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[55%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[90%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[75%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[45%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[30%] hover:bg-primary transition-all"></div>
+<div class="w-full bg-primary/20 h-[65%] hover:bg-primary transition-all"></div>
+</div>
+<div class="mt-4 flex justify-between font-data-mono text-[9px] text-secondary">
+<span class="">H-08</span><span class="">H-12</span><span class="">H-16</span><span class="">H-20</span><span class="">H-24</span>
+</div>
+</section>
+<section class="col-span-4 glass-panel p-6 aluminum-texture" style="box-shadow: none; transition: 0.3s;">
+<h3 class="font-label-caps text-label-caps mb-6">Humidity Impact on Carbonation</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="font-data-mono text-xs">pH Neutralization Rate</span>
+<span class="font-headline-sm text-headline-sm text-primary">8.42</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="border border-outline-variant p-2">
+<p class="text-[8px] font-label-caps text-secondary mb-1">Calcium Leaching</p>
+<p class="font-data-mono text-xs text-on-surface">Moderate Risk</p>
+</div>
+<div class="border border-outline-variant p-2">
+<p class="text-[8px] font-label-caps text-secondary mb-1">Steel Passivity</p>
+<p class="font-data-mono text-xs text-error">Stable / Weak</p>
+</div>
+</div>
+</div>
+</section>
+<section class="col-span-4 glass-panel p-6">
+<h3 class="font-label-caps text-label-caps mb-6">Thermal Loading (24h)</h3>
+<div class="relative h-24 flex items-center justify-center">
+<!-- Stylized circular technical readout -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-20 h-20 rounded-full border-2 border-outline-variant border-t-primary animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute w-16 h-16 rounded-full border border-dashed border-outline-variant"></div>
+</div>
+<div class="text-center z-10">
+<p class="font-headline-sm text-headline-sm">42.8°</p>
+<p class="font-label-caps text-[8px] text-secondary">Peak Cycle</p>
+</div>
+</div>
+<div class="mt-4 flex justify-around">
+<div class="text-center">
+<p class="font-data-mono text-[10px]">MIN</p>
+<p class="font-data-mono text-sm">28.4°</p>
+</div>
+<div class="text-center">
+<p class="font-data-mono text-[10px]">AVG</p>
+<p class="font-data-mono text-sm">34.1°</p>
+</div>
+<div class="text-center">
+<p class="font-data-mono text-[10px]">MAX</p>
+<p class="font-data-mono text-sm">42.8°</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Context Status -->
+<footer class="h-8 bg-surface-dim border-t border-outline-variant px-margin-desktop flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+<span class="font-data-mono text-[10px] text-secondary">Data Stream: ACTIVE</span>
+</div>
+<span class="text-outline border-l border-outline-variant h-4"></span>
+<span class="font-data-mono text-[10px] text-secondary">Last Sync: 14:02:29 UTC</span>
+</div>
+<div class="flex items-center space-x-4 font-data-mono text-[10px] text-primary">
+<span class="">Lat: 20.5937° N</span>
+<span class="">Long: 78.9629° E</span>
+</div>
+</footer>
+</div>
+<script>
+        // Micro-interaction for hover effects on glass panels
+        document.querySelectorAll('.glass-panel').forEach(panel => {
+            panel.addEventListener('mouseenter', () => {
+                panel.style.boxShadow = '0 10px 25px -5px rgba(114, 90, 61, 0.05)';
+                panel.style.transition = 'all 0.3s ease';
+            });
+            panel.addEventListener('mouseleave', () => {
+                panel.style.boxShadow = 'none';
+            });
+        });
+
+        // Simulating live data pings
+        setInterval(() => {
+            const indicators = document.querySelectorAll('.animate-ping');
+            indicators.forEach(ind => {
+                ind.style.opacity = '1';
+                setTimeout(() => ind.style.opacity = '0.5', 500);
+            });
+        }, 3000);
+    </script>
+
+
+</body></html>

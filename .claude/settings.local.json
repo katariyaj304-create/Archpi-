@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Sahitya\\\\Desktop\\\\archpi\\\\app\" -Depth 1 | Where-Object { $_.PSIsContainer -eq $false } | Select-Object Name, LastWriteTime, Length)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\Sahitya\\\\Desktop\\\\archpi\\\\app\\\\simulation.html\" | Measure-Object -Line\\).Lines)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\Sahitya\\\\Desktop\\\\archpi\\\\app\\\\public\\\\simulation.html\" | Measure-Object -Line\\).Lines)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\Sahitya\\\\Desktop\\\\archpi\\\\app\"; $env:TAVILY_API_KEY = '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'; python sketch_agent.py \"Eiffel Tower\")"
+    ]
+  }
+}

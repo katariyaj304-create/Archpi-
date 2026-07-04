@@ -1,0 +1,3184 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ArchPi | Structural Stress Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{
+colors:{
+"secondary-container":"#e2dfde","error":"#ba1a1a","secondary":"#5f5e5e",
+"surface-dim":"#e0d9d4","primary-fixed-dim":"#e1c19d","surface-container":"#f4ece8",
+"tertiary":"#5e5e5e","inverse-primary":"#e1c19d","inverse-on-surface":"#f7efeb",
+"on-surface-variant":"#4e453c","primary":"#725a3d","surface-tint":"#725a3d",
+"surface":"#fff8f4","error-container":"#ffdad6","surface-variant":"#e8e1dd",
+"on-primary":"#ffffff","surface-container-low":"#faf2ee","on-background":"#1e1b19",
+"on-primary-fixed":"#291803","inverse-surface":"#33302d","on-secondary-container":"#636262",
+"on-primary-container":"#4d381d","on-secondary":"#ffffff","primary-fixed":"#ffddb8",
+"primary-container":"#bfa17f","surface-container-highest":"#e8e1dd","on-tertiary":"#ffffff",
+"outline":"#80756b","on-error":"#ffffff","tertiary-container":"#a7a6a6",
+"surface-container-lowest":"#ffffff","surface-container-high":"#eee7e2",
+"surface-bright":"#fff8f4","on-surface":"#1e1b19","background":"#fff8f4",
+"outline-variant":"#d1c4b8","on-primary-fixed-variant":"#594327"
+},
+borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+spacing:{"unit":"4px","margin-mobile":"16px","margin-desktop":"48px","section-gap":"80px","gutter":"24px"},
+fontFamily:{
+"label-caps":["Inter"],"headline-md":["Playfair Display"],"data-mono":["Inter"],
+"headline-lg":["Playfair Display"],"headline-sm":["Playfair Display"],"body-md":["Inter"],"body-lg":["Inter"]
+},
+fontSize:{
+"label-caps":["12px",{"lineHeight":"1","letterSpacing":"0.1em","fontWeight":"600"}],
+"headline-md":["32px",{"lineHeight":"1.2","letterSpacing":"-0.01em","fontWeight":"600"}],
+"data-mono":["14px",{"lineHeight":"1.4","letterSpacing":"-0.01em","fontWeight":"500"}],
+"headline-lg":["48px",{"lineHeight":"1.1","letterSpacing":"-0.02em","fontWeight":"700"}],
+"headline-sm":["24px",{"lineHeight":"1.3","fontWeight":"500"}],
+"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}]
+}
+}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24}
+.glass-panel{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.brushed-aluminum{background:linear-gradient(135deg,#F6F6F6 0%,#E8E4E0 50%,#F0EDEA 100%);position:relative}
+.brushed-aluminum::after{content:"";position:absolute;inset:0;opacity:.04;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0z' fill='%23000' fill-opacity='.03'/%3E%3C/svg%3E")}
+@keyframes pulse-live{0%{box-shadow:0 0 0 0 rgba(52,168,83,.4)}70%{box-shadow:0 0 0 8px rgba(52,168,83,0)}100%{box-shadow:0 0 0 0 rgba(52,168,83,0)}}
+.pulse-live{animation:pulse-live 2s infinite}
+@keyframes scanline{0%{top:0}100%{top:100%}}
+.scanline{position:absolute;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(191,161,127,.3),transparent);animation:scanline 5s linear infinite;z-index:8;pointer-events:none}
+@keyframes log-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.log-anim{animation:log-in .35s ease-out}
+.btn-processing{pointer-events:none;opacity:.55}
+input[type=range]{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#d1c4b8;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#725a3d;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23725a3d' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.disaster-params{display:none}.disaster-params.active{display:block}
+.data-grid{background-image:linear-gradient(to right,rgba(209,196,184,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(209,196,184,.08) 1px,transparent 1px);background-size:40px 40px}
+</style>
+</head>
+<body class="bg-surface font-body-md text-on-surface selection:bg-primary/20">
+
+<!-- ═══════════ TOP NAV ═══════════ -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex justify-between items-center h-14 px-6 lg:px-10 max-w-[1440px] mx-auto">
+    <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-2xl">architecture</span>
+            <span class="font-headline-md text-[22px] text-on-surface tracking-tight">ArchPi</span>
+        </a>
+        <nav class="hidden md:flex gap-6 items-center h-full">
+            <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary py-4" href="simulation.html">Simulation</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-4 transition-colors" href="analysis.html">Blueprints</a>
+            <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-4 transition-colors" href="globe.html">Projects</a>
+        </nav>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">search</span>
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">notifications</span>
+        <span class="material-symbols-outlined text-on-surface-variant text-[22px] cursor-pointer hover:text-primary transition-colors">settings</span>
+        <div class="w-8 h-8 rounded-full bg-on-surface text-surface flex items-center justify-center font-label-caps text-[10px] ml-1">JD</div>
+    </div>
+</div>
+</header>
+
+<!-- ═══════════ LEFT SIDEBAR ═══════════ -->
+<aside class="hidden lg:flex flex-col h-screen overflow-y-auto w-[200px] fixed left-0 top-0 pt-[72px] pb-6 px-5 bg-surface border-r border-outline-variant/40 z-40">
+    <div class="mb-6">
+        <h3 class="font-headline-sm text-[18px] text-on-surface leading-tight">Simulation</h3>
+        <p class="font-label-caps text-[9px] text-on-surface-variant tracking-[.15em] mt-0.5">STRUCTURAL INTELLIGENCE</p>
+    </div>
+    <nav class="flex flex-col gap-0.5 text-[13px]">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="globe.html">
+<span class="material-symbols-outlined">public</span>
+<span class="font-label-caps text-label-caps">Globe View</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container/20 border-r-2 border-primary transition-all duration-200" href="simulation.html">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-caps text-label-caps">Simulation</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="analysis.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="materials.html">
+<span class="material-symbols-outlined">hardware</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="material-efficiency.html">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Efficiency Lab</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="soil.html">
+<span class="material-symbols-outlined">terrain</span>
+<span class="font-label-caps text-label-caps">Soil Analytics</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="weather.html">
+<span class="material-symbols-outlined">cloud</span>
+<span class="font-label-caps text-label-caps">Weather</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="history.html">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high transition-all duration-200" href="api-usage.html">
+<span class="material-symbols-outlined">api</span>
+<span class="font-label-caps text-label-caps">API Usage</span>
+</a>
+</nav>
+    <!-- System Health -->
+    <div class="mt-auto p-4 brushed-aluminum border border-outline-variant/50 rounded-lg">
+        <p class="font-label-caps text-[9px] text-on-surface-variant mb-2">SYSTEM HEALTH</p>
+        <div class="flex items-center gap-2 mb-1">
+            <div class="w-[6px] h-[6px] bg-green-500 rounded-full pulse-live"></div>
+            <span class="font-data-mono text-[11px]">Core integrity: 98.4%</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div>
+            <span class="font-data-mono text-[11px]">Sensor Latency: 2ms</span>
+        </div>
+    </div>
+</aside>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
+<main class="lg:ml-[200px] pt-14 min-h-screen">
+<div class="p-6 lg:p-8 max-w-[1280px] mx-auto">
+
+    <!-- Page Title Row -->
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h1 class="font-headline-lg text-[42px] text-on-surface leading-[1.05] mb-2">Structural Stress Analysis</h1>
+            <p class="font-body-md text-on-surface-variant max-w-xl text-[15px]">Advanced simulation testing for extreme load scenarios. Monitor real-time structural response and execute dampening protocols.</p>
+        </div>
+        <div class="flex flex-col items-end gap-1 pt-2">
+            <span class="font-label-caps text-[9px] text-on-surface-variant tracking-wider">CURRENT STATUS</span>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 font-label-caps text-[11px] rounded-sm" id="status-badge">
+                <span class="w-[6px] h-[6px] bg-green-500 rounded-full pulse-live"></span>
+                <span id="status-text">READY</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ GRID: 8 + 4 ═══════════ -->
+    <div class="grid grid-cols-12 gap-5">
+
+        <!-- ═══ LEFT: VIEWPORT + LOG ═══ -->
+        <div class="col-span-12 lg:col-span-8 space-y-5">
+
+            <!-- 3D VIEWPORT -->
+            <div class="relative bg-[#FAFAF8] border border-outline-variant overflow-hidden" style="min-height:650px">
+                <div class="absolute inset-0 data-grid pointer-events-none"></div>
+                <div class="scanline"></div>
+                <canvas id="viewport-canvas" class="absolute inset-0 w-full h-full" style="z-index:5"></canvas>
+
+                <!-- Top-left badges -->
+                <div class="absolute top-4 left-4 flex flex-col gap-2 z-20">
+                    <div class="px-3 py-1.5 bg-surface/85 border border-outline-variant/60 backdrop-blur-sm flex items-center gap-2 cursor-pointer select-none" id="btn-heatmap">
+                        <span class="material-symbols-outlined text-[15px]">layers</span>
+                        <span class="font-label-caps text-[10px]" id="heatmap-label">STRESS HEATMAP: ON</span>
+                    </div>
+                    <div class="px-3 py-1.5 bg-surface/85 border border-outline-variant/60 backdrop-blur-sm flex items-center gap-2 cursor-pointer select-none" id="btn-annotations">
+                        <span class="material-symbols-outlined text-[15px]">label</span>
+                        <span class="font-label-caps text-[10px]" id="annot-label">ANNOTATIONS: ON</span>
+                    </div>
+                    <div class="px-3 py-1.5 bg-primary text-on-primary border border-primary/60 backdrop-blur-sm flex items-center gap-2 cursor-pointer select-none hover:brightness-110 transition-all" id="btn-upload">
+                        <span class="material-symbols-outlined text-[15px]" id="upload-icon">add_a_photo</span>
+                        <span class="font-label-caps text-[10px]" id="upload-label">UPLOAD PHOTO</span>
+                    </div>
+                    <input type="file" id="photo-input" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Top-right info -->
+                <div class="absolute top-4 right-4 z-20 text-right">
+                    <p class="font-data-mono text-[11px] text-on-surface-variant">MODEL: <span id="model-id" class="text-primary font-semibold">—</span></p>
+                    <p class="font-data-mono text-[11px] text-on-surface-variant" id="geo-coords">GEO: —</p>
+                    <p class="font-data-mono text-[11px] text-on-surface-variant" id="building-info-line">—</p>
+                </div>
+
+                <!-- Bottom-left controls -->
+                <div class="absolute bottom-4 left-4 z-20 flex gap-2">
+                    <button id="btn-zin" class="w-9 h-9 bg-surface border border-outline-variant flex items-center justify-center hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">zoom_in</span></button>
+                    <button id="btn-zout" class="w-9 h-9 bg-surface border border-outline-variant flex items-center justify-center hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">zoom_out</span></button>
+                    <button id="btn-rot" class="w-9 h-9 bg-surface border border-outline-variant flex items-center justify-center hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">3d_rotation</span></button>
+                </div>
+
+                <!-- Node tooltip -->
+                <div id="node-tip" class="absolute z-30 hidden px-2 py-1 bg-on-surface text-surface text-[10px] font-data-mono pointer-events-none rounded-sm" style="transform:translate(-50%,-130%)"></div>
+            </div>
+
+            <!-- SIMULATION EVENT LOG -->
+            <div class="bg-surface border border-outline-variant">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum flex justify-between items-center">
+                    <span class="font-headline-sm text-[15px]">Simulation Event Log</span>
+                    <span class="font-data-mono text-[10px] text-on-surface-variant">LOG_v4.2.0</span>
+                </div>
+                <div class="px-5 py-4 font-data-mono text-[13px] h-48 overflow-y-auto space-y-2 bg-surface-container-low/50" id="event-log"></div>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT: DIAGNOSTICS + CONTROLS ═══ -->
+        <div class="col-span-12 lg:col-span-4 space-y-5">
+
+            <!-- BUILDING INFO -->
+            <div class="bg-surface border border-outline-variant">
+                <div class="px-5 py-3 border-b border-outline-variant brushed-aluminum">
+                    <h2 class="font-headline-sm text-[17px]" id="building-title">Loading Structure...</h2>
+                </div>
+                <div class="p-4 space-y-2">
+                    <div class="flex justify-between"><span class="font-label-caps text-[9px] text-on-surface-variant">HEIGHT</span><span class="font-data-mono text-[13px]" id="info-height">—</span></div>
+                    <div class="flex justify-between"><span class="font-label-caps text-[9px] text-on-surface-variant">FLOORS</span><span class="font-data-mono text-[13px]" id="info-floors">—</span></div>
+                    <div class="flex justify-between"><span class="font-label-caps text-[9px] text-on-surface-variant">STRUCTURAL SYSTEM</span><span class="font-data-mono text-[13px]" id="info-system">—</span></div>
+                    <div class="flex justify-between"><span class="font-label-caps text-[9px] text-on-surface-variant">MATERIAL</span><span class="font-data-mono text-[13px]" id="info-material">—</span></div>
+                    <div class="flex justify-between"><span class="font-label-caps text-[9px] text-on-surface-variant">FOUNDATION</span><span class="font-data-mono text-[13px]" id="info-foundation">—</span></div>
+                </div>
+            </div>
+
+            <!-- STRUCTURAL DIAGNOSTICS -->
+            <div class="bg-surface border border-outline-variant">
+                <div class="px-5 py-3 border-b border-outline-variant brushed-aluminum">
+                    <h2 class="font-headline-sm text-[17px]">Structural Diagnostics</h2>
+                </div>
+                <div class="p-5 space-y-6">
+                    <div class="border-b border-outline-variant/40 pb-4">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="font-label-caps text-[10px] text-on-surface-variant tracking-wider">MAX STRESS</span>
+                            <span class="font-data-mono text-[26px] text-on-surface font-semibold" id="diag-stress">0 MPa</span>
+                        </div>
+                        <div class="w-full h-[3px] bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full transition-all duration-700" id="bar-stress" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="border-b border-outline-variant/40 pb-4">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="font-label-caps text-[10px] text-on-surface-variant tracking-wider">LATERAL DRIFT</span>
+                            <span class="font-data-mono text-[26px] text-on-surface font-semibold" id="diag-drift">0mm</span>
+                        </div>
+                        <div class="w-full h-[3px] bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full transition-all duration-700" id="bar-drift" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="border-b border-outline-variant/40 pb-4">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="font-label-caps text-[10px] text-on-surface-variant tracking-wider">SEISMIC OSCILLATION</span>
+                            <span class="font-data-mono text-[26px] text-on-surface font-semibold" id="diag-osc">0.00Hz</span>
+                        </div>
+                        <div class="w-full h-[3px] bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full transition-all duration-700" id="bar-osc" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="font-label-caps text-[10px] text-on-surface-variant tracking-wider">SAFETY FACTOR</span>
+                            <span class="font-data-mono text-[26px] text-on-surface font-semibold" id="diag-safety">—</span>
+                        </div>
+                        <div class="w-full h-[3px] bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full bg-green-500 rounded-full transition-all duration-700" id="bar-safety" style="width:100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROL INTERFACE -->
+            <div class="bg-surface border border-outline-variant">
+                <div class="px-5 py-2.5 border-b border-outline-variant brushed-aluminum">
+                    <span class="font-label-caps text-[11px] tracking-wider text-on-surface-variant">CONTROL INTERFACE</span>
+                </div>
+                <div class="p-4 space-y-3">
+
+                    <!-- Disaster Type -->
+                    <select id="disaster-type" class="w-full border border-outline-variant bg-surface text-on-surface font-data-mono text-[12px] px-3 py-2 focus:outline-none focus:border-primary transition-colors pr-8">
+                        <option value="storm">🌪️  100-Year Storm</option>
+                        <option value="seismic">🌍  Earthquake</option>
+                        <option value="wind">💨  High Wind Event</option>
+                        <option value="flood">🌊  Flood / Storm Surge</option>
+                        <option value="lightning">⚡  Lightning Strike</option>
+                        <option value="fire">🔥  Structural Fire</option>
+                        <option value="tornado">🌀  Tornado</option>
+                        <option value="blizzard">❄️  Blizzard / Ice Storm</option>
+                        <option value="landslide">🏔️  Landslide</option>
+                        <option value="volcanic">🌋  Volcanic Eruption</option>
+                    </select>
+
+                    <!-- Magnitude -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-label-caps text-[9px]">MAGNITUDE</span>
+                            <span class="font-data-mono text-[11px] text-primary" id="mag-disp">1.0×</span>
+                        </div>
+                        <input type="range" id="mag-slider" min="0.5" max="10" step="0.1" value="1.0" class="w-full">
+                    </div>
+
+                    <!-- Dynamic Params -->
+                    <div class="disaster-params active space-y-2" id="p-storm">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">WIND SPEED</span><span class="font-data-mono text-[10px] text-primary" id="d-storm-w">180 km/h</span></div><input type="range" id="storm-w" min="50" max="350" step="5" value="180" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">DURATION</span><span class="font-data-mono text-[10px] text-primary" id="d-storm-d">12 hrs</span></div><input type="range" id="storm-d" min="1" max="72" step="1" value="12" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-seismic">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">RICHTER SCALE</span><span class="font-data-mono text-[10px] text-primary" id="d-seis-r">6.5 Mw</span></div><input type="range" id="seis-r" min="3" max="9.5" step="0.1" value="6.5" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">DEPTH</span><span class="font-data-mono text-[10px] text-primary" id="d-seis-d">15 km</span></div><input type="range" id="seis-d" min="1" max="100" step="1" value="15" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-wind">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">SUSTAINED SPEED</span><span class="font-data-mono text-[10px] text-primary" id="d-wind-s">150 km/h</span></div><input type="range" id="wind-s" min="50" max="300" step="5" value="150" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">DIRECTION</span><span class="font-data-mono text-[10px] text-primary" id="d-wind-d">270°</span></div><input type="range" id="wind-d" min="0" max="359" step="1" value="270" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-flood">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">WATER LEVEL</span><span class="font-data-mono text-[10px] text-primary" id="d-flood-l">3.5 m</span></div><input type="range" id="flood-l" min="0.5" max="15" step="0.5" value="3.5" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">FLOW RATE</span><span class="font-data-mono text-[10px] text-primary" id="d-flood-f">500 m³/s</span></div><input type="range" id="flood-f" min="100" max="5000" step="100" value="500" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-lightning">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">ENERGY</span><span class="font-data-mono text-[10px] text-primary" id="d-ltng-e">5 MJ</span></div><input type="range" id="ltng-e" min="1" max="50" step="1" value="5" class="w-full"></div>
+                        <div><span class="font-label-caps text-[8px]">LOCATION</span><select id="ltng-loc" class="w-full mt-1 border border-outline-variant bg-surface font-data-mono text-[10px] px-2 py-1 pr-6"><option>Spire</option><option>Mid-Level</option><option>Base</option></select></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-fire">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">TEMPERATURE</span><span class="font-data-mono text-[10px] text-error" id="d-fire-t">800°C</span></div><input type="range" id="fire-t" min="200" max="1200" step="50" value="800" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">AFFECTED FLOORS</span><span class="font-data-mono text-[10px] text-primary" id="d-fire-f">5</span></div><input type="range" id="fire-f" min="1" max="30" step="1" value="5" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-tornado">
+                        <div><span class="font-label-caps text-[8px]">EF SCALE</span><select id="torn-ef" class="w-full mt-1 border border-outline-variant bg-surface font-data-mono text-[10px] px-2 py-1 pr-6"><option value="1">EF0</option><option value="2">EF1</option><option value="3" selected>EF2</option><option value="4">EF3</option><option value="5">EF4</option><option value="6">EF5</option></select></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">PATH WIDTH</span><span class="font-data-mono text-[10px] text-primary" id="d-torn-w">400 m</span></div><input type="range" id="torn-w" min="50" max="2000" step="50" value="400" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-blizzard">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">SNOW LOAD</span><span class="font-data-mono text-[10px] text-primary" id="d-bliz-s">150 kg/m²</span></div><input type="range" id="bliz-s" min="50" max="500" step="10" value="150" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">WIND SPEED</span><span class="font-data-mono text-[10px] text-primary" id="d-bliz-w">100 km/h</span></div><input type="range" id="bliz-w" min="40" max="200" step="5" value="100" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-landslide">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">DISPLACEMENT</span><span class="font-data-mono text-[10px] text-primary" id="d-land-d">2.5 m</span></div><input type="range" id="land-d" min="0.5" max="20" step="0.5" value="2.5" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">IMPACT ANGLE</span><span class="font-data-mono text-[10px] text-primary" id="d-land-a">30°</span></div><input type="range" id="land-a" min="0" max="90" step="5" value="30" class="w-full"></div>
+                    </div>
+                    <div class="disaster-params space-y-2" id="p-volcanic">
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">ASH LOAD</span><span class="font-data-mono text-[10px] text-primary" id="d-volc-a">50 kg/m²</span></div><input type="range" id="volc-a" min="10" max="300" step="10" value="50" class="w-full"></div>
+                        <div><div class="flex justify-between mb-0.5"><span class="font-label-caps text-[8px]">PYROCLASTIC DIST</span><span class="font-data-mono text-[10px] text-primary" id="d-volc-p">5 km</span></div><input type="range" id="volc-p" min="1" max="50" step="1" value="5" class="w-full"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button id="btn-execute" class="w-full py-3.5 px-4 bg-primary-container text-on-primary-container hover:brightness-105 transition-all flex items-center justify-center gap-3 active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[20px]">monitoring</span>
+                        <span class="font-body-md text-[14px] font-medium" id="exec-label">Run Structural Analysis</span>
+                    </button>
+                    <button id="btn-reset" class="w-full border border-outline-variant py-2.5 px-4 bg-surface hover:bg-surface-variant transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[16px] text-on-surface-variant">restart_alt</span>
+                        <span class="font-label-caps text-[10px] text-on-surface-variant">Reset Simulation</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SENSOR HEALTH -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="border border-outline-variant p-3 bg-surface">
+                    <span class="font-label-caps text-[9px] text-on-surface-variant block mb-1.5">WIND SENSORS</span>
+                    <div class="flex items-center gap-2"><div class="w-[6px] h-[6px] bg-green-500 rounded-full pulse-live"></div><span class="font-data-mono text-[11px]">ACTIVE<br/>(124/124)</span></div>
+                </div>
+                <div class="border border-outline-variant p-3 bg-surface">
+                    <span class="font-label-caps text-[9px] text-on-surface-variant block mb-1.5">ACCELEROMETERS</span>
+                    <div class="flex items-center gap-2"><div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div><span class="font-data-mono text-[11px]">ACTIVE<br/>(86/86)</span></div>
+                </div>
+                <div class="border border-outline-variant p-3 bg-surface">
+                    <span class="font-label-caps text-[9px] text-on-surface-variant block mb-1.5">STRAIN GAUGES</span>
+                    <div class="flex items-center gap-2"><div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div><span class="font-data-mono text-[11px]">ACTIVE<br/>(256/256)</span></div>
+                </div>
+                <div class="border border-outline-variant p-3 bg-surface">
+                    <span class="font-label-caps text-[9px] text-on-surface-variant block mb-1.5">THERMAL SENSORS</span>
+                    <div class="flex items-center gap-2"><div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div><span class="font-data-mono text-[11px]">ACTIVE<br/>(48/48)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<!-- Floating Agent -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button class="w-12 h-12 bg-[#34A853] text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-[22px]">support_agent</span>
+    </button>
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+(function(){
+'use strict';
+const P=new URLSearchParams(location.search);
+const bldgQuery=P.get('q')||'Burj Khalifa';
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 1: BUILDING DATABASE WITH DETAILED PROFILES
+// ═══════════════════════════════════════════════════════════════
+function lerp(pts, t) {
+    t = Math.max(0, Math.min(1, t));
+    for (let i = 0; i < pts.length - 1; i++) {
+        if (t >= pts[i][0] && t <= pts[i+1][0]) {
+            const f = (t - pts[i][0]) / (pts[i+1][0] - pts[i][0]);
+            return pts[i][1] + (pts[i+1][1] - pts[i][1]) * f;
+        }
+    }
+    return pts[pts.length-1][1];
+}
+
+// Each building now has detailed left/right outline data for architectural accuracy
+// pp = symmetric profile points [[normalizedHeight, widthFactor], ...]
+// leftDetail / rightDetail = asymmetric outline offsets for wings/buttresses
+// coreRatio = ratio of core wall width to total width at each height
+// windowDensity = windows per unit width (higher = more detailed facade)
+// structuralFeatures = array of {h, type, ...} for columns, outriggers, etc.
+
+const BUILDINGS = [
+{
+    name:'Burj Khalifa', keys:['burj','khalifa','dubai tower','tallest'],
+    height:828, floors:163, baseWidth:54, topWidth:1.2,
+    system:'Buttressed Core (Y-shaped)', material:'C80/C60 Concrete + Steel',
+    foundation:'3.7m Raft on 194 Bored Piles (1.5m dia, 50m deep)',
+    pileLoad:14, lat:25.1972, lng:55.2744, density:2500,
+    seismicZone:'2A', windDesign:150, maxStress:480,
+    drawingId:'BK-SA-001', windowDensity:6, coreRatio:0.38,
+    setbacks:[
+        {h:636, name:'SETBACK 1', shear:215, label:'SETBACK 1 SHEAR: 215 kN'},
+        {h:509, name:'SETBACK 2', shear:210, label:'SETBACK 2 SHEAR: 210 kN'},
+        {h:370, name:'SETBACK 3', shear:210, label:'SETBACK 3 SHEAR: 210 kN'},
+    ],
+    annotations:[
+        {h:828, label:'828', side:'top'},
+        {h:780, label:'MAX CORE STRESS: 480 MPa', side:'right', stress:true},
+        {h:700, label:'MAX CORE STRESS: 460 MN', side:'right'},
+        {h:636, label:'SETBACK 1 SHEAR: 215 kN', side:'right'},
+        {h:509, label:'SETBACK 2 SHEAR: 210 kN', side:'left'},
+        {h:370, label:'SETBACK 3 SHEAR: 210 kN', side:'left'},
+        {h:250, label:'SETBACK 3 EXTERIOR: 210 MN', side:'left'},
+    ],
+    // Very high-resolution profile: 40+ points for Burj Khalifa's stepped silhouette
+    pp:[
+        [0.000, 0.00],
+        [0.005, 0.95],
+        [0.010, 1.00],  // Base - full width with Y-shaped plan
+        [0.020, 1.00],
+        [0.040, 1.00],
+        [0.060, 1.00],
+        [0.080, 0.98],
+        [0.100, 0.95],
+        [0.120, 0.92],
+        [0.140, 0.88],
+        [0.160, 0.84],
+        [0.180, 0.80],
+        [0.200, 0.76],
+        [0.220, 0.72],
+        [0.240, 0.68],
+        [0.260, 0.64],
+        [0.280, 0.60],
+        [0.300, 0.56],
+        [0.320, 0.53],
+        [0.340, 0.50],
+        [0.360, 0.47],
+        [0.380, 0.44],
+        [0.400, 0.41],
+        [0.420, 0.38],
+        [0.440, 0.36],  // Setback 3 zone (~370m)
+        [0.450, 0.34],
+        [0.470, 0.32],
+        [0.500, 0.30],
+        [0.530, 0.27],
+        [0.560, 0.24],
+        [0.590, 0.22],
+        [0.610, 0.20],  // Setback 2 zone (~509m)
+        [0.640, 0.18],
+        [0.670, 0.16],
+        [0.700, 0.14],
+        [0.730, 0.12],
+        [0.760, 0.10],  // Setback 1 zone (~636m)
+        [0.780, 0.085],
+        [0.800, 0.07],
+        [0.820, 0.055],
+        [0.840, 0.045],
+        [0.860, 0.038],
+        [0.880, 0.032],
+        [0.900, 0.026],
+        [0.920, 0.022],
+        [0.940, 0.018],
+        [0.955, 0.015],
+        [0.970, 0.012],
+        [0.980, 0.010],
+        [0.990, 0.008],
+        [0.995, 0.006],
+        [1.000, 0.004]
+    ],
+    // Buttress wings (Y-shape visible in elevation)
+    wings:[
+        {side:'left',  startH:0, endH:0.45, extraWidth:0.12, taper:true},
+        {side:'right', startH:0, endH:0.62, extraWidth:0.10, taper:true},
+        {side:'left',  startH:0, endH:0.77, extraWidth:0.06, taper:true},
+    ],
+    structuralFeatures:[
+        {h:0.23, type:'outrigger'},
+        {h:0.45, type:'outrigger'},
+        {h:0.62, type:'outrigger'},
+        {h:0.77, type:'outrigger'},
+    ]
+},
+{
+    name:'Shanghai Tower', keys:['shanghai tower','shanghai','china tallest'],
+    height:632, floors:128, baseWidth:63, topWidth:12,
+    system:'Mega-Frame + Core Wall (Twisted)', material:'C70 Concrete + Steel Composite',
+    foundation:'6m Raft on 955 Bored Piles',
+    pileLoad:12, lat:31.2356, lng:121.5016, density:2450,
+    seismicZone:'7', windDesign:130, maxStress:420,
+    drawingId:'ST-SA-001', windowDensity:5, coreRatio:0.35,
+    setbacks:[{h:542,name:'ZONE 9',shear:195,label:'ZONE 9 TRANSITION: 195 kN'},{h:370,name:'ZONE 6',shear:205,label:'ZONE 6 TRANSITION: 205 kN'},{h:200,name:'ZONE 3',shear:220,label:'ZONE 3 TRANSITION: 220 kN'}],
+    annotations:[{h:632,label:'632',side:'top'},{h:500,label:'MAX CORE STRESS: 420 MPa',side:'right',stress:true},{h:370,label:'TWIST ZONE: 210 kN',side:'left'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.03,.98],[.06,.96],[.10,.93],[.14,.90],[.18,.87],[.22,.84],[.26,.80],[.30,.77],[.34,.73],[.38,.70],[.42,.66],[.46,.62],[.50,.58],[.54,.54],[.58,.50],[.62,.46],[.66,.42],[.70,.38],[.74,.34],[.78,.30],[.82,.27],[.86,.24],[.90,.22],[.94,.20],[.97,.19],[1,.18]],
+    wings:[], structuralFeatures:[{h:0.32,type:'outrigger'},{h:0.58,type:'outrigger'},{h:0.85,type:'outrigger'}]
+},
+{
+    name:'One World Trade Center', keys:['one world','freedom tower','wtc','world trade','1wtc','new york'],
+    height:541, floors:104, baseWidth:63, topWidth:46,
+    system:'Core Wall + Outrigger Trusses', material:'C65 Concrete + A992 Steel',
+    foundation:'Reinforced Concrete Bathtub on Bedrock',
+    pileLoad:0, lat:40.7127, lng:-74.0134, density:2400,
+    seismicZone:'2B', windDesign:140, maxStress:380,
+    drawingId:'WTC-SA-001', windowDensity:4, coreRatio:0.40,
+    setbacks:[{h:417,name:'SETBACK 1',shear:180,label:'PARAPET TRANSITION: 180 kN'},{h:280,name:'MID ZONE',shear:195,label:'OUTRIGGER LEVEL: 195 kN'}],
+    annotations:[{h:541,label:'541',side:'top'},{h:417,label:'ANTENNA BASE: 180 kN',side:'right'},{h:280,label:'OUTRIGGER: 195 kN',side:'left'}],
+    pp:[[0,0],[.005,.95],[.01,1],[.05,.98],[.10,.96],[.15,.94],[.20,.92],[.25,.90],[.30,.88],[.35,.86],[.40,.84],[.45,.82],[.50,.80],[.55,.78],[.60,.76],[.65,.75],[.70,.74],[.77,.73],[.82,.73],[.87,.73],[.92,.73],[.96,.73],[1,.73]],
+    wings:[], structuralFeatures:[{h:0.52,type:'outrigger'}]
+},
+{
+    name:'Taipei 101', keys:['taipei','101','taipei101','taiwan'],
+    height:508, floors:101, baseWidth:63, topWidth:8,
+    system:'Mega-Frame + Braced Core (Modular)', material:'C70 Concrete + SM570 Steel',
+    foundation:'4.7m Raft on 380 Barrette Piles',
+    pileLoad:11, lat:25.0339, lng:121.5645, density:2400,
+    seismicZone:'5', windDesign:135, maxStress:400,
+    drawingId:'T101-SA-001', windowDensity:5, coreRatio:0.36,
+    setbacks:[{h:438,name:'MODULE 8',shear:175,label:'MODULE 8 SHEAR: 175 kN'},{h:375,name:'MODULE 7',shear:180,label:'MODULE 7: 180 kN'},{h:312,name:'MODULE 6',shear:185,label:'MODULE 6: 185 kN'},{h:249,name:'MODULE 5',shear:190,label:'MODULE 5: 190 kN'},{h:186,name:'MODULE 4',shear:200,label:'MODULE 4: 200 kN'}],
+    annotations:[{h:508,label:'508',side:'top'},{h:438,label:'SPIRE ZONE: 175 kN',side:'right'},{h:312,label:'TUNED MASS DAMPER: 185 kN',side:'left'}],
+    pp:[[0,0],[.005,.95],[.01,1],[.05,1],[.09,.86],[.14,1],[.18,.86],[.23,1],[.27,.86],[.32,1],[.36,.86],[.41,1],[.45,.86],[.50,1],[.54,.86],[.59,1],[.63,.86],[.68,1],[.72,.68],[.76,.50],[.80,.30],[.84,.22],[.88,.14],[.92,.10],[.96,.06],[1,.03]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Empire State Building', keys:['empire','state','esb','new york landmark'],
+    height:443, floors:102, baseWidth:129, topWidth:10,
+    system:'Steel Frame (Riveted)', material:'A36 Structural Steel + Limestone',
+    foundation:'Steel Grillage on Manhattan Schist',
+    pileLoad:0, lat:40.7484, lng:-73.9857, density:7850,
+    seismicZone:'2A', windDesign:120, maxStress:320,
+    drawingId:'ESB-SA-001', windowDensity:6, coreRatio:0.32,
+    setbacks:[{h:375,name:'TOWER',shear:130,label:'TOWER SETBACK: 130 kN'},{h:290,name:'SETBACK 4',shear:145,label:'30TH FL SETBACK: 145 kN'},{h:200,name:'SETBACK 3',shear:160,label:'25TH FL SETBACK: 160 kN'},{h:100,name:'SETBACK 2',shear:180,label:'6TH FL SETBACK: 180 kN'}],
+    annotations:[{h:443,label:'443',side:'top'},{h:375,label:'ANTENNA MAST: 130 kN',side:'right'},{h:200,label:'ART DECO SETBACK: 160 kN',side:'left'}],
+    pp:[[0,0],[.005,.95],[.01,1],[.04,1],[.06,.98],[.10,.75],[.12,.75],[.15,.72],[.17,.72],[.20,.62],[.22,.62],[.25,.58],[.30,.50],[.35,.50],[.38,.46],[.42,.42],[.45,.38],[.50,.34],[.55,.30],[.60,.26],[.65,.24],[.70,.20],[.75,.18],[.80,.14],[.85,.10],[.88,.08],[.92,.06],[.96,.04],[.98,.03],[1,.02]],
+    wings:[], structuralFeatures:[{h:0.22,type:'setback_major'},{h:0.45,type:'setback_major'}]
+},
+{
+    name:'Eiffel Tower', keys:['eiffel','paris','france tower','tour eiffel'],
+    height:330, floors:3, baseWidth:125, topWidth:2,
+    system:'Wrought Iron Lattice', material:'Puddled Wrought Iron',
+    foundation:'Masonry Piers on Concrete (15m deep)',
+    pileLoad:8, lat:48.8584, lng:2.2945, density:7200,
+    seismicZone:'1', windDesign:110, maxStress:250,
+    drawingId:'ET-SA-001', windowDensity:0, coreRatio:0.20,
+    setbacks:[{h:276,name:'3RD PLATFORM',shear:80,label:'3RD PLATFORM: 80 kN'},{h:116,name:'2ND PLATFORM',shear:120,label:'2ND PLATFORM: 120 kN'},{h:57,name:'1ST PLATFORM',shear:160,label:'1ST PLATFORM: 160 kN'}],
+    annotations:[{h:330,label:'330',side:'top'},{h:276,label:'SUMMIT: 80 kN',side:'right'},{h:116,label:'2ND FLOOR: 120 kN',side:'left'},{h:57,label:'1ST FLOOR: 160 kN',side:'left'}],
+    pp:[[0,0],[.005,.90],[.01,1],[.05,.82],[.10,.65],[.14,.55],[.17,.50],[.175,.55],[.18,.48],[.22,.40],[.26,.34],[.30,.28],[.35,.22],[.352,.28],[.355,.22],[.40,.18],[.50,.14],[.60,.10],[.70,.07],[.80,.04],[.84,.035],[.837,.05],[.84,.035],[.90,.025],[.95,.02],[1,.006]],
+    wings:[], structuralFeatures:[], isLattice:true
+},
+{
+    name:'Petronas Towers', keys:['petronas','twin towers','kuala lumpur','kl','malaysia'],
+    height:452, floors:88, baseWidth:44, topWidth:5,
+    system:'Concrete Core + Steel Ring Truss', material:'C80 Concrete + Steel',
+    foundation:'4.5m Raft on 104 Barrette Piles (60-120m)',
+    pileLoad:13, lat:3.1578, lng:101.7117, density:2450,
+    seismicZone:'2', windDesign:125, maxStress:360,
+    drawingId:'PT-SA-001', windowDensity:5, coreRatio:0.35,
+    setbacks:[{h:375,name:'PINNACLE',shear:90,label:'PINNACLE ZONE: 90 kN'},{h:310,name:'CROWN',shear:120,label:'CROWN: 120 kN'},{h:170,name:'SKYBRIDGE',shear:170,label:'SKYBRIDGE: 170 kN'}],
+    annotations:[{h:452,label:'452',side:'top'},{h:375,label:'PINNACLE: 90 kN',side:'right'},{h:170,label:'SKYBRIDGE: 170 kN',side:'left'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.10,.95],[.15,.92],[.20,.88],[.25,.84],[.30,.80],[.35,.76],[.40,.72],[.45,.68],[.50,.63],[.55,.58],[.60,.52],[.65,.45],[.70,.38],[.75,.30],[.80,.22],[.83,.18],[.86,.14],[.89,.10],[.92,.07],[.95,.04],[.98,.02],[1,.01]],
+    wings:[], structuralFeatures:[{h:0.376,type:'skybridge'}]
+},
+{
+    name:'Willis Tower', keys:['willis','sears','sears tower','chicago','bundled tube'],
+    height:442, floors:108, baseWidth:69, topWidth:23,
+    system:'Bundled Tube', material:'A36/A572 Steel Frame',
+    foundation:'Steel Caissons to Hardpan (18m)',
+    pileLoad:0, lat:41.8789, lng:-87.6359, density:7850,
+    seismicZone:'2A', windDesign:130, maxStress:340,
+    drawingId:'WT-SA-001', windowDensity:5, coreRatio:0.30,
+    setbacks:[{h:375,name:'2-TUBE ZONE',shear:100,label:'2 TUBES: 100 kN'},{h:310,name:'3-TUBE ZONE',shear:130,label:'3 TUBES: 130 kN'},{h:220,name:'5-TUBE ZONE',shear:160,label:'5 TUBES: 160 kN'},{h:140,name:'7-TUBE ZONE',shear:185,label:'7 TUBES: 185 kN'}],
+    annotations:[{h:442,label:'442',side:'top'},{h:375,label:'ANTENNA: 100 kN',side:'right'},{h:220,label:'5-TUBE SET: 160 kN',side:'left'}],
+    pp:[[0,0],[.005,.95],[.01,1],[.06,1],[.10,1],[.15,1],[.20,1],[.25,1],[.30,1],[.32,.78],[.35,.78],[.40,.78],[.45,.78],[.50,.68],[.55,.68],[.60,.60],[.65,.55],[.70,.55],[.75,.48],[.78,.45],[.80,.34],[.85,.34],[.90,.34],[.95,.34],[1,.34]],
+    wings:[], structuralFeatures:[{h:0.32,type:'tube_term'},{h:0.50,type:'tube_term'},{h:0.70,type:'tube_term'}]
+},
+{
+    name:'CN Tower', keys:['cn tower','toronto','canada tower','canadian'],
+    height:553, floors:7, baseWidth:30, topWidth:1,
+    system:'Post-Tensioned Concrete Shaft', material:'C40 Reinforced Concrete',
+    foundation:'7m Thick Concrete Pad (on Shale)',
+    pileLoad:0, lat:43.6426, lng:-79.3871, density:2500,
+    seismicZone:'2', windDesign:120, maxStress:280,
+    drawingId:'CN-SA-001', windowDensity:0, coreRatio:0.50,
+    setbacks:[{h:447,name:'ANTENNA BASE',shear:60,label:'ANTENNA BASE: 60 kN'},{h:346,name:'SKYPOD',shear:95,label:'SKYPOD: 95 kN'},{h:280,name:'RESTAURANT',shear:110,label:'OBSERVATION: 110 kN'}],
+    annotations:[{h:553,label:'553',side:'top'},{h:346,label:'SKYPOD: 95 kN',side:'right'}],
+    pp:[[0,0],[.005,.80],[.01,1],[.03,.55],[.06,.32],[.10,.22],[.15,.17],[.20,.14],[.30,.11],[.40,.09],[.50,.08],[.505,.25],[.54,.25],[.545,.08],[.58,.07],[.63,.065],[.65,.06],[.80,.035],[.85,.03],[.90,.02],[1,.006]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'The Shard', keys:['shard','london shard','london bridge tower','uk tallest'],
+    height:310, floors:72, baseWidth:56, topWidth:2,
+    system:'Central Core + Perimeter Columns', material:'C60 Concrete + S355 Steel',
+    foundation:'3m Raft on London Clay',
+    pileLoad:0, lat:51.5045, lng:-0.0865, density:2400,
+    seismicZone:'1', windDesign:105, maxStress:300,
+    drawingId:'SH-SA-001', windowDensity:5, coreRatio:0.34,
+    setbacks:[{h:244,name:'VIEWING GALLERY',shear:100,label:'VIEWING: 100 kN'},{h:170,name:'HOTEL FLOORS',shear:130,label:'HOTEL LEVEL: 130 kN'}],
+    annotations:[{h:310,label:'310',side:'top'},{h:244,label:'VIEWING: 100 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.93],[.10,.85],[.15,.78],[.20,.72],[.25,.65],[.30,.58],[.35,.52],[.40,.48],[.50,.38],[.60,.28],[.70,.20],[.80,.14],[.85,.10],[.90,.06],[.95,.03],[1,.006]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Chrysler Building', keys:['chrysler','art deco','new york chrysler'],
+    height:319, floors:77, baseWidth:60, topWidth:5,
+    system:'Steel Frame (Riveted)', material:'A36 Steel + Nirosta Stainless Crown',
+    foundation:'Concrete Caissons on Bedrock',
+    pileLoad:0, lat:40.7516, lng:-73.9755, density:7850,
+    seismicZone:'2A', windDesign:115, maxStress:280,
+    drawingId:'CB-SA-001', windowDensity:5, coreRatio:0.32,
+    setbacks:[{h:274,name:'CROWN',shear:90,label:'CROWN: 90 kN'},{h:230,name:'UPPER SETBACK',shear:110,label:'61ST FL: 110 kN'},{h:140,name:'LOWER SETBACK',shear:140,label:'LOWER: 140 kN'}],
+    annotations:[{h:319,label:'319',side:'top'},{h:274,label:'CROWN: 90 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.08,1],[.12,.90],[.15,.82],[.20,.72],[.25,.65],[.30,.55],[.35,.50],[.40,.45],[.50,.40],[.60,.35],[.70,.30],[.75,.28],[.82,.30],[.86,.34],[.88,.22],[.92,.15],[.96,.08],[1,.015]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Lotte World Tower', keys:['lotte','seoul tower','korea tallest','lotte world'],
+    height:555, floors:123, baseWidth:68, topWidth:8,
+    system:'Core Wall + Outrigger + Belt Truss', material:'C70 Concrete + SM570 Steel',
+    foundation:'5.5m Raft on 108 Piles (2.4m dia)',
+    pileLoad:12, lat:37.5126, lng:127.1025, density:2450,
+    seismicZone:'3', windDesign:130, maxStress:400,
+    drawingId:'LW-SA-001', windowDensity:5, coreRatio:0.34,
+    setbacks:[{h:478,name:'CROWN',shear:110,label:'CROWN: 110 kN'},{h:350,name:'ZONE 3',shear:155,label:'ZONE 3: 155 kN'},{h:200,name:'ZONE 1',shear:185,label:'ZONE 1: 185 kN'}],
+    annotations:[{h:555,label:'555',side:'top'},{h:478,label:'LANTERN: 110 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.10,.94],[.15,.90],[.20,.87],[.25,.83],[.30,.79],[.35,.75],[.40,.70],[.45,.65],[.50,.60],[.55,.55],[.60,.50],[.65,.45],[.70,.40],[.75,.34],[.80,.28],[.86,.22],[.90,.17],[.94,.12],[.97,.08],[1,.015]],
+    wings:[], structuralFeatures:[{h:0.36,type:'outrigger'},{h:0.63,type:'outrigger'}]
+},
+{
+    name:'Burj Al Arab', keys:['burj al arab','dubai sail','dubai hotel','sail'],
+    height:321, floors:60, baseWidth:70, topWidth:42,
+    system:'Steel Exoskeleton + Concrete Core', material:'S355 Steel + C50 Concrete',
+    foundation:'230 Friction Piles (45m deep in sand)',
+    pileLoad:10, lat:25.1412, lng:55.1854, density:7850,
+    seismicZone:'2A', windDesign:125, maxStress:310,
+    drawingId:'BA-SA-001', windowDensity:3, coreRatio:0.30,
+    setbacks:[{h:280,name:'HELIPAD',shear:80,label:'HELIPAD: 80 kN'},{h:200,name:'SKY LOUNGE',shear:120,label:'LOUNGE: 120 kN'}],
+    annotations:[{h:321,label:'321',side:'top'},{h:280,label:'HELIPAD: 80 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.90],[.10,.85],[.15,.82],[.20,.80],[.30,.78],[.40,.76],[.50,.74],[.60,.72],[.70,.70],[.80,.68],[.87,.66],[.92,.65],[.96,.64],[1,.63]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Tokyo Skytree', keys:['skytree','tokyo tower','japan tallest'],
+    height:634, floors:5, baseWidth:68, topWidth:1,
+    system:'Steel Lattice + RC Shaft Core', material:'S490 High-Strength Steel + C60 Concrete',
+    foundation:'Wall-Type Foundation + Piles (50m)',
+    pileLoad:15, lat:35.7101, lng:139.8107, density:5500,
+    seismicZone:'8', windDesign:140, maxStress:380,
+    drawingId:'TS-SA-001', windowDensity:0, coreRatio:0.45,
+    setbacks:[{h:497,name:'GAIN TOWER',shear:70,label:'ANTENNA GAIN: 70 kN'},{h:450,name:'TEMBO GALLERY',shear:90,label:'TEMBO: 90 kN'},{h:350,name:'TEMBO DECK',shear:120,label:'DECK: 120 kN'}],
+    annotations:[{h:634,label:'634',side:'top'},{h:450,label:'TEMBO: 90 kN',side:'right'},{h:350,label:'OBSERVATION: 120 kN',side:'left'}],
+    pp:[[0,0],[.005,.80],[.01,1],[.03,.60],[.06,.38],[.10,.26],[.15,.20],[.20,.16],[.30,.12],[.40,.10],[.50,.08],[.55,.20],[.58,.20],[.59,.07],[.65,.06],[.70,.05],[.75,.04],[.80,.03],[.85,.02],[.90,.015],[.95,.01],[1,.004]],
+    wings:[], structuralFeatures:[], isLattice:true
+},
+{
+    name:'Ping An Finance Centre', keys:['ping an','shenzhen tower','ping an ifc'],
+    height:599, floors:115, baseWidth:60, topWidth:10,
+    system:'Mega-Column + Core Wall + Outrigger', material:'C70 Concrete + Q460 Steel',
+    foundation:'Raft on Bored Piles (52m)',
+    pileLoad:13, lat:22.5333, lng:114.0545, density:2450,
+    seismicZone:'6', windDesign:135, maxStress:410,
+    drawingId:'PA-SA-001', windowDensity:5, coreRatio:0.35,
+    setbacks:[{h:515,name:'CROWN',shear:105,label:'CROWN: 105 kN'},{h:380,name:'ZONE 3',shear:150,label:'ZONE 3: 150 kN'},{h:220,name:'ZONE 1',shear:190,label:'ZONE 1: 190 kN'}],
+    annotations:[{h:599,label:'599',side:'top'},{h:515,label:'SPIRE: 105 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.10,.94],[.15,.90],[.20,.87],[.25,.83],[.30,.80],[.35,.76],[.40,.72],[.45,.68],[.50,.64],[.55,.59],[.60,.55],[.65,.50],[.70,.45],[.75,.38],[.80,.34],[.86,.26],[.90,.20],[.94,.15],[.97,.10],[1,.017]],
+    wings:[], structuralFeatures:[{h:0.37,type:'outrigger'},{h:0.60,type:'outrigger'}]
+},
+{
+    name:'Big Ben', keys:['big ben','elizabeth tower','westminster','london clock','parliament tower'],
+    height:96, floors:11, baseWidth:12, topWidth:5,
+    system:'Brick Masonry + Cast Iron Frame', material:'Caen Stone + Brick + Cast Iron',
+    foundation:'3m Concrete Raft on London Clay',
+    pileLoad:0, lat:51.5007, lng:-0.1246, density:2200,
+    seismicZone:'1', windDesign:90, maxStress:180,
+    drawingId:'BB-SA-001', windowDensity:2, coreRatio:0.50,
+    setbacks:[{h:62,name:'BELFRY',shear:45,label:'BELFRY: 45 kN'},{h:55,name:'CLOCK',shear:50,label:'CLOCK FACE: 50 kN'}],
+    annotations:[{h:96,label:'96',side:'top'},{h:62,label:'BELFRY: 45 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.10,1],[.20,.98],[.30,.96],[.40,.94],[.50,.92],[.55,.88],[.57,.82],[.60,.78],[.62,.78],[.64,.90],[.66,.85],[.70,.82],[.75,.76],[.80,.60],[.85,.44],[.88,.36],[.92,.30],[.95,.38],[.97,.30],[.99,.15],[1,.01]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Sydney Opera House', keys:['opera house','sydney','australia landmark','sail shells'],
+    height:65, floors:5, baseWidth:185, topWidth:4,
+    system:'Precast Concrete Shell Ribs', material:'Precast C45 Concrete + Steel Tendons',
+    foundation:'580 Concrete Piers (drilled to sandstone)',
+    pileLoad:6, lat:-33.8568, lng:151.2153, density:2400,
+    seismicZone:'1', windDesign:100, maxStress:200,
+    drawingId:'SOH-SA-001', windowDensity:0, coreRatio:0.25,
+    setbacks:[{h:50,name:'MAJOR HALL APEX',shear:80,label:'MAJOR HALL: 80 kN'},{h:35,name:'MINOR HALL',shear:60,label:'MINOR HALL: 60 kN'}],
+    annotations:[{h:65,label:'65',side:'top'},{h:50,label:'MAJOR SHELL: 80 kN',side:'right'}],
+    pp:[[0,0],[.005,.90],[.01,1],[.10,.92],[.20,.80],[.30,.68],[.40,.55],[.50,.42],[.60,.30],[.70,.20],[.80,.12],[.90,.06],[1,.01]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Leaning Tower of Pisa', keys:['pisa','leaning tower','italy tower','torre'],
+    height:56, floors:8, baseWidth:15, topWidth:8,
+    system:'Hollow Cylindrical Masonry', material:'White Carrara Marble + Limestone',
+    foundation:'3m Foundation Ring on Clay/Sand',
+    pileLoad:0, lat:43.7230, lng:10.3966, density:2600,
+    seismicZone:'3', windDesign:80, maxStress:150,
+    drawingId:'TP-SA-001', windowDensity:2, coreRatio:0.60,
+    setbacks:[{h:48,name:'BELFRY',shear:25,label:'BELFRY: 25 kN'}],
+    annotations:[{h:56,label:'56',side:'top'},{h:48,label:'BELFRY: 25 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.10,.95],[.20,.90],[.30,.88],[.40,.86],[.50,.84],[.60,.82],[.70,.80],[.80,.78],[.85,.65],[.90,.60],[.95,.58],[1,.55]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Space Needle', keys:['space needle','seattle','pacific northwest','needle'],
+    height:184, floors:5, baseWidth:42, topWidth:1,
+    system:'Steel Frame + Central Core', material:'A36 Steel + Concrete',
+    foundation:'9.1m Deep Concrete Pad + 72 Bolts',
+    pileLoad:0, lat:47.6205, lng:-122.3493, density:7850,
+    seismicZone:'4', windDesign:130, maxStress:260,
+    drawingId:'SN-SA-001', windowDensity:0, coreRatio:0.40,
+    setbacks:[{h:158,name:'OBSERVATION',shear:65,label:'OBSERVATION: 65 kN'}],
+    annotations:[{h:184,label:'184',side:'top'},{h:158,label:'DISK: 65 kN',side:'right'}],
+    pp:[[0,0],[.005,.80],[.01,1],[.02,.55],[.03,.22],[.05,.12],[.10,.08],[.20,.06],[.40,.05],[.60,.045],[.75,.04],[.82,.04],[.84,.42],[.88,.42],[.89,.04],[.92,.035],[.96,.025],[1,.006]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Gateway Arch', keys:['gateway','arch','st louis','missouri','gateway arch'],
+    height:192, floors:0, baseWidth:192, topWidth:2,
+    system:'Catenary Arch (Double-Wall)', material:'Stainless Steel Skin + Carbon Steel + Concrete',
+    foundation:'Reinforced Concrete to Bedrock (18m)',
+    pileLoad:0, lat:38.6247, lng:-90.1848, density:7850,
+    seismicZone:'3', windDesign:130, maxStress:240,
+    drawingId:'GA-SA-001', windowDensity:0, coreRatio:0.35,
+    setbacks:[],
+    annotations:[{h:192,label:'192',side:'top'}],
+    pp:[[0,0],[.005,.90],[.01,1],[.10,.80],[.20,.62],[.30,.46],[.40,.34],[.50,.24],[.60,.16],[.70,.10],[.80,.06],[.90,.03],[.95,.018],[1,.01]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Statue of Liberty', keys:['statue','liberty','new york harbor','lady liberty'],
+    height:93, floors:0, baseWidth:47, topWidth:3,
+    system:'Iron Framework + Copper Skin', material:'Wrought Iron Frame + Copper Cladding',
+    foundation:'Concrete Pedestal on Star-Shaped Fort',
+    pileLoad:0, lat:40.6892, lng:-74.0445, density:7200,
+    seismicZone:'2A', windDesign:120, maxStress:200,
+    drawingId:'SL-SA-001', windowDensity:0, coreRatio:0.30,
+    setbacks:[{h:46,name:'PEDESTAL TOP',shear:60,label:'PEDESTAL: 60 kN'}],
+    annotations:[{h:93,label:'93',side:'top'},{h:46,label:'PEDESTAL: 60 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.10,1],[.20,.98],[.30,.96],[.40,.94],[.49,.85],[.50,.50],[.52,.40],[.55,.35],[.60,.30],[.65,.28],[.70,.26],[.75,.22],[.80,.20],[.85,.25],[.88,.22],[.90,.18],[.93,.14],[.96,.10],[.98,.06],[1,.03]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Abraj Al-Bait', keys:['abraj','makkah','mecca','clock tower','al bait'],
+    height:601, floors:120, baseWidth:95, topWidth:25,
+    system:'Concrete Core + Steel Frame', material:'C60 Concrete + Steel',
+    foundation:'Raft + Piles on Granite Bedrock',
+    pileLoad:14, lat:21.4190, lng:39.8262, density:2450,
+    seismicZone:'2B', windDesign:125, maxStress:410,
+    drawingId:'AB-SA-001', windowDensity:4, coreRatio:0.35,
+    setbacks:[{h:530,name:'CRESCENT',shear:90,label:'CRESCENT: 90 kN'},{h:450,name:'CLOCK',shear:130,label:'CLOCK FACE: 130 kN'},{h:300,name:'TOWER',shear:175,label:'TOWER: 175 kN'}],
+    annotations:[{h:601,label:'601',side:'top'},{h:450,label:'CLOCK: 130 kN',side:'right'},{h:300,label:'TOWER: 175 kN',side:'left'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.10,.98],[.20,.96],[.30,.94],[.40,.90],[.50,.82],[.55,.65],[.60,.55],[.65,.50],[.70,.48],[.72,.55],[.75,.50],[.78,.46],[.82,.40],[.85,.36],[.88,.44],[.90,.42],[.92,.38],[.95,.30],[.97,.20],[1,.04]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Salesforce Tower', keys:['salesforce','san francisco tower','sf tower'],
+    height:326, floors:61, baseWidth:41, topWidth:10,
+    system:'Concrete Core + Steel Moment Frame', material:'C55 Concrete + A992 Steel',
+    foundation:'3.5m Mat on Drilled Shafts (70m)',
+    pileLoad:9, lat:37.7897, lng:-122.3969, density:2400,
+    seismicZone:'4', windDesign:110, maxStress:320,
+    drawingId:'SF-SA-001', windowDensity:4, coreRatio:0.34,
+    setbacks:[{h:280,name:'CROWN',shear:90,label:'CROWN: 90 kN'},{h:180,name:'MID',shear:130,label:'MID-LEVEL: 130 kN'}],
+    annotations:[{h:326,label:'326',side:'top'},{h:280,label:'LED CROWN: 90 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.1,.95],[.2,.90],[.3,.85],[.4,.80],[.5,.74],[.6,.68],[.7,.60],[.8,.52],[.86,.44],[.92,.36],[.96,.28],[1,.24]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Lakhta Center', keys:['lakhta','st petersburg','russia tallest','gazprom'],
+    height:462, floors:87, baseWidth:64, topWidth:4,
+    system:'Concrete Core + Steel Spire', material:'C80 Concrete + S390 Steel',
+    foundation:'5m Raft on 264 Piles (65m)',
+    pileLoad:11, lat:59.9871, lng:30.1773, density:2450,
+    seismicZone:'1', windDesign:115, maxStress:380,
+    drawingId:'LC-SA-001', windowDensity:4, coreRatio:0.34,
+    setbacks:[{h:390,name:'SPIRE BASE',shear:100,label:'SPIRE: 100 kN'},{h:280,name:'OBSERVATION',shear:140,label:'OBSERVATION: 140 kN'}],
+    annotations:[{h:462,label:'462',side:'top'},{h:390,label:'SPIRE: 100 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.1,.93],[.2,.85],[.3,.77],[.4,.68],[.5,.58],[.6,.48],[.7,.36],[.78,.24],[.84,.16],[.88,.10],[.93,.06],[.97,.03],[1,.009]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Shanghai World Financial Center', keys:['swfc','bottle opener','shanghai wfc','world financial'],
+    height:492, floors:101, baseWidth:58, topWidth:14,
+    system:'Mega-Frame + Core Wall + Outrigger', material:'C60 Concrete + SM570 Steel',
+    foundation:'4m Raft on Bored Piles',
+    pileLoad:11, lat:31.2347, lng:121.5075, density:2450,
+    seismicZone:'7', windDesign:130, maxStress:390,
+    drawingId:'SWFC-SA-001', windowDensity:5, coreRatio:0.34,
+    setbacks:[{h:440,name:'APERTURE',shear:110,label:'APERTURE: 110 kN'},{h:350,name:'ZONE 3',shear:150,label:'ZONE 3: 150 kN'},{h:200,name:'ZONE 1',shear:180,label:'ZONE 1: 180 kN'}],
+    annotations:[{h:492,label:'492',side:'top'},{h:440,label:'TRAPEZOIDAL APERTURE: 110 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.98],[.1,.96],[.2,.91],[.3,.86],[.4,.80],[.5,.74],[.6,.67],[.7,.58],[.75,.50],[.80,.42],[.85,.36],[.88,.34],[.90,.28],[.93,.24],[.96,.20],[1,.18]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'International Commerce Centre', keys:['icc','hong kong icc','kowloon','hk tallest'],
+    height:484, floors:118, baseWidth:57, topWidth:18,
+    system:'Mega-Column + Core Wall + Outrigger', material:'C90 Concrete + Steel',
+    foundation:'6m Raft on Caissons (Granite)',
+    pileLoad:0, lat:22.3034, lng:114.1603, density:2450,
+    seismicZone:'5', windDesign:135, maxStress:400,
+    drawingId:'ICC-SA-001', windowDensity:5, coreRatio:0.35,
+    setbacks:[{h:420,name:'CROWN',shear:115,label:'CROWN: 115 kN'},{h:300,name:'ZONE 2',shear:155,label:'ZONE 2: 155 kN'}],
+    annotations:[{h:484,label:'484',side:'top'},{h:420,label:'CROWN: 115 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.98],[.1,.97],[.2,.94],[.3,.91],[.4,.87],[.5,.82],[.6,.76],[.7,.68],[.8,.58],[.86,.48],[.92,.38],[.96,.32],[1,.30]],
+    wings:[], structuralFeatures:[]
+},
+{
+    name:'Guangzhou CTF Finance Centre', keys:['guangzhou ctf','guangzhou tower','ctf finance','east tower'],
+    height:530, floors:111, baseWidth:60, topWidth:14,
+    system:'Core Wall + Outrigger + Belt Truss', material:'C70 Concrete + Q390 Steel',
+    foundation:'Raft on Bored Piles (80m)',
+    pileLoad:12, lat:23.1191, lng:113.3203, density:2450,
+    seismicZone:'6', windDesign:130, maxStress:400,
+    drawingId:'GZ-SA-001', windowDensity:5, coreRatio:0.34,
+    setbacks:[{h:460,name:'CROWN',shear:110,label:'CROWN: 110 kN'},{h:330,name:'ZONE 3',shear:150,label:'ZONE 3: 150 kN'}],
+    annotations:[{h:530,label:'530',side:'top'},{h:460,label:'CROWN: 110 kN',side:'right'}],
+    pp:[[0,0],[.005,.92],[.01,1],[.05,.97],[.1,.95],[.2,.89],[.3,.82],[.4,.75],[.5,.66],[.6,.57],[.7,.47],[.8,.36],[.86,.28],[.92,.20],[.96,.14],[1,.03]],
+    wings:[], structuralFeatures:[]
+}
+];
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 2: BUILDING MATCHING
+// ═══════════════════════════════════════════════════════════════
+function matchBuilding(query) {
+    const q = query.toLowerCase().trim();
+    let best = null, bestScore = 0;
+    for (const b of BUILDINGS) {
+        let score = 0;
+        if (b.name.toLowerCase() === q) return b;
+        if (q.includes(b.name.toLowerCase())) score += 100;
+        if (b.name.toLowerCase().includes(q)) score += 80;
+        for (const k of b.keys) {
+            if (q.includes(k)) score += 60;
+            if (k.includes(q)) score += 40;
+            const qWords = q.split(/\s+/);
+            for (const w of qWords) {
+                if (w.length > 2 && k.includes(w)) score += 20;
+                if (w.length > 2 && b.name.toLowerCase().includes(w)) score += 15;
+            }
+        }
+        if (score > bestScore) { bestScore = score; best = b; }
+    }
+    if (best && bestScore > 10) return best;
+    return createGenericBuilding(query);
+}
+
+function createGenericBuilding(name) {
+    const isSkyscraper = /tower|centre|center|plaza|building|skyscraper|high.?rise/i.test(name);
+    const isBridge = /bridge/i.test(name);
+    // Wide, low structures: forts, palaces, large monument complexes
+    const isWide = /fort|fortress|qila|citadel|palace|parliament|station|stadium|airport|mahal|walls?/i.test(name);
+    const isMonument = /monument|memorial|statue|church|cathedral|mosque|temple|castle|tomb|pagoda|stupa|shrine|gate/i.test(name);
+    const h = isSkyscraper ? 200 : isBridge ? 80 : isWide ? 35 : isMonument ? 60 : 120;
+    const fl = isSkyscraper ? Math.round(h/3.5) : isBridge ? 0 : isWide ? 3 : isMonument ? Math.round(h/4) : Math.round(h/3.5);
+    const bw = isSkyscraper ? 40 : isBridge ? 200 : isWide ? 220 : isMonument ? 30 : 40;
+    return {
+        name: name, keys:[], generic:true, height:h, floors:fl, baseWidth:bw, topWidth: bw*0.3,
+        system: isSkyscraper?'Core Wall + Frame':isWide?'Load-Bearing Masonry Walls':'Load-Bearing Structure',
+        material: isSkyscraper?'C50 Concrete + Steel':isWide?'Stone / Brick Masonry':'Reinforced Concrete',
+        foundation:'Standard Foundation',
+        pileLoad:0, lat:0, lng:0, density:2400,
+        seismicZone:'2', windDesign:100, maxStress: h * 0.5,
+        drawingId: name.substring(0,2).toUpperCase()+'-SA-001',
+        windowDensity:3, coreRatio:0.35,
+        setbacks:[{h:h*0.7,name:'UPPER',shear:Math.round(h*0.2),label:'UPPER: '+Math.round(h*0.2)+' kN'}],
+        annotations:[{h:h,label:String(h),side:'top'}],
+        pp:[[0,0],[.005,.92],[.01,1],[.1,.92],[.2,.84],[.3,.76],[.4,.68],[.5,.60],[.6,.50],[.7,.40],[.8,.30],[.9,.20],[.95,.12],[1,.05]],
+        wings:[], structuralFeatures:[]
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 3: STRESS COMPUTATION ENGINE
+// ═══════════════════════════════════════════════════════════════
+function computeStressProfile(building, disasterType, magnitude) {
+    const H = building.height;
+    const B = building.baseWidth;
+    const rho = building.density;
+    const maxS = building.maxStress;
+    const N = 200;
+    const stresses = new Float64Array(N);
+
+    // Self-weight: precompute suffix integral of cross-section area (∝ w²)
+    // so axial stress = weight of structure above / area at that height —
+    // highest at the base, tapering to zero at the top.
+    // The profile's first point [0,0] is a path-closing drawing artifact, not a
+    // real zero-width section — evaluate width no lower than t=0.015 (true base)
+    const wArr = new Float64Array(N);
+    const suffixArea = new Float64Array(N + 1);
+    for (let i = 0; i < N; i++) {
+        const t = Math.max(i / (N - 1), 0.015);
+        wArr[i] = Math.max(lerp(building.pp, t), 0.05);
+    }
+    for (let i = N - 1; i >= 0; i--) suffixArea[i] = suffixArea[i + 1] + wArr[i] * wArr[i];
+
+    for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        const h = t * H;
+        const w = lerp(building.pp, t);
+        let sigma_g = rho * 9.81 * H * (suffixArea[i] / N) / (wArr[i] * wArr[i]) / 1e6 * 0.15;
+
+        let sigma_w = 0;
+        if (['storm','wind','tornado','blizzard'].includes(disasterType)) {
+            let vRef;
+            if (disasterType === 'tornado') vRef = 80 * magnitude;
+            else if (disasterType === 'blizzard') vRef = 30 * magnitude;
+            else vRef = 45 * magnitude;
+            const q = 0.5 * 1.225 * vRef * vRef;
+            const momentArm = Math.pow((1 - t), 2.2);
+            const sectionMod = B * w * B * w / 6;
+            sigma_w = q * B * momentArm * H / Math.max(sectionMod * 1e6, 0.001) * 0.0008;
+            sigma_w = Math.min(sigma_w, maxS * 0.6);
+        }
+
+        let sigma_s = 0;
+        if (disasterType === 'seismic') {
+            const Cs = 0.08 * magnitude;
+            const shearFrac = 1 - Math.pow(t, 1.3);
+            sigma_s = Cs * rho * H * shearFrac / 1e4;
+            sigma_s = Math.min(sigma_s, maxS * 0.5);
+        }
+
+        let sigma_f = 0;
+        if (disasterType === 'flood') {
+            const waterH = Math.min(15 * magnitude, H * 0.15);
+            if (h < waterH) sigma_f = 9810 * (waterH - h) * magnitude / 1e6 * 2;
+        }
+
+        let sigma_fire = 0;
+        if (disasterType === 'fire') {
+            const fireZoneBottom = 0.1;
+            const fireZoneTop = 0.1 + 0.08 * magnitude;
+            if (t >= fireZoneBottom && t <= fireZoneTop) {
+                sigma_fire = 200e3 * 1.2e-5 * 800 * magnitude / 1e6 * 0.5;
+            }
+        }
+
+        let sigma_l = 0;
+        if (disasterType === 'lightning' && t > 0.9) sigma_l = 50 * magnitude * (t - 0.9) / 0.1;
+
+        let sigma_ls = 0;
+        if (disasterType === 'landslide' && t < 0.15) sigma_ls = 80 * magnitude * (0.15 - t) / 0.15;
+
+        let sigma_v = 0;
+        if (disasterType === 'volcanic') sigma_v = sigma_g * 0.3 * magnitude + 20 * magnitude * (1 - t * 0.5);
+
+        let concentration = 1.0;
+        for (const sb of building.setbacks) {
+            const sbT = 1 - sb.h / H;
+            if (Math.abs(t - sbT) < 0.04) concentration = 1.3 + 0.2 * magnitude;
+        }
+
+        stresses[i] = Math.min((sigma_g + sigma_w + sigma_s + sigma_f + sigma_fire + sigma_l + sigma_ls + sigma_v) * concentration, maxS);
+    }
+
+    let computedMax = 0;
+    for (let i = 0; i < N; i++) if (stresses[i] > computedMax) computedMax = stresses[i];
+    if (computedMax > 0) {
+        // Baseline (gravity self-weight only) peaks at ~50% capacity; disasters scale with magnitude
+        const peakTarget = disasterType === 'baseline' ? maxS * 0.5 : maxS * 0.85 * magnitude;
+        const scaleFactor = peakTarget / computedMax;
+        for (let i = 0; i < N; i++) stresses[i] = Math.min(stresses[i] * scaleFactor, maxS);
+    }
+    return stresses;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 4: PROFESSIONAL CANVAS RENDERER
+// ═══════════════════════════════════════════════════════════════
+const canvas = document.getElementById('viewport-canvas');
+const ctx = canvas.getContext('2d');
+const tip = document.getElementById('node-tip');
+
+let zoom = 1, rotated = false, heatOn = true, showAnnot = true;
+let simActive = false, animT = 0, simProgress = 0;
+let fieldMax = 0; // peak of the current stress field — colorbar range, FEA-post-processor style
+let currentStresses = null;
+let targetStresses = null;
+let liveServerData = null;
+let currentBuilding = null;
+
+// Offscreen canvas for compositing
+let offCanvas = null, offCtx = null;
+
+function stressColor(ratio) {
+    ratio = Math.max(0, Math.min(1, ratio));
+    let r, g, b;
+    if (ratio < 0.25) {
+        const f = ratio / 0.25;
+        r = 0; g = Math.round(f * 255); b = 255;
+    } else if (ratio < 0.5) {
+        const f = (ratio - 0.25) / 0.25;
+        r = 0; g = 255; b = Math.round((1 - f) * 255);
+    } else if (ratio < 0.75) {
+        const f = (ratio - 0.5) / 0.25;
+        r = Math.round(f * 255); g = 255; b = 0;
+    } else {
+        const f = (ratio - 0.75) / 0.25;
+        r = 255; g = Math.round((1 - f) * 255); b = 0;
+    }
+    return `rgb(${r},${g},${b})`;
+}
+
+function stressColorRGBA(ratio, a) {
+    ratio = Math.max(0, Math.min(1, ratio));
+    let r, g, b;
+    if (ratio < 0.25) { const f=ratio/.25; r=0;g=Math.round(f*255);b=255; }
+    else if (ratio < 0.5) { const f=(ratio-.25)/.25; r=0;g=255;b=Math.round((1-f)*255); }
+    else if (ratio < 0.75) { const f=(ratio-.5)/.25; r=Math.round(f*255);g=255;b=0; }
+    else { const f=(ratio-.75)/.25; r=255;g=Math.round((1-f)*255);b=0; }
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+function getStressColorRGB(ratio) {
+    ratio = Math.max(0, Math.min(1, ratio));
+    let r, g, b;
+    if (ratio < 0.25) {
+        const f = ratio / 0.25;
+        r = 0; g = Math.round(f * 255); b = 255;
+    } else if (ratio < 0.5) {
+        const f = (ratio - 0.25) / 0.25;
+        r = 0; g = 255; b = Math.round((1 - f) * 255);
+    } else if (ratio < 0.75) {
+        const f = (ratio - 0.5) / 0.25;
+        r = Math.round(f * 255); g = 255; b = 0;
+    } else {
+        const f = (ratio - 0.75) / 0.25;
+        r = 255; g = Math.round((1 - f) * 255); b = 0;
+    }
+    return { r, g, b };
+}
+
+let viewW = 0, viewH = 0;
+
+function resizeCanvas() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    canvas.style.width = r.width + 'px'; canvas.style.height = r.height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    viewW = r.width; viewH = r.height;
+    // Reset offscreen
+    offCanvas = null; offCtx = null;
+}
+
+function ensureOffscreen() {
+    if (!offCanvas || offCanvas.width !== viewW || offCanvas.height !== viewH) {
+        offCanvas = document.createElement('canvas');
+        offCanvas.width = viewW;
+        offCanvas.height = viewH;
+        offCtx = offCanvas.getContext('2d');
+    }
+}
+
+// ── Layout constants ──
+function getLayout() {
+    const m = 35; // margin
+    const padL = viewW * 0.16;
+    const padR = viewW * 0.24;
+    const padT = viewH * 0.07;
+    const padB = viewH * 0.18;
+    const drawW = viewW - padL - padR;
+    const drawH = viewH - padT - padB;
+    const cxB = padL + drawW * 0.45;
+    const groundY = viewH - padB;
+    return { m, padL, padR, padT, padB, drawW, drawH, cxB, groundY };
+}
+
+function render(ts) {
+    animT = ts || 0;
+    ctx.clearRect(0, 0, viewW, viewH);
+    if (!currentBuilding) { requestAnimationFrame(render); return; }
+
+    ctx.save();
+    const cx = viewW / 2, cy = viewH / 2;
+    ctx.translate(cx, cy);
+    ctx.scale(zoom, zoom);
+    if (rotated) { ctx.scale(0.92, 1); ctx.rotate(0.03); }
+    ctx.translate(-cx, -cy);
+
+    // Animate stresses toward target
+    if (targetStresses && currentStresses) {
+        for (let i = 0; i < 200; i++) {
+            currentStresses[i] += (targetStresses[i] - currentStresses[i]) * 0.05;
+        }
+    }
+
+    // Colorbar spans the computed field range so the full rainbow maps onto the structure.
+    // 97.5th percentile, not absolute max — concentration spikes saturate red instead of
+    // compressing the rest of the structure into blue.
+    fieldMax = 0;
+    if (currentStresses) {
+        const sorted = Array.from(currentStresses).sort((a, b) => a - b);
+        fieldMax = sorted[Math.floor(0.975 * (sorted.length - 1))];
+    }
+
+    drawEngineeringBorder();
+    drawBuildingWithStress();
+    if (showAnnot) drawAnnotations();
+    drawStressLegend();
+    drawSimParamsBox();
+    drawTitleBlock();
+
+    ctx.restore();
+    requestAnimationFrame(render);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ENGINEERING DRAWING BORDER
+// ═══════════════════════════════════════════════════════════════
+function drawEngineeringBorder() {
+    const { m } = getLayout();
+    const cols = 8, rows = 6;
+    const iW = viewW - m * 2;
+    const iH = viewH - m * 2;
+    const cw = iW / cols;
+    const rh = iH / rows;
+
+    // Outer border (double line for engineering drawing)
+    ctx.strokeStyle = '#888';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(m, m, iW, iH);
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(m + 3, m + 3, iW - 6, iH - 6);
+
+    // Grid reference markers
+    ctx.font = '500 9px Inter';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Column labels (A-H) top & bottom
+    for (let i = 0; i < cols; i++) {
+        const x = m + i * cw + cw / 2;
+        // Top
+        ctx.fillStyle = '#999';
+        ctx.fillText(String.fromCharCode(65 + i), x, m - 10);
+        // Bottom
+        ctx.fillText(String.fromCharCode(65 + i), x, viewH - m + 12);
+        // Tick marks
+        ctx.beginPath();
+        ctx.moveTo(m + (i + 1) * cw, m); ctx.lineTo(m + (i + 1) * cw, m + 5);
+        ctx.moveTo(m + (i + 1) * cw, viewH - m); ctx.lineTo(m + (i + 1) * cw, viewH - m - 5);
+        ctx.strokeStyle = '#aaa'; ctx.lineWidth = 0.5; ctx.stroke();
+    }
+
+    // Row labels (1-6) left & right
+    ctx.textAlign = 'center';
+    for (let i = 0; i < rows; i++) {
+        const y = m + i * rh + rh / 2;
+        ctx.fillStyle = '#999';
+        ctx.fillText(String(rows - i), m - 12, y);
+        ctx.fillText(String(rows - i), viewW - m + 14, y);
+        // Tick marks
+        ctx.beginPath();
+        ctx.moveTo(m, m + (i + 1) * rh); ctx.lineTo(m + 5, m + (i + 1) * rh);
+        ctx.moveTo(viewW - m, m + (i + 1) * rh); ctx.lineTo(viewW - m - 5, m + (i + 1) * rh);
+        ctx.strokeStyle = '#aaa'; ctx.lineWidth = 0.5; ctx.stroke();
+    }
+
+    // Light grid lines
+    ctx.setLineDash([1, 6]);
+    ctx.strokeStyle = 'rgba(160,150,140,0.10)';
+    ctx.lineWidth = 0.3;
+    for (let i = 1; i < cols; i++) {
+        ctx.beginPath();
+        ctx.moveTo(m + i * cw, m + 5);
+        ctx.lineTo(m + i * cw, viewH - m - 5);
+        ctx.stroke();
+    }
+    for (let i = 1; i < rows; i++) {
+        ctx.beginPath();
+        ctx.moveTo(m + 5, m + i * rh);
+        ctx.lineTo(viewW - m - 5, m + i * rh);
+        ctx.stroke();
+    }
+    ctx.setLineDash([]);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUILDING IMAGE + STRESS HEATMAP OVERLAY
+// ═══════════════════════════════════════════════════════════════
+let buildingImage = null;        // Original fetched image (HTMLImageElement)
+let buildingSilhouette = null;   // Canvas: filled building silhouette (alpha mask for heatmap)
+let buildingOutline = null;      // Canvas: crisp architectural detail lines
+let buildingSketch = null;       // Canvas: high-contrast sketch drawing
+let buildingImgLoaded = false;
+let buildingBounds = null;       // { minX, minY, w, h }
+let isFetchingImage = false;
+let fetchAttempt = 0;
+let userImageActive = false;     // a user upload takes priority over auto-fetched images
+
+function loadAndPreprocessBuildingImage(buildingName) {
+    buildingImgLoaded = false;
+    buildingImage = null;
+    buildingSilhouette = null;
+    buildingOutline = null;
+    buildingSketch = null;
+    buildingBounds = null;
+    isFetchingImage = true;
+    fetchAttempt = 0;
+
+    // Primary source: AI-generated CAD elevation (consistent reference style
+    // for every structure); internet sketch search is the fallback
+    generateElevationDrawing(buildingName);
+}
+
+async function generateElevationDrawing(buildingName) {
+    addLog(nowTS(), `Generating CAD elevation drawing of ${buildingName} (FLUX.1-dev)...`, 'info');
+    try {
+        const sameB = currentBuilding && currentBuilding.name === buildingName ? currentBuilding : null;
+        const desc = sameB ? [sameB.type, sameB.material].filter(Boolean).join(', ') : '';
+        const dims = sameB ? `&h=${sameB.height || 0}&w=${sameB.baseWidth || 0}` : '';
+        const r = await fetch(`/api/generate-elevation?name=${encodeURIComponent(buildingName)}&description=${encodeURIComponent(desc)}${dims}`);
+        const d = await r.json();
+        if (r.ok && d.imageBase64) {
+            if (userImageActive || (currentBuilding && currentBuilding.name !== buildingName)) return;
+            const ok = await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(preprocessBuildingImage(img, true));
+                img.onerror = () => resolve(false);
+                img.src = d.imageBase64;
+            });
+            if (ok) {
+                isFetchingImage = false;
+                addLog(nowTS(), `AI elevation drawing ready${d.cached ? ' (cached)' : ''}. Structure extracted.`, 'info');
+                return;
+            }
+            addLog(nowTS(), 'Generated drawing could not be segmented — falling back to image search', 'warning');
+        } else {
+            addLog(nowTS(), `Drawing generation unavailable: ${(d.error || 'unknown').substring(0, 80)}`, 'warning');
+        }
+    } catch (e) {
+        addLog(nowTS(), `Drawing generation error: ${e.message}`, 'warning');
+    }
+    if (userImageActive || (currentBuilding && currentBuilding.name !== buildingName)) return;
+    addLog(nowTS(), `Searching for high-fidelity architectural image of ${buildingName}...`, 'info');
+    attemptImageLoad(buildingName);
+}
+
+function attemptImageLoad(buildingName) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = `/api/building-blueprint-image?q=${encodeURIComponent(buildingName)}&idx=${fetchAttempt}&t=${Date.now()}`;
+    
+    img.onload = function() {
+        if (userImageActive) return; // user-uploaded drawing takes priority
+        addLog(nowTS(), `Image retrieved (${img.width}×${img.height}). Preprocessing silhouette...`, 'info');
+        const success = preprocessBuildingImage(img);
+        if (!success && fetchAttempt < 6) {
+            fetchAttempt++;
+            addLog(nowTS(), `Retrying with alternate image (attempt ${fetchAttempt + 1})...`, 'info');
+            attemptImageLoad(buildingName);
+        } else if (!success) {
+            isFetchingImage = false;
+            addLog(nowTS(), `Could not extract building shape. Using vector profile.`, 'warning');
+        }
+    };
+    
+    img.onerror = function() {
+        if (fetchAttempt < 6) {
+            fetchAttempt++;
+            attemptImageLoad(buildingName);
+        } else {
+            isFetchingImage = false;
+            addLog(nowTS(), `Could not retrieve image. Using vector profile.`, 'warning');
+        }
+    };
+}
+
+// Isolate the primary structure in a binary mask by tracing the central vertical
+// object from its highest point downward. Each row keeps only the foreground runs
+// that overlap the structure's span in the row above (with a bounded growth rate),
+// so disconnected clutter — trees, neighboring buildings, foreground objects —
+// and sudden wide ground bands are rejected.
+// Find the row where a near-full-width foreground band starts and persists to the
+// bottom of the frame — the ground line (trees, water, streetscape). Only fires when
+// the structure above is clearly narrower, so tightly-cropped buildings are untouched.
+function detectGroundRow(closed, W, H) {
+    const extent = new Int32Array(H);
+    for (let y = 0; y < H; y++) {
+        let lo = -1, hi = -1;
+        for (let x = 0; x < W; x++) if (closed[y * W + x]) { if (lo < 0) lo = x; hi = x; }
+        extent[y] = lo < 0 ? 0 : hi - lo + 1;
+    }
+    for (let y = Math.floor(H * 0.45); y < H - 3; y++) {
+        if (extent[y] < W * 0.93) continue;
+        let wideBelow = 0, total = 0;
+        for (let yy = y; yy < H; yy++) { total++; if (extent[yy] >= W * 0.85) wideBelow++; }
+        let sumAbove = 0, cntAbove = 0;
+        for (let yy = Math.floor(H * 0.15); yy < y; yy++) { sumAbove += extent[yy]; cntAbove++; }
+        const avgAbove = cntAbove ? sumAbove / cntAbove : W;
+        if (wideBelow / total > 0.7 && avgAbove < W * 0.7) return y;
+    }
+    return H;
+}
+
+function isolateStructure(closed, W, H) {
+    const iso = new Uint8Array(W * H);
+    const margin = Math.max(2, Math.round(W * 0.02));   // run-overlap tolerance
+    const grow = Math.max(2, Math.round(W * 0.012));    // max widening per row per side
+    const minRun = Math.max(2, Math.round(W * 0.008));  // ignore speck runs
+
+    // Everything below the ground band is scenery, not structure
+    const groundY = detectGroundRow(closed, W, H);
+
+    let prevRuns = null;
+    let missedRows = 0;
+
+    for (let y = 0; y < groundY; y++) {
+        // Collect horizontal runs of foreground in this row
+        const runs = [];
+        let s = -1;
+        for (let x = 0; x <= W; x++) {
+            const v = x < W ? closed[y * W + x] : 0;
+            if (v && s < 0) s = x;
+            else if (!v && s >= 0) {
+                if (x - s >= minRun) runs.push([s, x - 1]);
+                s = -1;
+            }
+        }
+
+        if (!prevRuns) {
+            // Structure top: first solid run whose center lies in the middle 60% of frame
+            let best = null, bestDist = Infinity;
+            for (const r of runs) {
+                const c = (r[0] + r[1]) / 2;
+                if (c < W * 0.2 || c > W * 0.8) continue;
+                const d = Math.abs(c - W / 2);
+                if (d < bestDist) { bestDist = d; best = r; }
+            }
+            if (best) {
+                prevRuns = [best];
+                for (let x = best[0]; x <= best[1]; x++) iso[y * W + x] = 1;
+            }
+            continue;
+        }
+
+        // Keep runs overlapping the previous span, clipped to a bounded growth
+        const kept = [];
+        for (const r of runs) {
+            let loBound = Infinity, hiBound = -Infinity, overlaps = false;
+            for (const p of prevRuns) {
+                if (r[0] <= p[1] + margin && r[1] >= p[0] - margin) {
+                    overlaps = true;
+                    loBound = Math.min(loBound, p[0] - grow);
+                    hiBound = Math.max(hiBound, p[1] + grow);
+                }
+            }
+            if (!overlaps) continue;
+            const lo = Math.max(r[0], loBound, 0);
+            const hi = Math.min(r[1], hiBound, W - 1);
+            if (hi - lo >= 1) kept.push([lo, hi]);
+        }
+
+        if (kept.length) {
+            for (const r of kept) for (let x = r[0]; x <= r[1]; x++) iso[y * W + x] = 1;
+            prevRuns = kept;
+            missedRows = 0;
+        } else {
+            // Tolerate small vertical gaps (arches, open lattice) before giving up
+            missedRows++;
+            if (missedRows > H * 0.06) break;
+        }
+    }
+
+    // Sanity: if tracing captured too little of the mask, fall back to the raw
+    // mask — but still without the ground band
+    let isoCount = 0, closedCount = 0;
+    for (let i = 0; i < iso.length; i++) { isoCount += iso[i]; closedCount += closed[i]; }
+    if (isoCount < closedCount * 0.12 || isoCount < W * H * 0.02) {
+        if (groundY < H) {
+            const cut = new Uint8Array(closed);
+            cut.fill(0, groundY * W);
+            return cut;
+        }
+        return closed;
+    }
+    return iso;
+}
+
+function preprocessBuildingImage(img, skipShapeCheck) {
+    try {
+        const W = img.width, H = img.height;
+        
+        // Step 1: Draw original image onto a temp canvas
+        const srcCanvas = document.createElement('canvas');
+        srcCanvas.width = W; srcCanvas.height = H;
+        const srcCtx = srcCanvas.getContext('2d');
+        srcCtx.drawImage(img, 0, 0);
+        const srcData = srcCtx.getImageData(0, 0, W, H);
+        const pixels = srcData.data;
+        
+        // Step 2: Compute brightness array
+        const brightness = new Float32Array(W * H);
+        for (let y = 0; y < H; y++) {
+            for (let x = 0; x < W; x++) {
+                const i = (y * W + x) * 4;
+                brightness[y * W + x] = 0.299 * pixels[i] + 0.587 * pixels[i+1] + 0.114 * pixels[i+2];
+            }
+        }
+        
+        // Step 3: Otsu's method for adaptive threshold
+        const histogram = new Int32Array(256);
+        for (let i = 0; i < brightness.length; i++) histogram[Math.round(brightness[i])]++;
+        
+        const totalPx = W * H;
+        let sumAll = 0;
+        for (let i = 0; i < 256; i++) sumAll += i * histogram[i];
+        
+        let sumBg = 0, wBg = 0, maxVar = 0, bestTh = 128;
+        for (let t = 0; t < 256; t++) {
+            wBg += histogram[t];
+            if (wBg === 0) continue;
+            const wFg = totalPx - wBg;
+            if (wFg === 0) break;
+            sumBg += t * histogram[t];
+            const diff = sumBg / wBg - (sumAll - sumBg) / wFg;
+            const v = wBg * wFg * diff * diff;
+            if (v > maxVar) { maxVar = v; bestTh = t; }
+        }
+        const threshold = Math.max(80, Math.min(230, bestTh));
+        
+        // Step 4: Create binary mask
+        const mask = new Uint8Array(W * H);
+        for (let i = 0; i < brightness.length; i++) {
+            mask[i] = brightness[i] <= threshold ? 1 : 0;
+        }
+        
+        // Auto-detect mask inversion (if top corners are classified as foreground, invert)
+        let cornerCount = 0;
+        const checkSz = Math.min(15, Math.floor(Math.min(W, H) * 0.05));
+        for (let y = 0; y < checkSz; y++) {
+            for (let x = 0; x < checkSz; x++) {
+                cornerCount += mask[y * W + x]; // Top-left
+                cornerCount += mask[y * W + (W - 1 - x)]; // Top-right
+            }
+        }
+        const totalChecked = checkSz * checkSz * 2;
+        if (cornerCount > totalChecked * 0.4) {
+            // Mask is inverted, flip foreground and background
+            for (let i = 0; i < mask.length; i++) {
+                mask[i] = mask[i] === 1 ? 0 : 1;
+            }
+        }
+        
+        // Step 5: Sobel edge detection
+        const edgeMap = new Float32Array(W * H);
+        for (let y = 1; y < H - 1; y++) {
+            for (let x = 1; x < W - 1; x++) {
+                const tl = brightness[(y-1)*W + x-1], tc = brightness[(y-1)*W + x], tr = brightness[(y-1)*W + x+1];
+                const ml = brightness[y*W + x-1], mr = brightness[y*W + x+1];
+                const bl = brightness[(y+1)*W + x-1], bc = brightness[(y+1)*W + x], br = brightness[(y+1)*W + x+1];
+                const gx = -tl - 2*ml - bl + tr + 2*mr + br;
+                const gy = -tl - 2*tc - tr + bl + 2*bc + br;
+                edgeMap[y * W + x] = Math.sqrt(gx*gx + gy*gy);
+            }
+        }
+        
+        // Step 6: Morphological close (dilate + erode) to fill gaps
+        const dilated = new Uint8Array(mask);
+        for (let y = 2; y < H - 2; y++) {
+            for (let x = 2; x < W - 2; x++) {
+                if (mask[y*W+x] === 1) continue;
+                let cnt = 0;
+                for (let dy = -1; dy <= 1; dy++)
+                    for (let dx = -1; dx <= 1; dx++)
+                        cnt += mask[(y+dy)*W + (x+dx)];
+                if (cnt >= 4) dilated[y*W+x] = 1;
+            }
+        }
+        const closed = new Uint8Array(dilated);
+        for (let y = 2; y < H - 2; y++) {
+            for (let x = 2; x < W - 2; x++) {
+                if (dilated[y*W+x] === 0) continue;
+                let cnt = 0;
+                for (let dy = -1; dy <= 1; dy++)
+                    for (let dx = -1; dx <= 1; dx++)
+                        cnt += dilated[(y+dy)*W + (x+dx)];
+                if (cnt < 5) closed[y*W+x] = 0;
+            }
+        }
+
+        // Step 6.4: Fill enclosed interiors — architectural line drawings are dark
+        // outlines on white paper; flood the background inward from the frame borders
+        // and mark every unreachable (enclosed) pixel as structure body so the
+        // stress heatmap fills the building solid, not just its linework
+        const bgReach = new Uint8Array(W * H);
+        const floodStack = [];
+        const pushBg = (i) => { if (!closed[i] && !bgReach[i]) { bgReach[i] = 1; floodStack.push(i); } };
+        for (let x = 0; x < W; x++) { pushBg(x); pushBg((H - 1) * W + x); }
+        for (let y = 0; y < H; y++) { pushBg(y * W); pushBg(y * W + W - 1); }
+        while (floodStack.length) {
+            const i = floodStack.pop();
+            const x = i % W;
+            if (x > 0) pushBg(i - 1);
+            if (x < W - 1) pushBg(i + 1);
+            if (i >= W) pushBg(i - W);
+            if (i < (H - 1) * W) pushBg(i + W);
+        }
+        const filled = new Uint8Array(closed);
+        for (let i = 0; i < filled.length; i++) if (!bgReach[i]) filled[i] = 1;
+
+        // Step 6.5: Isolate the primary structure. Clean white-background drawings
+        // (architectural sketches) keep the flood-filled mask as-is — aggressive
+        // top-down tracing is only needed for photographs with scenery, where it
+        // rejects sky remnants, trees, and neighboring buildings
+        let borderSum = 0, borderN = 0;
+        for (let x = 0; x < W; x += 2) { borderSum += brightness[x] + brightness[(H - 1) * W + x]; borderN += 2; }
+        for (let y = 0; y < H; y += 2) { borderSum += brightness[y * W] + brightness[y * W + W - 1]; borderN += 2; }
+        const isCleanSketch = (borderSum / borderN) > 228;
+        const finalMask = isCleanSketch ? filled : isolateStructure(filled, W, H);
+
+        // Step 7a: Keep only the dominant column cluster — sketch sheets often show
+        // several variants side by side; the structure is the cluster with most mass
+        const colCounts = new Int32Array(W);
+        for (let y = 0; y < H; y++)
+            for (let x = 0; x < W; x++)
+                if (finalMask[y*W+x]) colCounts[x]++;
+
+        const colTh = Math.max(2, H * 0.015);
+        const gapTol = Math.max(3, Math.round(W * 0.04));
+        const clusters = [];
+        let cs = -1, gapRun = 0;
+        for (let x = 0; x < W; x++) {
+            if (colCounts[x] > colTh) {
+                if (cs < 0) cs = x;
+                gapRun = 0;
+            } else if (cs >= 0) {
+                gapRun++;
+                if (gapRun > gapTol) { clusters.push([cs, x - gapRun]); cs = -1; gapRun = 0; }
+            }
+        }
+        if (cs >= 0) clusters.push([cs, W - 1]);
+        if (clusters.length > 1) {
+            let bestCl = clusters[0], bestMass = -1;
+            for (const c of clusters) {
+                let mass = 0;
+                for (let x = c[0]; x <= c[1]; x++) mass += colCounts[x];
+                if (mass > bestMass) { bestMass = mass; bestCl = c; }
+            }
+            for (let y = 0; y < H; y++)
+                for (let x = 0; x < W; x++)
+                    if ((x < bestCl[0] || x > bestCl[1]) && finalMask[y*W+x]) { finalMask[y*W+x] = 0; colCounts[x] = 0; }
+        }
+
+        // Step 7b: Bounding box via column/row projection
+        const rowCounts = new Int32Array(H);
+        for (let y = 0; y < H; y++)
+            for (let x = 0; x < W; x++)
+                if (finalMask[y*W+x]) rowCounts[y]++;
+
+        const rowTh = Math.max(2, W * 0.015);
+        let minX = 0, maxX = W-1, minY = 0, maxY = H-1;
+        for (let x = 0; x < W; x++) if (colCounts[x] > colTh) { minX = x; break; }
+        for (let x = W-1; x >= 0; x--) if (colCounts[x] > colTh) { maxX = x; break; }
+        for (let y = 0; y < H; y++) if (rowCounts[y] > rowTh) { minY = y; break; }
+        for (let y = H-1; y >= 0; y--) if (rowCounts[y] > rowTh) { maxY = y; break; }
+        
+        const pad = Math.max(2, Math.round(Math.min(W, H) * 0.01));
+        minX = Math.max(0, minX - pad);
+        maxX = Math.min(W-1, maxX + pad);
+        minY = Math.max(0, minY - pad);
+        maxY = Math.min(H-1, maxY + pad);
+        
+        const cropW = maxX - minX + 1;
+        const cropH = maxY - minY + 1;
+        if (cropW < 30 || cropH < 50) return false;
+
+        // Shape sanity: the extracted structure's proportions must plausibly match
+        // this building — rejects landscape scenes and wide panorama sketches so
+        // the loader rotates to the next image candidate. For generic buildings the
+        // assumed dimensions are guesses, so only extreme shapes are rejected.
+        if (!skipShapeCheck && currentBuilding && currentBuilding.height && currentBuilding.baseWidth) {
+            const cropAR = cropH / cropW;
+            let lo, hi, expectAR;
+            if (currentBuilding.generic) {
+                expectAR = cropAR; lo = 0.12; hi = 12;
+            } else {
+                expectAR = Math.min(Math.max(currentBuilding.height / currentBuilding.baseWidth, 0.4), 6);
+                lo = expectAR * 0.3; hi = expectAR * 5;
+            }
+            if (cropAR < lo || cropAR > hi) {
+                addLog(nowTS(), `Image shape mismatch (AR ${cropAR.toFixed(2)} vs expected ~${expectAR.toFixed(2)}) — trying next candidate`, 'warning');
+                return false;
+            }
+        }
+        
+        // Step 8: Create SILHOUETTE canvas (filled shape — the alpha mask for heatmap)
+        const silCanvas = document.createElement('canvas');
+        silCanvas.width = cropW; silCanvas.height = cropH;
+        const silCtx = silCanvas.getContext('2d');
+        const silData = silCtx.createImageData(cropW, cropH);
+        
+        for (let y = 0; y < cropH; y++) {
+            for (let x = 0; x < cropW; x++) {
+                const sIdx = (y + minY) * W + (x + minX);
+                const dIdx = (y * cropW + x) * 4;
+                if (finalMask[sIdx]) {
+                    silData.data[dIdx] = 255;
+                    silData.data[dIdx+1] = 255;
+                    silData.data[dIdx+2] = 255;
+                    silData.data[dIdx+3] = 255;
+                }
+            }
+        }
+        silCtx.putImageData(silData, 0, 0);
+        
+        // Step 9: Create OUTLINE canvas (edge-based architectural detail lines)
+        const outCanvas = document.createElement('canvas');
+        outCanvas.width = cropW; outCanvas.height = cropH;
+        const outCtx = outCanvas.getContext('2d');
+        const outData = outCtx.createImageData(cropW, cropH);
+        
+        // Find max edge for normalization
+        let maxEdge = 0;
+        for (let y = 0; y < cropH; y++)
+            for (let x = 0; x < cropW; x++)
+                maxEdge = Math.max(maxEdge, edgeMap[(y+minY)*W + (x+minX)]);
+        
+        const edgeTh = maxEdge * 0.08; // only show significant edges
+        for (let y = 0; y < cropH; y++) {
+            for (let x = 0; x < cropW; x++) {
+                const sIdx = (y + minY) * W + (x + minX);
+                const eVal = edgeMap[sIdx];
+                const dIdx = (y * cropW + x) * 4;
+                
+                if (eVal > edgeTh && finalMask[sIdx]) {
+                    const alpha = Math.min(220, Math.round((eVal / maxEdge) * 280));
+                    outData.data[dIdx] = 15;
+                    outData.data[dIdx+1] = 15;
+                    outData.data[dIdx+2] = 20;
+                    outData.data[dIdx+3] = alpha;
+                }
+            }
+        }
+        outCtx.putImageData(outData, 0, 0);
+        
+        // Step 10: Create SKETCH canvas (transparent background with pencil sketch lines)
+        const skCanvas = document.createElement('canvas');
+        skCanvas.width = cropW; skCanvas.height = cropH;
+        const skCtx = skCanvas.getContext('2d');
+        const skData = skCtx.createImageData(cropW, cropH);
+        
+        // Convert grayscale brightness into alpha-transparency dark pencil lines
+        const lineThreshold = 205;
+        for (let y = 0; y < cropH; y++) {
+            for (let x = 0; x < cropW; x++) {
+                const sIdx = (y + minY) * W + (x + minX);
+                const pIdx = sIdx * 4;
+                const dIdx = (y * cropW + x) * 4;
+
+                if (finalMask[sIdx]) {
+                    const r = pixels[pIdx];
+                    const g = pixels[pIdx+1];
+                    const b = pixels[pIdx+2];
+                    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                    
+                    if (gray < lineThreshold) {
+                        // Proportional transparency: darker pixel = more opaque black line
+                        const alpha = Math.round((1 - (gray / lineThreshold)) * 255);
+                        skData.data[dIdx] = 20;     // dark charcoal color
+                        skData.data[dIdx+1] = 20;
+                        skData.data[dIdx+2] = 25;
+                        skData.data[dIdx+3] = Math.max(0, Math.min(240, alpha * 1.5));
+                    }
+                }
+            }
+        }
+        skCtx.putImageData(skData, 0, 0);
+        
+        // Store results
+        buildingImage = img;
+        buildingSilhouette = silCanvas;
+        buildingOutline = outCanvas;
+        buildingSketch = skCanvas;
+        buildingBounds = { minX, minY, w: cropW, h: cropH };
+        buildingImgLoaded = true;
+        isFetchingImage = false;
+        
+        let fillCount = 0;
+        for (let i = 0; i < finalMask.length; i++) if (finalMask[i]) fillCount++;
+        const coverage = (fillCount / (W * H) * 100).toFixed(1);
+        addLog(nowTS(), `Silhouette: ${cropW}×${cropH}px, ${coverage}% fill, Otsu=${threshold}.`, 'info');
+        return true;
+        
+    } catch(e) {
+        console.error("Preprocessing error:", e);
+        return false;
+    }
+}
+
+
+function drawBuildingWithStress() {
+    const b = currentBuilding;
+    const L = getLayout();
+    const N = 200;
+
+    // Sway
+    let swayX = 0;
+    if (simActive) swayX = Math.sin(animT / 1000 * 1.5) * 3 * simProgress;
+
+    // Apply linear shear transform for structural sway
+    ctx.save();
+    ctx.translate(L.cxB, L.groundY);
+    const shearFactor = swayX / L.drawH;
+    ctx.transform(1, 0, shearFactor, 1, 0, 0);
+    ctx.translate(-L.cxB, -L.groundY);
+
+    if (buildingImgLoaded && buildingImage && buildingBounds) {
+        // Contain-fit the sketch into the drawing area: as large as possible
+        // while fully visible, anchored to the ground line and centered
+        const scale = Math.min(L.drawH / buildingBounds.h, (L.drawW * 0.98) / buildingBounds.w);
+        const destW = buildingBounds.w * scale;
+        const destH = buildingBounds.h * scale;
+        const destX = L.padL + (L.drawW - destW) / 2;
+        const destY = L.groundY - destH;
+        
+        window.__DEBUG_DATA__ = { scale, destW, destH, destX, destY, L, buildingBounds, buildingSilhouette, buildingSketch, buildingOutline, offCanvas, currentStresses, b, liveServerData, targetStresses };
+
+        // Resize offscreen canvas to match the cropped building size exactly
+        if (!offCanvas || offCanvas.width !== Math.ceil(destW) || offCanvas.height !== Math.ceil(destH)) {
+            offCanvas = document.createElement('canvas');
+            offCanvas.width = Math.ceil(destW);
+            offCanvas.height = Math.ceil(destH);
+            offCtx = offCanvas.getContext('2d');
+        }
+        
+        offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
+        
+        // 1. Draw the preprocessed building silhouette mask to the offscreen canvas
+        offCtx.drawImage(
+            buildingSilhouette, 
+            0, 0, buildingBounds.w, buildingBounds.h,
+            0, 0, destW, destH
+        );
+        
+        // 2. Perform 2D FEA Stress Heatmap rendering with Multiply blend in-place
+        if (heatOn && currentStresses) {
+            const imgData = offCtx.getImageData(0, 0, Math.ceil(destW), Math.ceil(destH));
+            const data = imgData.data;
+            const wInt = imgData.width;
+            const hInt = imgData.height;
+            
+            for (let y = 0; y < hInt; y++) {
+                const pctY = (hInt - 1 - y) / Math.max(1, hInt - 1); // 0 at top, 1 at bottom
+                const si = Math.floor(pctY * 199);
+                const baseStress = currentStresses[si] / Math.max(fieldMax, 1);
+                
+                for (let x = 0; x < wInt; x++) {
+                    const idx = (y * wInt + x) * 4;
+                    if (data[idx+3] === 0) continue; // skip transparent background
+                    
+                    // Normalized horizontal offset from centerline (-1 to 1)
+                    const dx = Math.abs(x - wInt / 2) / (wInt / 2);
+                    
+                    // 2D Stress Field Model (highest at core/bottom, lower on wings)
+                    let stressRatio = baseStress;
+                    if (dx < 0.25) {
+                        // High stress concentration in central structural core
+                        stressRatio = baseStress * (1.2 - dx * 0.4);
+                    } else {
+                        // Wing columns: stress tapers off horizontally
+                        stressRatio = baseStress * (0.8 - (dx - 0.25) * 0.8);
+                    }
+                    
+                    // Wave pulsing dynamic animation along height/width when active
+                    if (simActive && simProgress > 0) {
+                        stressRatio += Math.sin(animT / 400 + pctY * 15 + dx * 8) * 0.04 * simProgress;
+                    }
+                    
+                    stressRatio = Math.max(0.02, Math.min(1.0, stressRatio));
+                    
+                    // Get RGB stress color
+                    const rgb = getStressColorRGB(stressRatio);
+                    
+                    data[idx] = rgb.r;
+                    data[idx+1] = rgb.g;
+                    data[idx+2] = rgb.b;
+                    data[idx+3] = 255;
+                }
+            }
+            offCtx.putImageData(imgData, 0, 0);
+            
+            // 3. Draw the colorful 2D stress heatmap (opacity 80%)
+            ctx.save();
+            ctx.globalAlpha = 0.80;
+            ctx.drawImage(offCanvas, destX, destY, destW, destH);
+            ctx.restore();
+            
+            // 4. Draw the transparent sketch lines (windows/details) on top (opacity 90%)
+            ctx.save();
+            ctx.globalAlpha = 0.90;
+            ctx.drawImage(
+                buildingSketch, 
+                0, 0, buildingBounds.w, buildingBounds.h,
+                destX, destY, destW, destH
+            );
+            ctx.restore();
+            
+            // 5. Draw crisp original CAD lines / edge outlines on top (opacity 90%)
+            ctx.save();
+            ctx.globalAlpha = 0.90;
+            ctx.drawImage(
+                buildingOutline, 
+                0, 0, buildingBounds.w, buildingBounds.h,
+                destX, destY, destW, destH
+            );
+            ctx.restore();
+        } else {
+            // Draw pure pencil sketch lines without stress heatmap
+            ctx.save();
+            ctx.globalAlpha = 0.90;
+            ctx.drawImage(
+                buildingSketch, 
+                0, 0, buildingBounds.w, buildingBounds.h,
+                destX, destY, destW, destH
+            );
+            ctx.restore();
+
+            ctx.save();
+            ctx.globalAlpha = 0.90;
+            ctx.drawImage(
+                buildingOutline, 
+                0, 0, buildingBounds.w, buildingBounds.h,
+                destX, destY, destW, destH
+            );
+            ctx.restore();
+        }
+    } else {
+        // FALLBACK: Programmatic silhouette CAD drawing (if offline or loading)
+        if (isFetchingImage) {
+            ctx.fillStyle = 'rgba(100, 110, 120, 0.35)';
+            ctx.font = '500 10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('RETRIEVING BLUEPRINT SCHEMATIC...', L.cxB, L.groundY - L.drawH / 2);
+        }
+        
+        // Build outline points
+        const leftPts = [], rightPts = [];
+        for (let i = 0; i <= N; i++) {
+            const t = i / N;
+            const w = lerp(b.pp, t);
+            let halfW = w * L.drawW * 0.36;
+            const y = L.groundY - t * L.drawH;
+
+            let extraL = 0, extraR = 0;
+            if (b.wings) {
+                for (const wing of b.wings) {
+                    if (t >= wing.startH && t <= wing.endH) {
+                        let wingFactor = wing.extraWidth;
+                        if (wing.taper) {
+                            const wingProgress = (t - wing.startH) / (wing.endH - wing.startH);
+                            wingFactor *= (1 - wingProgress * wingProgress);
+                        }
+                        if (wing.side === 'left') extraL = wingFactor * L.drawW * 0.36;
+                        else extraR = wingFactor * L.drawW * 0.36;
+                    }
+                }
+            }
+            leftPts.push([L.cxB - halfW - extraL, y]);
+            rightPts.push([L.cxB + halfW + extraR, y]);
+        }
+
+        function buildPath(context) {
+            context.beginPath();
+            context.moveTo(rightPts[0][0], rightPts[0][1]);
+            for (let i = 1; i <= N; i++) context.lineTo(rightPts[i][0], rightPts[i][1]);
+            for (let i = N; i >= 0; i--) context.lineTo(leftPts[i][0], leftPts[i][1]);
+            context.closePath();
+        }
+
+        ctx.save();
+        buildPath(ctx);
+        ctx.clip();
+
+        const stripH = L.drawH / N + 0.5;
+
+        if (heatOn && currentStresses) {
+            for (let i = 0; i < N; i++) {
+                const t = i / (N - 1);
+                const y = L.groundY - t * L.drawH;
+                let ratio = currentStresses[i] / Math.max(fieldMax, 1);
+
+                if (simActive && simProgress > 0) {
+                    ratio += Math.sin(animT / 500 + t * 12) * 0.025 * simProgress;
+                    ratio = Math.max(0, Math.min(1, ratio));
+                }
+                ctx.fillStyle = stressColor(ratio);
+                ctx.globalAlpha = 0.90;
+                ctx.fillRect(L.cxB - L.drawW * 0.5, y - stripH, L.drawW, stripH + 0.5);
+            }
+            ctx.globalAlpha = 1;
+
+            const cr = b.coreRatio || 0.35;
+            for (let i = 0; i < N; i++) {
+                const t = i / (N - 1);
+                const w = lerp(b.pp, t);
+                const coreW = w * L.drawW * 0.36 * cr;
+                const y = L.groundY - t * L.drawH;
+                if (coreW < 1) continue;
+                let ratio = currentStresses[i] / Math.max(fieldMax, 1);
+                const coreRatio = Math.min(1, ratio * 1.25);
+                ctx.fillStyle = stressColorRGBA(coreRatio, 0.30);
+                ctx.fillRect(L.cxB - coreW, y - stripH, coreW * 2, stripH + 0.5);
+            }
+        } else {
+            const grad = ctx.createLinearGradient(0, L.groundY, 0, L.groundY - L.drawH);
+            grad.addColorStop(0, 'rgba(140, 160, 185, 0.30)');
+            grad.addColorStop(1, 'rgba(180, 200, 220, 0.15)');
+            buildPath(ctx);
+            ctx.fillStyle = grad;
+            ctx.fill();
+        }
+
+        drawStructuralInternals(L, 0, N);
+        ctx.restore();
+
+        ctx.save();
+        buildPath(ctx);
+        ctx.strokeStyle = 'rgba(40,40,40,0.55)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        buildPath(ctx);
+        ctx.strokeStyle = 'rgba(40,40,40,0.12)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    ctx.restore(); // Restore sway shear transformation
+
+    // Draw non-sheared height dimensions and foundation
+    drawDimensionMarkers(L, swayX);
+    drawFoundation(L, swayX);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STRUCTURAL INTERNALS (floor slabs, core walls, columns, windows)
+// ═══════════════════════════════════════════════════════════════
+function drawStructuralInternals(L, swayX, N) {
+    const b = currentBuilding;
+
+    // ── Floor slab lines ──
+    const floorCount = b.floors > 0 ? Math.min(b.floors, 100) : 20;
+    if (floorCount > 2) {
+        for (let f = 1; f < floorCount; f++) {
+            const t = f / floorCount;
+            const y = L.groundY - t * L.drawH;
+            const w = lerp(b.pp, t);
+            const halfW = w * L.drawW * 0.36;
+            const sway = swayX * t * t;
+            if (halfW < 2) continue;
+
+            // Check if this is a setback level
+            let isSetback = false;
+            for (const sb of b.setbacks) {
+                if (Math.abs(t - sb.h / b.height) < 0.015) { isSetback = true; break; }
+            }
+
+            if (isSetback) {
+                ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+                ctx.lineWidth = 1.2;
+            } else {
+                ctx.strokeStyle = 'rgba(0,0,0,0.04)';
+                ctx.lineWidth = 0.3;
+            }
+            ctx.beginPath();
+            ctx.moveTo(L.cxB - halfW + sway, y);
+            ctx.lineTo(L.cxB + halfW + sway, y);
+            ctx.stroke();
+        }
+    }
+
+    // ── Core wall lines (vertical) ──
+    const cr = b.coreRatio || 0.35;
+    ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+    ctx.lineWidth = 0.6;
+    const coreStep = Math.max(1, Math.floor(N / 100));
+    for (let i = 0; i < N; i += coreStep) {
+        const t = i / N;
+        const w = lerp(b.pp, t);
+        const coreW = w * L.drawW * 0.36 * cr;
+        const y = L.groundY - t * L.drawH;
+        const sway = swayX * t * t;
+        if (coreW < 2) continue;
+        const segH = L.drawH / N * coreStep;
+
+        // Left core wall
+        ctx.beginPath();
+        ctx.moveTo(L.cxB - coreW + sway, y);
+        ctx.lineTo(L.cxB - coreW + sway, y - segH);
+        ctx.stroke();
+        // Right core wall
+        ctx.beginPath();
+        ctx.moveTo(L.cxB + coreW + sway, y);
+        ctx.lineTo(L.cxB + coreW + sway, y - segH);
+        ctx.stroke();
+    }
+
+    // ── Window grid (facade detail) ──
+    const wd = b.windowDensity || 0;
+    if (wd > 0 && floorCount > 3) {
+        ctx.fillStyle = 'rgba(0,0,0,0.018)';
+        const windowFloors = Math.min(floorCount, 80);
+        const floorH = L.drawH / windowFloors;
+        for (let f = 1; f < windowFloors; f++) {
+            const t = f / windowFloors;
+            const y = L.groundY - t * L.drawH;
+            const w = lerp(b.pp, t);
+            const halfW = w * L.drawW * 0.36;
+            const sway = swayX * t * t;
+            if (halfW < 6) continue;
+
+            const nWin = Math.max(2, Math.floor(halfW * 2 / (10 / wd * 3)));
+            const winW = (halfW * 2) / nWin;
+            for (let wi = 0; wi < nWin; wi++) {
+                const wx = L.cxB - halfW + sway + wi * winW + winW * 0.15;
+                ctx.fillRect(wx, y - floorH * 0.72, winW * 0.7, floorH * 0.52);
+            }
+        }
+    }
+
+    // ── Structural features (outriggers, tube terminations) ──
+    if (b.structuralFeatures) {
+        for (const feat of b.structuralFeatures) {
+            const t = feat.h;
+            const y = L.groundY - t * L.drawH;
+            const w = lerp(b.pp, t);
+            const halfW = w * L.drawW * 0.36;
+            const sway = swayX * t * t;
+            const coreW = halfW * cr;
+
+            if (feat.type === 'outrigger') {
+                // Draw outrigger truss lines
+                ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+                ctx.lineWidth = 0.8;
+                const trussH = L.drawH * 0.015;
+                // Diagonal members
+                ctx.beginPath();
+                ctx.moveTo(L.cxB - coreW + sway, y);
+                ctx.lineTo(L.cxB - halfW + sway, y - trussH);
+                ctx.moveTo(L.cxB - coreW + sway, y - trussH);
+                ctx.lineTo(L.cxB - halfW + sway, y);
+                ctx.moveTo(L.cxB + coreW + sway, y);
+                ctx.lineTo(L.cxB + halfW + sway, y - trussH);
+                ctx.moveTo(L.cxB + coreW + sway, y - trussH);
+                ctx.lineTo(L.cxB + halfW + sway, y);
+                ctx.stroke();
+                // Horizontal chords
+                ctx.beginPath();
+                ctx.moveTo(L.cxB - halfW + sway, y);
+                ctx.lineTo(L.cxB + halfW + sway, y);
+                ctx.moveTo(L.cxB - halfW + sway, y - trussH);
+                ctx.lineTo(L.cxB + halfW + sway, y - trussH);
+                ctx.stroke();
+            }
+
+            if (feat.type === 'tube_term') {
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(L.cxB - halfW + sway, y);
+                ctx.lineTo(L.cxB + halfW + sway, y);
+                ctx.stroke();
+            }
+
+            if (feat.type === 'skybridge') {
+                ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+                ctx.lineWidth = 1;
+                const bridgeH = L.drawH * 0.008;
+                ctx.strokeRect(L.cxB - halfW * 1.3 + sway, y - bridgeH, halfW * 2.6, bridgeH * 2);
+            }
+        }
+    }
+
+    // ── Lattice pattern for towers like Eiffel Tower ──
+    if (b.isLattice) {
+        ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+        ctx.lineWidth = 0.4;
+        const latticeStep = Math.max(3, Math.floor(N / 50));
+        for (let i = 0; i < N - latticeStep; i += latticeStep) {
+            const t1 = i / N, t2 = (i + latticeStep) / N;
+            const w1 = lerp(b.pp, t1), w2 = lerp(b.pp, t2);
+            const hw1 = w1 * L.drawW * 0.36, hw2 = w2 * L.drawW * 0.36;
+            const y1 = L.groundY - t1 * L.drawH, y2 = L.groundY - t2 * L.drawH;
+            const s1 = swayX * t1 * t1, s2 = swayX * t2 * t2;
+            // Cross bracing
+            ctx.beginPath();
+            ctx.moveTo(L.cxB - hw1 + s1, y1);
+            ctx.lineTo(L.cxB + hw2 + s2, y2);
+            ctx.moveTo(L.cxB + hw1 + s1, y1);
+            ctx.lineTo(L.cxB - hw2 + s2, y2);
+            ctx.stroke();
+        }
+    }
+
+    // ── Setback transition zones with concentration halos ──
+    if (simActive && currentStresses && heatOn) {
+        for (const sb of b.setbacks) {
+            const t = sb.h / b.height;
+            const y = L.groundY - t * L.drawH;
+            const w = lerp(b.pp, t);
+            const halfW = w * L.drawW * 0.36;
+            const sway = swayX * t * t;
+            const si = Math.round(t * 199);
+            const ratio = currentStresses[Math.min(si, 199)] / Math.max(fieldMax, 1);
+
+            // Stress concentration glow at setback
+            const glowH = L.drawH * 0.02;
+            const grad = ctx.createLinearGradient(0, y - glowH, 0, y + glowH);
+            grad.addColorStop(0, stressColorRGBA(Math.min(1, ratio * 1.3), 0));
+            grad.addColorStop(0.5, stressColorRGBA(Math.min(1, ratio * 1.3), 0.15));
+            grad.addColorStop(1, stressColorRGBA(Math.min(1, ratio * 1.3), 0));
+            ctx.fillStyle = grad;
+            ctx.fillRect(L.cxB - halfW + sway, y - glowH, halfW * 2, glowH * 2);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DIMENSION MARKERS (height markers with dashed lines)
+// ═══════════════════════════════════════════════════════════════
+function drawDimensionMarkers(L, swayX) {
+    const b = currentBuilding;
+    const marks = [];
+    marks.push({ h: b.height, label: b.height + '' });
+    for (const sb of b.setbacks) marks.push({ h: sb.h, label: sb.h + '' });
+    if (b.height > 80) marks.push({ h: 0, label: '0' });
+
+    // Dimension line on far left
+    const dimX = L.cxB - L.drawW * 0.40;
+
+    ctx.font = '500 9px Inter';
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'right';
+
+    for (const mk of marks) {
+        const t = mk.h / b.height;
+        const y = L.groundY - t * L.drawH;
+        const w = lerp(b.pp, t);
+        const halfW = w * L.drawW * 0.36;
+        const sway = swayX * t * t;
+
+        // Height label
+        ctx.fillStyle = '#555';
+        ctx.fillText(mk.label, dimX - 8, y + 3);
+
+        // Tick mark
+        ctx.beginPath();
+        ctx.moveTo(dimX - 3, y);
+        ctx.lineTo(dimX + 3, y);
+        ctx.strokeStyle = '#777';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+
+        // Dashed reference line to building
+        ctx.beginPath();
+        ctx.setLineDash([2, 4]);
+        ctx.moveTo(dimX + 3, y);
+        ctx.lineTo(L.cxB - halfW + sway - 3, y);
+        ctx.strokeStyle = 'rgba(100,100,100,0.18)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Vertical dimension line
+    if (marks.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(dimX, L.groundY);
+        ctx.lineTo(dimX, L.groundY - L.drawH);
+        ctx.strokeStyle = 'rgba(100,100,100,0.15)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FOUNDATION DRAWING
+// ═══════════════════════════════════════════════════════════════
+function drawFoundation(L, swayX) {
+    const b = currentBuilding;
+    const baseW = lerp(b.pp, 0.01) * L.drawW * 0.36;
+    const gy = L.groundY;
+    const foundW = baseW * 1.5;
+    const foundH = viewH * 0.035;
+
+    // Ground line (heavy)
+    ctx.beginPath();
+    ctx.moveTo(L.cxB - L.drawW * 0.44, gy);
+    ctx.lineTo(L.cxB + L.drawW * 0.44, gy);
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Ground surface hatching
+    ctx.strokeStyle = 'rgba(100,90,80,0.20)';
+    ctx.lineWidth = 0.6;
+    for (let x = L.cxB - L.drawW * 0.42; x < L.cxB + L.drawW * 0.42; x += 7) {
+        ctx.beginPath();
+        ctx.moveTo(x, gy + 1);
+        ctx.lineTo(x - 5, gy + 7);
+        ctx.stroke();
+    }
+
+    // Foundation raft slab
+    ctx.fillStyle = 'rgba(170,160,150,0.35)';
+    ctx.fillRect(L.cxB - foundW, gy + 1, foundW * 2, foundH);
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(L.cxB - foundW, gy + 1, foundW * 2, foundH);
+
+    // Cross-hatching inside raft (concrete symbol)
+    ctx.strokeStyle = 'rgba(100,90,80,0.12)';
+    ctx.lineWidth = 0.4;
+    for (let x = L.cxB - foundW; x < L.cxB + foundW; x += 5) {
+        ctx.beginPath();
+        ctx.moveTo(x, gy + 1);
+        ctx.lineTo(x + foundH * 0.6, gy + 1 + foundH);
+        ctx.stroke();
+    }
+
+    // Piles
+    if (b.pileLoad > 0) {
+        const nPiles = 8;
+        ctx.strokeStyle = '#777';
+        ctx.lineWidth = 1.2;
+        const pileTop = gy + 1 + foundH;
+        const pileLen = viewH * 0.04;
+
+        for (let i = 0; i < nPiles; i++) {
+            const px = L.cxB - foundW * 0.85 + (i / (nPiles - 1)) * foundW * 1.7;
+            // Pile shaft
+            ctx.beginPath();
+            ctx.moveTo(px, pileTop);
+            ctx.lineTo(px, pileTop + pileLen);
+            ctx.stroke();
+            // Pile tip (pointed)
+            ctx.beginPath();
+            ctx.moveTo(px - 3, pileTop + pileLen);
+            ctx.lineTo(px, pileTop + pileLen + 5);
+            ctx.lineTo(px + 3, pileTop + pileLen);
+            ctx.strokeStyle = '#777';
+            ctx.stroke();
+            // Skin friction hatching on piles
+            ctx.strokeStyle = 'rgba(100,90,80,0.15)';
+            ctx.lineWidth = 0.3;
+            for (let py = pileTop + 4; py < pileTop + pileLen; py += 4) {
+                ctx.beginPath();
+                ctx.moveTo(px + 2, py);
+                ctx.lineTo(px + 5, py - 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(px - 2, py);
+                ctx.lineTo(px - 5, py - 2);
+                ctx.stroke();
+            }
+            ctx.strokeStyle = '#777';
+            ctx.lineWidth = 1.2;
+        }
+
+        // Pile load label
+        ctx.font = '500 8px Inter';
+        ctx.fillStyle = '#555';
+        ctx.textAlign = 'center';
+        ctx.fillText('PILE GROUP LOAD: ' + b.pileLoad + ' MN', L.cxB, pileTop + pileLen + 18);
+    }
+
+    // Soil layers
+    const soilY = gy + 1 + foundH + (b.pileLoad > 0 ? viewH * 0.06 : viewH * 0.02);
+    ctx.setLineDash([3, 5]);
+    ctx.strokeStyle = 'rgba(120,110,100,0.15)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(L.cxB - L.drawW * 0.35, soilY);
+    ctx.lineTo(L.cxB + L.drawW * 0.35, soilY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Foundation label
+    ctx.font = '500 7px Inter';
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'center';
+    ctx.fillText('RAFT: ' + (b.foundation.match(/[\d.]+m/)?.[0] || '3m') + ' THICK', L.cxB, gy + foundH * 0.6 + 3);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANNOTATIONS WITH LEADER LINES
+// ═══════════════════════════════════════════════════════════════
+function drawAnnotations() {
+    const b = currentBuilding;
+    if (!b.annotations) return;
+
+    const L = getLayout();
+    const swayX = simActive ? Math.sin(animT / 1000 * 1.5) * 3 * simProgress : 0;
+    const hasStress = !!(currentStresses && targetStresses);
+
+    for (let ai = 0; ai < b.annotations.length; ai++) {
+        const a = b.annotations[ai];
+        const t = a.h / b.height;
+        const y = L.groundY - t * L.drawH;
+        const w = lerp(b.pp, t);
+        const halfW = w * L.drawW * 0.36;
+        const sway = swayX * t * t;
+
+        // Get dynamic stress value
+        let stressVal = 0;
+        if (currentStresses) {
+            const si = Math.round(t * 199);
+            stressVal = Math.round(currentStresses[Math.min(si, 199)]);
+        }
+
+        const side = a.side || 'right';
+
+        if (side === 'top') {
+            // Height marker at top
+            ctx.font = 'bold 11px Inter';
+            ctx.fillStyle = '#444';
+            ctx.textAlign = 'center';
+            ctx.fillText('▼ ' + a.label + 'm', L.cxB + sway, y - 12);
+            // Small circle
+            ctx.beginPath();
+            ctx.arc(L.cxB + sway, y - 3, 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#725a3d';
+            ctx.fill();
+            continue;
+        }
+
+        let startX, endX, textAlign;
+        const leaderLen = 40 + ai * 18;
+
+        if (side === 'right') {
+            startX = L.cxB + halfW + sway + 4;
+            endX = startX + leaderLen;
+            textAlign = 'left';
+        } else {
+            startX = L.cxB - halfW + sway - 4;
+            endX = startX - leaderLen;
+            textAlign = 'right';
+        }
+
+        // Leader line
+        ctx.beginPath();
+        ctx.moveTo(startX, y);
+        // Horizontal + small jog
+        const jogY = y - 2 * (ai % 2 === 0 ? 1 : -1);
+        ctx.lineTo(startX + (side === 'right' ? 10 : -10), jogY);
+        ctx.lineTo(endX, jogY);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+
+        // Circle at start
+        ctx.beginPath();
+        ctx.arc(startX, y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#725a3d';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(startX, y, 2.5, 0, Math.PI * 2);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        // Label text
+        ctx.textAlign = textAlign;
+        ctx.font = 'bold 9px Inter';
+        ctx.fillStyle = '#333';
+        let labelText = a.label;
+        if (hasStress && a.stress) {
+            labelText = a.label.replace(/\d+\s*MPa/, stressVal + ' MPa');
+        }
+        ctx.fillText(labelText, endX + (side === 'right' ? 4 : -4), jogY - 2);
+
+        // Stress value below label if relevant
+        if (hasStress && stressVal > 0 && !a.stress) {
+            ctx.font = '8px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('σ = ' + stressVal + ' MPa', endX + (side === 'right' ? 4 : -4), jogY + 9);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STRESS LEVEL LEGEND (COLORBAR)
+// ═══════════════════════════════════════════════════════════════
+function drawStressLegend() {
+    if (!currentBuilding) return;
+    const b = currentBuilding;
+    const { m } = getLayout();
+    const legX = viewW - m - 55;
+    const legY = m + 50;
+    const legW = 16;
+    const legH = 180;
+
+    // Background
+    ctx.fillStyle = 'rgba(255,252,248,0.92)';
+    ctx.fillRect(legX - 8, legY - 35, legW + 55, legH + 50);
+    ctx.strokeStyle = 'rgba(160,150,140,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(legX - 8, legY - 35, legW + 55, legH + 50);
+
+    // Title
+    ctx.font = 'bold 8px Inter';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    ctx.fillText('STRESS LEVEL', legX + legW / 2 + 10, legY - 22);
+    ctx.fillText('(MPa)', legX + legW / 2 + 10, legY - 12);
+
+    // Gradient bar
+    for (let i = 0; i < legH; i++) {
+        const ratio = 1 - i / legH;
+        ctx.fillStyle = stressColor(ratio);
+        ctx.fillRect(legX, legY + i, legW, 1.5);
+    }
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 0.8;
+    ctx.strokeRect(legX, legY, legW, legH);
+
+    // Tick marks and labels — legend range follows the computed field, like FEA post-processors
+    ctx.font = '500 8px Inter';
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'left';
+    const maxS = fieldMax > 1 ? fieldMax : b.maxStress;
+    const ticks = [0, 0.25, 0.5, 0.75, 1.0];
+    for (const t of ticks) {
+        const y = legY + (1 - t) * legH;
+        ctx.beginPath();
+        ctx.moveTo(legX + legW, y);
+        ctx.lineTo(legX + legW + 4, y);
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+        ctx.fillText(Math.round(t * maxS), legX + legW + 7, y + 3);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SIMULATION PARAMETERS BOX
+// ═══════════════════════════════════════════════════════════════
+function drawSimParamsBox() {
+    if (!currentBuilding || (!simActive && simProgress === 0)) return;
+    const b = currentBuilding;
+    const { m } = getLayout();
+    const spX = viewW - m - 160;
+    const spY = m + 260;
+    const spW = 150;
+    const spH = 92;
+
+    ctx.fillStyle = 'rgba(255,252,248,0.94)';
+    ctx.fillRect(spX, spY, spW, spH);
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 0.6;
+    ctx.strokeRect(spX, spY, spW, spH);
+
+    // Header line
+    ctx.beginPath();
+    ctx.moveTo(spX, spY + 16);
+    ctx.lineTo(spX + spW, spY + 16);
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
+
+    ctx.font = 'bold 8px Inter';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'left';
+    ctx.fillText('SIMULATION PARAMETERS:', spX + 6, spY + 11);
+
+    // Close button (X)
+    ctx.font = '9px Inter';
+    ctx.fillStyle = '#999';
+    ctx.textAlign = 'right';
+    ctx.fillText('×', spX + spW - 5, spY + 11);
+
+    ctx.font = '500 8px Inter';
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'left';
+    const dtype = document.getElementById('disaster-type');
+    const typeName = dtype ? dtype.options[dtype.selectedIndex].text.replace(/^.\s+/, '') : 'Storm';
+    ctx.fillText('Load Type:    ' + typeName, spX + 6, spY + 30);
+    ctx.fillText('Wind Load:    ' + b.windDesign + ' km/h', spX + 6, spY + 43);
+    ctx.fillText('Seismic:      Zone ' + b.seismicZone, spX + 6, spY + 56);
+    const matShort = b.material.length > 18 ? b.material.substring(0, 18) + '…' : b.material;
+    ctx.fillText('Material:     ' + matShort, spX + 6, spY + 69);
+
+    // Magnitude
+    const mag = parseFloat(document.getElementById('mag-slider')?.value || 1);
+    ctx.fillText('Magnitude:    ' + mag.toFixed(1) + '×', spX + 6, spY + 82);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TITLE BLOCK (Engineering Drawing Standard)
+// ═══════════════════════════════════════════════════════════════
+function drawTitleBlock() {
+    if (!currentBuilding) return;
+    const b = currentBuilding;
+    const { m } = getLayout();
+    const tbW = 200;
+    const tbH = 95;
+    const tbX = viewW - m - tbW;
+    const tbY = viewH - m - tbH;
+
+    // Background
+    ctx.fillStyle = 'rgba(255,252,248,0.96)';
+    ctx.fillRect(tbX, tbY, tbW, tbH);
+
+    // Outer border (double line)
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(tbX, tbY, tbW, tbH);
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 0.4;
+    ctx.strokeRect(tbX + 1.5, tbY + 1.5, tbW - 3, tbH - 3);
+
+    // Horizontal dividers
+    ctx.beginPath();
+    ctx.moveTo(tbX, tbY + 28); ctx.lineTo(tbX + tbW, tbY + 28);
+    ctx.moveTo(tbX, tbY + 50); ctx.lineTo(tbX + tbW, tbY + 50);
+    ctx.moveTo(tbX, tbY + 68); ctx.lineTo(tbX + tbW, tbY + 68);
+    ctx.strokeStyle = '#bbb';
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
+
+    // Vertical divider in date/scale row
+    ctx.beginPath();
+    ctx.moveTo(tbX + tbW * 0.55, tbY + 50);
+    ctx.lineTo(tbX + tbW * 0.55, tbY + 68);
+    ctx.stroke();
+
+    // Row 1: Project name + STRUCTURAL ANALYSIS
+    ctx.font = 'bold 10px Inter';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'right';
+    const titleStr = b.name.toUpperCase();
+    ctx.fillText(titleStr.length > 22 ? titleStr.substring(0, 22) : titleStr, tbX + tbW - 8, tbY + 13);
+    ctx.font = '7px Inter';
+    ctx.fillStyle = '#666';
+    ctx.fillText('STRUCTURAL ANALYSIS', tbX + tbW - 8, tbY + 23);
+
+    // Row 2: Drawing description
+    ctx.textAlign = 'left';
+    ctx.font = '7px Inter';
+    ctx.fillStyle = '#555';
+    ctx.fillText('PROJECT:', tbX + 6, tbY + 38);
+    ctx.fillStyle = '#333';
+    ctx.font = '500 8px Inter';
+    ctx.fillText('STRESS DISTRIBUTION', tbX + 50, tbY + 38);
+    ctx.font = '7px Inter';
+    ctx.fillStyle = '#555';
+    ctx.fillText('(MPa)', tbX + 155, tbY + 38);
+
+    // Row 3: Scale & Date
+    ctx.font = '7px Inter';
+    ctx.fillStyle = '#888';
+    ctx.fillText('SCALE:', tbX + 6, tbY + 60);
+    ctx.fillStyle = '#333';
+    ctx.fillText(b.drawingId.substring(0, 10), tbX + 38, tbY + 60);
+    ctx.fillStyle = '#888';
+    ctx.fillText('DATE:', tbX + tbW * 0.55 + 6, tbY + 60);
+    const now = new Date();
+    ctx.fillStyle = '#333';
+    ctx.fillText(now.toLocaleDateString('en-GB', { year:'numeric', month:'2-digit', day:'2-digit' }), tbX + tbW * 0.55 + 32, tbY + 60);
+
+    // Row 4: Drawing number (prominent)
+    ctx.font = 'bold 12px Inter';
+    ctx.fillStyle = '#725a3d';
+    ctx.textAlign = 'center';
+    ctx.fillText(b.drawingId, tbX + tbW / 2, tbY + 84);
+
+    // Bottom text
+    ctx.font = '6px Inter';
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'left';
+    ctx.fillText('ARCHPITECT ACADEMY EARTH', tbX + 6, tbY + 92);
+    ctx.textAlign = 'right';
+    ctx.fillText('EXAMPLE ONLY, ALL RIGHTS RESERVED', tbX + tbW - 6, tbY + 92);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 5: UI CONTROLS
+// ═══════════════════════════════════════════════════════════════
+const disasterSel = document.getElementById('disaster-type');
+const disasterPanels = {
+    storm:'p-storm', seismic:'p-seismic', wind:'p-wind', flood:'p-flood',
+    lightning:'p-lightning', fire:'p-fire', tornado:'p-tornado',
+    blizzard:'p-blizzard', landslide:'p-landslide', volcanic:'p-volcanic'
+};
+disasterSel.addEventListener('change', function() {
+    document.querySelectorAll('.disaster-params').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById(disasterPanels[this.value]);
+    if (panel) panel.classList.add('active');
+});
+
+const magSlider = document.getElementById('mag-slider');
+const magDisp = document.getElementById('mag-disp');
+magSlider.addEventListener('input', function() {
+    magDisp.textContent = parseFloat(this.value).toFixed(1) + '×';
+});
+
+const sliderBindings = [
+    ['storm-w','d-storm-w',v=>v+' km/h'],['storm-d','d-storm-d',v=>v+' hrs'],
+    ['seis-r','d-seis-r',v=>parseFloat(v).toFixed(1)+' Mw'],['seis-d','d-seis-d',v=>v+' km'],
+    ['wind-s','d-wind-s',v=>v+' km/h'],['wind-d','d-wind-d',v=>v+'°'],
+    ['flood-l','d-flood-l',v=>parseFloat(v).toFixed(1)+' m'],['flood-f','d-flood-f',v=>v+' m³/s'],
+    ['ltng-e','d-ltng-e',v=>v+' MJ'],['fire-t','d-fire-t',v=>v+'°C'],['fire-f','d-fire-f',v=>v],
+    ['torn-w','d-torn-w',v=>v+' m'],['bliz-s','d-bliz-s',v=>v+' kg/m²'],['bliz-w','d-bliz-w',v=>v+' km/h'],
+    ['land-d','d-land-d',v=>parseFloat(v).toFixed(1)+' m'],['land-a','d-land-a',v=>v+'°'],
+    ['volc-a','d-volc-a',v=>v+' kg/m²'],['volc-p','d-volc-p',v=>v+' km'],
+];
+for (const [sliderId, dispId, fmt] of sliderBindings) {
+    const sl = document.getElementById(sliderId);
+    const dp = document.getElementById(dispId);
+    if (sl && dp) sl.addEventListener('input', function() { dp.textContent = fmt(this.value); });
+}
+
+document.getElementById('btn-zin').onclick = () => { zoom = Math.min(zoom + 0.15, 3); };
+document.getElementById('btn-zout').onclick = () => { zoom = Math.max(zoom - 0.15, 0.4); };
+document.getElementById('btn-rot').onclick = () => { rotated = !rotated; };
+document.getElementById('btn-heatmap').onclick = () => {
+    heatOn = !heatOn;
+    document.getElementById('heatmap-label').textContent = 'STRESS HEATMAP: ' + (heatOn ? 'ON' : 'OFF');
+};
+
+// ── Photo upload → Gemini architectural drawing → stress analysis ──
+const photoInput = document.getElementById('photo-input');
+const uploadLabel = document.getElementById('upload-label');
+const uploadIcon = document.getElementById('upload-icon');
+let uploadBusy = false;
+
+document.getElementById('btn-upload').onclick = () => { if (!uploadBusy) photoInput.click(); };
+
+function loadDrawingIntoPipeline(dataUrl, sourceDesc) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const ok = preprocessBuildingImage(img, true); // user-provided: skip shape check
+            if (ok) {
+                userImageActive = true;
+                isFetchingImage = false;
+                addLog(nowTS(), `${sourceDesc} loaded into analyzer (${img.width}×${img.height})`, 'info');
+            } else {
+                addLog(nowTS(), `${sourceDesc} could not be segmented — try a clearer photo`, 'warning');
+            }
+            resolve(ok);
+        };
+        img.onerror = () => { addLog(nowTS(), `${sourceDesc} failed to load`, 'warning'); resolve(false); };
+        img.src = dataUrl;
+    });
+}
+
+// Step 1 of upload flow: Gemini Vision identifies the structure and returns
+// its structural profile + description; applied immediately so the physics
+// and UI reflect the real building even before a drawing exists
+async function identifyPhoto(dataUrl, mimeType) {
+    addLog(nowTS(), 'Identifying structure with Gemini Vision...', 'info');
+    try {
+        const r = await fetch('/api/analyze-photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: dataUrl, mimeType })
+        });
+        const d = await r.json();
+        if (r.ok && d.height_m) {
+            currentBuilding = buildFromAIProfile(d.name || 'Uploaded Structure', d);
+            applyBuildingToUI(currentBuilding);
+            applyBaselineStress();
+            addLog(nowTS(), `Identified: ${currentBuilding.name} — ${currentBuilding.height}m ${currentBuilding.material}`, 'info');
+            return d;
+        }
+        addLog(nowTS(), `Photo identification unavailable: ${(d.error || '').substring(0, 80)}`, 'warning');
+    } catch (e) {
+        addLog(nowTS(), `Photo identification error: ${e.message}`, 'warning');
+    }
+    return null;
+}
+
+// Step 2: generate a technical elevation drawing of the identified structure
+// (Gemini image models when quota exists, FLUX.1-dev otherwise)
+async function generateDrawing(dataUrl, mimeType, identity) {
+    addLog(nowTS(), 'Generating AI architectural elevation drawing...', 'info');
+    try {
+        const r = await fetch('/api/convert-to-drawing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                imageBase64: dataUrl,
+                mimeType,
+                buildingName: identity ? identity.name : (currentBuilding ? currentBuilding.name : ''),
+                description: identity ? identity.description : ''
+            })
+        });
+        const d = await r.json();
+        if (r.ok && d.imageBase64) {
+            addLog(nowTS(), `AI elevation drawing generated (${d.model}). Extracting structure...`, 'info');
+            return await loadDrawingIntoPipeline(d.imageBase64, 'AI elevation drawing');
+        }
+        addLog(nowTS(), `Drawing generation unavailable: ${(d.error || 'unknown error').substring(0, 90)}`, 'warning');
+    } catch (e) {
+        addLog(nowTS(), `Drawing generation error: ${e.message}`, 'warning');
+    }
+    return false;
+}
+
+photoInput.addEventListener('change', async function() {
+    const file = this.files && this.files[0];
+    this.value = '';
+    if (!file || uploadBusy) return;
+
+    uploadBusy = true;
+    uploadLabel.textContent = 'GENERATING DRAWING...';
+    uploadIcon.textContent = 'hourglass_top';
+
+    const dataUrl = await new Promise((resolve) => {
+        const rd = new FileReader();
+        rd.onload = () => resolve(rd.result);
+        rd.readAsDataURL(file);
+    });
+
+    addLog(nowTS(), `Photo uploaded (${Math.round(file.size / 1024)} KB). Starting AI analysis...`, 'info');
+
+    // 1) identify → 2) generate drawing → 3) internet sketch search → 4) raw photo
+    const identity = await identifyPhoto(dataUrl, file.type);
+    const drawn = await generateDrawing(dataUrl, file.type, identity);
+
+    if (!drawn) {
+        if (identity && currentBuilding) {
+            addLog(nowTS(), 'Searching architectural drawing for identified structure...', 'info');
+            userImageActive = false;
+            buildingImgLoaded = false;
+            loadAndPreprocessBuildingImage(currentBuilding.name);
+        } else {
+            addLog(nowTS(), 'Analyzing raw photo directly...', 'info');
+            await loadDrawingIntoPipeline(dataUrl, 'Uploaded photo');
+        }
+    }
+
+    applyBaselineStress();
+    uploadBusy = false;
+    uploadLabel.textContent = 'UPLOAD PHOTO';
+    uploadIcon.textContent = 'add_a_photo';
+});
+document.getElementById('btn-annotations').onclick = () => {
+    showAnnot = !showAnnot;
+    document.getElementById('annot-label').textContent = 'ANNOTATIONS: ' + (showAnnot ? 'ON' : 'OFF');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 6: DIAGNOSTICS
+// ═══════════════════════════════════════════════════════════════
+function updateDiagnostics(maxStress, drift, oscHz, safetyFactor) {
+    const el = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+    const bar = (id, pct) => { const e = document.getElementById(id); if(e) e.style.width = Math.min(100, pct) + '%'; };
+
+    el('diag-stress', Math.round(maxStress) + ' MPa');
+    bar('bar-stress', maxStress / (currentBuilding ? currentBuilding.maxStress : 500) * 100);
+    el('diag-drift', Math.round(drift) + 'mm');
+    bar('bar-drift', drift / 500 * 100);
+    el('diag-osc', oscHz.toFixed(2) + 'Hz');
+    bar('bar-osc', oscHz / 2 * 100);
+    el('diag-safety', safetyFactor.toFixed(2));
+    bar('bar-safety', safetyFactor / 3 * 100);
+
+    const safetyBar = document.getElementById('bar-safety');
+    if (safetyBar) {
+        if (safetyFactor > 1.5) safetyBar.className = 'h-full bg-green-500 rounded-full transition-all duration-700';
+        else if (safetyFactor > 1.0) safetyBar.className = 'h-full bg-yellow-500 rounded-full transition-all duration-700';
+        else safetyBar.className = 'h-full bg-red-500 rounded-full transition-all duration-700';
+    }
+    const stressBar = document.getElementById('bar-stress');
+    if (stressBar) {
+        const ratio = maxStress / (currentBuilding ? currentBuilding.maxStress : 500);
+        if (ratio > 0.9) stressBar.className = 'h-full bg-red-500 rounded-full transition-all duration-700';
+        else if (ratio > 0.7) stressBar.className = 'h-full bg-yellow-500 rounded-full transition-all duration-700';
+        else stressBar.className = 'h-full bg-primary rounded-full transition-all duration-700';
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 7: EVENT LOG
+// ═══════════════════════════════════════════════════════════════
+const logEl = document.getElementById('event-log');
+function addLog(ts, msg, level) {
+    if (!logEl) return;
+    const d = document.createElement('div');
+    const col = level === 'critical' ? 'text-red-500 font-semibold' : level === 'warning' ? 'text-orange-400' : 'text-gray-400';
+    d.className = `flex gap-4 ${col} log-anim`;
+    d.innerHTML = `<span class="w-20 shrink-0 text-[11px]">[${ts}]</span><span class="text-[12px]">${msg}</span>`;
+    logEl.prepend(d);
+    while (logEl.children.length > 40) logEl.removeChild(logEl.lastChild);
+}
+function nowTS() { return new Date().toLocaleTimeString('en-GB', { hour12: false }); }
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 8: WEBSOCKET & SIMULATION EXECUTION
+// ═══════════════════════════════════════════════════════════════
+let wsConn = null;
+
+function connectWS() {
+    const p = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    try { wsConn = new WebSocket(`${p}//${location.host}/ws`); }
+    catch(e) { setTimeout(connectWS, 3000); return; }
+
+    wsConn.onopen = () => { addLog(nowTS(), 'WebSocket telemetry link established', 'info'); };
+    wsConn.onmessage = (e) => { try { handleWSMessage(JSON.parse(e.data)); } catch(err) { console.error('WS Handler Error:', err); } };
+    wsConn.onclose = () => { setTimeout(connectWS, 2000); };
+    wsConn.onerror = () => {};
+}
+
+function handleWSMessage(m) {
+    if (!currentBuilding) return;
+
+    if (m.type === 'telemetry' && m.data) {
+        liveServerData = m.data;
+        const stage = m.data.stage || 0;
+        simProgress = Math.min(1, stage / 8);
+        if (m.data.beamStresses && m.data.beamStresses.length > 0) {
+            if (!targetStresses) targetStresses = new Float64Array(200);
+            const beams = m.data.beamStresses;
+            const maxServerStress = Math.max(...beams.map(b => b.stress || b.stress_mpa || 0));
+            for (let i = 0; i < 200; i++) {
+                const t = i / 199;
+                const bIdx = Math.min(Math.floor(t * beams.length), beams.length - 1);
+                const beam = beams[bIdx];
+                if (beam) {
+                    const ratio = maxServerStress > 0 ? (beam.stress || beam.stress_mpa || 0) / maxServerStress : 0;
+                    targetStresses[i] = ratio * currentBuilding.maxStress * simProgress;
+                }
+            }
+        }
+        if (m.data.oscillation !== undefined) {
+            const maxS = targetStresses ? Math.max(...targetStresses) : 0;
+            const sf = maxS > 0 ? currentBuilding.maxStress / maxS : 3.0;
+            updateDiagnostics(maxS, m.data.drift || 0, m.data.oscillation || 0, sf);
+        }
+        if (stage <= 1) addLog(nowTS(), `Telemetry stage ${stage + 1}/8 — loading FEA mesh`, 'info');
+        else if (stage === 3) addLog(nowTS(), 'Live stress telemetry broadcasting', 'warning');
+        else if (stage === 5) {
+            const beams = m.data.beamStresses || [];
+            const critCount = beams.filter(b => (b.status || '') === 'CRITICAL').length;
+            if (critCount > 0) addLog(nowTS(), `⚠ ${critCount} CRITICAL elements detected`, 'critical');
+        }
+    }
+
+    if (m.type === 'simulation_start') {
+        simActive = true; simProgress = 0;
+        document.getElementById('status-text').textContent = 'LIVE SIMULATION ACTIVE';
+        document.getElementById('status-badge').className = 'flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 font-label-caps text-[11px] rounded-sm';
+        addLog(nowTS(), `Simulation ${m.data?.simulationId || ''} initiated on server`, 'warning');
+    }
+
+    if (m.type === 'simulation_end') {
+        simProgress = 1;
+        addLog(nowTS(), `Simulation COMPLETE. Duration: ${((m.data?.duration || 0) / 1000).toFixed(1)}s`, 'info');
+        document.getElementById('btn-execute').classList.remove('btn-processing');
+        document.getElementById('exec-label').textContent = 'Run Structural Analysis';
+        document.getElementById('status-text').textContent = 'ANALYSIS COMPLETE';
+        document.getElementById('status-badge').className = 'flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 font-label-caps text-[11px] rounded-sm';
+    }
+
+    if (m.type === 'log' && m.data) addLog(m.data.timestamp || nowTS(), m.data.message || '', m.data.level || 'info');
+    if (m.type === 'ai_insight' && m.data) addLog(nowTS(), '🤖 ' + (m.data.message || ''), m.data.level || 'info');
+
+    if (m.type === 'simulation_update' && m.data) {
+        if (m.data.tiers) {
+            if (!targetStresses) targetStresses = new Float64Array(200);
+            for (let i = 0; i < 200; i++) {
+                const t = i / 199;
+                const tierIdx = Math.floor(t * m.data.tiers.length);
+                const tier = m.data.tiers[Math.min(tierIdx, m.data.tiers.length - 1)];
+                if (tier) targetStresses[i] = (tier.stress || tier.core_stress || 0) * currentBuilding.maxStress;
+            }
+            simActive = true; simProgress = 1;
+        }
+    }
+    if (m.type === 'simulation_complete') {
+        document.getElementById('btn-execute').classList.remove('btn-processing');
+        document.getElementById('exec-label').textContent = 'Run Structural Analysis';
+    }
+}
+
+// Execute simulation
+const btnExe = document.getElementById('btn-execute');
+btnExe.onclick = async () => {
+    if (simActive && simProgress < 1) return;
+    simActive = true; simProgress = 0; liveServerData = null;
+    btnExe.classList.add('btn-processing');
+    document.getElementById('exec-label').textContent = 'SIMULATION IN PROGRESS...';
+    document.getElementById('status-text').textContent = 'LIVE SIMULATION ACTIVE';
+    document.getElementById('status-badge').className = 'flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 font-label-caps text-[11px] rounded-sm';
+
+    const dtype = disasterSel.value;
+    const mag = parseFloat(magSlider.value);
+
+    addLog(nowTS(), `Initiating ${dtype.toUpperCase()} simulation | Magnitude: ${mag.toFixed(1)}× | ${currentBuilding.name}`, 'warning');
+    addLog(nowTS(), 'Loading structural mesh & material properties...', 'info');
+
+    targetStresses = computeStressProfile(currentBuilding, dtype, Math.min(mag, 5));
+    currentStresses = new Float64Array(200);
+
+    let stage = 0;
+    const progressInterval = setInterval(() => {
+        stage++;
+        simProgress = Math.min(1, stage / 10);
+        if (stage === 2) addLog(nowTS(), 'Assembling global stiffness matrix K...', 'info');
+        if (stage === 3) addLog(nowTS(), 'Applying boundary conditions (penalty method)...', 'info');
+        if (stage === 4) addLog(nowTS(), 'Solving K·u = f via Gaussian elimination...', 'info');
+        if (stage === 5) addLog(nowTS(), 'Computing element stresses (σ = E·ε)...', 'warning');
+        if (stage === 6) {
+            const maxS = Math.max(...targetStresses);
+            const sf = currentBuilding.maxStress / Math.max(maxS, 1);
+            updateDiagnostics(maxS, maxS * 0.3, 1 / (0.1 * Math.max(currentBuilding.floors, 5)), sf);
+            addLog(nowTS(), `Peak stress: ${Math.round(maxS)} MPa | Safety Factor: ${sf.toFixed(2)}`, maxS > currentBuilding.maxStress * 0.9 ? 'critical' : 'warning');
+        }
+        if (stage === 8) {
+            const critSb = currentBuilding.setbacks.filter(s => s.shear > 150);
+            if (critSb.length > 0) addLog(nowTS(), `⚠ ${critSb.length} critical setback zones identified`, 'critical');
+        }
+        if (stage >= 10) {
+            clearInterval(progressInterval);
+            simProgress = 1;
+            addLog(nowTS(), 'Client-side analysis complete. Awaiting server FEA verification...', 'info');
+        }
+    }, 800);
+
+    try {
+        const params = getDisasterParams(dtype);
+        await fetch('/api/simulation/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: dtype, buildingName: currentBuilding.name, magnitude: mag, params })
+        });
+        addLog(nowTS(), 'Server FEA engine engaged — deterministic solver active', 'info');
+    } catch(e) {
+        addLog(nowTS(), 'Server unavailable — using client-side computation', 'warning');
+        setTimeout(() => {
+            btnExe.classList.remove('btn-processing');
+            document.getElementById('exec-label').textContent = 'Run Structural Analysis';
+            document.getElementById('status-text').textContent = 'ANALYSIS COMPLETE';
+            document.getElementById('status-badge').className = 'flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 font-label-caps text-[11px] rounded-sm';
+        }, 10000);
+    }
+};
+
+function getDisasterParams(dtype) {
+    const v = id => { const e = document.getElementById(id); return e ? parseFloat(e.value) : 0; };
+    switch(dtype) {
+        case 'storm': return { windSpeed: v('storm-w'), duration: v('storm-d') };
+        case 'seismic': return { richter: v('seis-r'), depth: v('seis-d') };
+        case 'wind': return { speed: v('wind-s'), direction: v('wind-d') };
+        case 'flood': return { waterLevel: v('flood-l'), flowRate: v('flood-f') };
+        case 'lightning': return { energy: v('ltng-e'), location: document.getElementById('ltng-loc')?.value || 'Spire' };
+        case 'fire': return { temperature: v('fire-t'), floors: v('fire-f') };
+        case 'tornado': return { efScale: v('torn-ef'), pathWidth: v('torn-w') };
+        case 'blizzard': return { snowLoad: v('bliz-s'), windSpeed: v('bliz-w') };
+        case 'landslide': return { displacement: v('land-d'), angle: v('land-a') };
+        case 'volcanic': return { ashLoad: v('volc-a'), pyroclasticDist: v('volc-p') };
+        default: return {};
+    }
+}
+
+document.getElementById('btn-reset').onclick = () => {
+    simActive = false; simProgress = 0;
+    currentStresses = new Float64Array(200);
+    liveServerData = null;
+    applyBaselineStress();
+    document.getElementById('btn-execute').classList.remove('btn-processing');
+    document.getElementById('exec-label').textContent = 'Run Structural Analysis';
+    document.getElementById('status-text').textContent = 'READY';
+    document.getElementById('status-badge').className = 'flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 font-label-caps text-[11px] rounded-sm';
+    addLog(nowTS(), 'Simulation reset. Reverted to baseline gravity stress state.', 'info');
+};
+
+// Mouse hover
+canvas.addEventListener('mousemove', e => {
+    if (!currentBuilding || !currentStresses) { tip.classList.add('hidden'); return; }
+    const r = canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const L = getLayout();
+    const t = (L.groundY - my) / L.drawH;
+    if (t >= 0 && t <= 1) {
+        const si = Math.round(t * 199);
+        const stress = currentStresses[si];
+        const h = Math.round(t * currentBuilding.height);
+        const flr = currentBuilding.floors > 0 ? Math.round(t * currentBuilding.floors) : '—';
+        tip.classList.remove('hidden');
+        tip.textContent = `H: ${h}m | Floor ${flr} | σ: ${Math.round(stress)} MPa`;
+        tip.style.left = mx + 'px';
+        tip.style.top = (my - 16) + 'px';
+        canvas.style.cursor = 'crosshair';
+    } else {
+        tip.classList.add('hidden');
+        canvas.style.cursor = 'default';
+    }
+});
+canvas.addEventListener('mouseleave', () => { tip.classList.add('hidden'); });
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 9: INITIALIZATION
+// ═══════════════════════════════════════════════════════════════
+// Baseline self-weight stress field — shown immediately so the FEA
+// stress map (blue top → red core/base) is visible before any disaster runs
+function applyBaselineStress() {
+    const b = currentBuilding;
+    if (!b) return;
+    targetStresses = computeStressProfile(b, 'baseline', 1);
+    const baseMax = Math.max(...targetStresses);
+    const sf = b.maxStress / Math.max(baseMax, 1);
+    updateDiagnostics(baseMax, baseMax * 0.1, 1 / (0.1 * Math.max(b.floors, 5)), sf);
+    addLog(nowTS(), `Baseline gravity stress field computed. Peak: ${Math.round(baseMax)} MPa (self-weight) | SF: ${sf.toFixed(2)}`, 'info');
+}
+
+function applyBuildingToUI(b) {
+    document.getElementById('building-title').textContent = b.name;
+    document.getElementById('model-id').textContent = b.drawingId;
+    document.getElementById('geo-coords').textContent = b.lat ? `GEO: ${Math.abs(b.lat).toFixed(4)}° ${b.lat >= 0 ? 'N' : 'S'}, ${Math.abs(b.lng).toFixed(4)}° ${b.lng >= 0 ? 'E' : 'W'}` : 'GEO: —';
+    document.getElementById('building-info-line').textContent = `${b.height}m | ${b.floors > 0 ? b.floors + ' floors' : 'Structure'} | ${b.system.split('(')[0].trim()}`;
+    document.getElementById('info-height').textContent = b.height + ' m';
+    document.getElementById('info-floors').textContent = b.floors > 0 ? b.floors : 'N/A';
+    document.getElementById('info-system').textContent = b.system;
+    document.getElementById('info-material').textContent = b.material;
+    document.getElementById('info-foundation').textContent = b.foundation.length > 35 ? b.foundation.substring(0, 35) + '…' : b.foundation;
+    document.title = `ArchPi | ${b.name} — Stress Analysis`;
+}
+
+// Convert an AI-generated profile (from /api/building-profile) into a building
+// object — this is the primary data source for EVERY structure; the built-in
+// list is only an offline fallback
+function buildFromAIProfile(queryName, d) {
+    // Math.abs guards against sign typos in model output (e.g. -0.98 for 0.98)
+    let pp = Array.isArray(d.profile)
+        ? d.profile.filter(p => Array.isArray(p) && p.length === 2 && isFinite(+p[0]) && isFinite(+p[1]))
+            .map(p => [Math.min(1, Math.abs(+p[0])), Math.min(1.2, Math.abs(+p[1]))])
+        : [];
+    pp.sort((a, b) => a[0] - b[0]);
+    if (pp.length < 4) pp = [[0.01, 1], [0.3, 0.85], [0.6, 0.6], [0.85, 0.35], [1, 0.12]];
+    if (pp[0][0] > 0.005) pp.unshift([0.005, pp[0][1]]);
+    pp.unshift([0, 0]);
+    if (pp[pp.length - 1][0] < 1) pp.push([1, pp[pp.length - 1][1]]);
+
+    const h = Math.max(5, +d.height_m || 50);
+    const setbacks = (Array.isArray(d.setbacks) ? d.setbacks : []).slice(0, 4)
+        .filter(s => s && Math.abs(+s.h_m) > 0 && Math.abs(+s.h_m) < h)
+        .map(s => ({ h: Math.abs(+s.h_m), name: s.label || 'ZONE', shear: Math.round(h * 0.3), label: s.label || 'ZONE' }));
+    const annotations = [
+        { h: h, label: String(Math.round(h)), side: 'top' },
+        ...(Array.isArray(d.annotations) ? d.annotations : []).slice(0, 5)
+            .filter(a => a && +a.h_m > 0 && +a.h_m <= h)
+            .map(a => ({ h: +a.h_m, label: a.label || '', side: a.side === 'left' ? 'left' : 'right', stress: /stress/i.test(a.label || '') }))
+    ];
+
+    return {
+        name: d.name || queryName, keys: [], aiGenerated: true,
+        height: h,
+        floors: Math.max(0, Math.round(+d.floors || 0)),
+        baseWidth: Math.max(3, +d.base_width_m || 30),
+        topWidth: Math.max(0.5, +d.top_width_m || 3),
+        system: d.structural_system || 'Load-Bearing Structure',
+        material: d.primary_material || 'Masonry / Concrete',
+        foundation: d.foundation || 'Standard Foundation',
+        pileLoad: 0,
+        lat: +d.lat || 0, lng: +d.lng || 0,
+        density: Math.min(9000, Math.max(1500, +d.density_kgm3 || 2400)),
+        seismicZone: String(d.seismic_zone || '2'),
+        windDesign: Math.max(60, +d.wind_design_kmh || 120),
+        maxStress: Math.min(600, Math.max(20, +d.max_stress_mpa || h * 0.5)),
+        drawingId: (d.name || queryName).replace(/[^A-Za-z]/g, '').substring(0, 3).toUpperCase() + '-SA-001',
+        windowDensity: 4, coreRatio: 0.35,
+        setbacks, annotations, pp, wings: [], structuralFeatures: []
+    };
+}
+
+async function fetchAIProfile(name) {
+    try {
+        const r = await fetch(`/api/building-profile?q=${encodeURIComponent(name)}`);
+        if (!r.ok) return null;
+        const d = await r.json();
+        if (!d || !d.height_m) return null;
+        return buildFromAIProfile(name, d);
+    } catch (e) { return null; }
+}
+
+function initBuilding() {
+    // Instant local estimate so the page renders immediately...
+    currentBuilding = matchBuilding(bldgQuery);
+    currentStresses = new Float64Array(200);
+    targetStresses = null;
+
+    const b = currentBuilding;
+    applyBuildingToUI(b);
+    updateDiagnostics(0, 0, 1 / (0.1 * Math.max(b.floors, 5)), 3.0);
+
+    addLog(nowTS(), `Structural model loaded: ${b.name}`, 'info');
+    addLog(nowTS(), `Height: ${b.height}m | ${b.floors} floors | ${b.system}`, 'info');
+    addLog(nowTS(), `Material: ${b.material}`, 'info');
+
+    // Load and preprocess realistic blueprint design image from Internet
+    loadAndPreprocessBuildingImage(b.name);
+
+    // Show the FEA stress map immediately (as in engineering elevation drawings)
+    applyBaselineStress();
+
+    // ...then refine with the AI-generated structural profile — works for ANY
+    // structure, independent of the built-in list
+    addLog(nowTS(), 'Requesting AI structural profile (DeepSeek)...', 'info');
+    fetchAIProfile(bldgQuery).then(aiB => {
+        if (!aiB) {
+            addLog(nowTS(), 'AI profile unavailable — using local estimates', 'warning');
+            return;
+        }
+        currentBuilding = aiB;
+        applyBuildingToUI(aiB);
+        addLog(nowTS(), `AI structural profile applied: ${aiB.name} — ${aiB.height}m, ${aiB.system}`, 'info');
+        if (!simActive) applyBaselineStress();
+    });
+}
+
+// Auto-run a disaster when arriving with ?disaster=seismic&mag=7 in the URL
+function applyURLDisaster() {
+    const dParam = P.get('disaster');
+    if (!dParam || !disasterPanels[dParam]) return;
+    disasterSel.value = dParam;
+    disasterSel.dispatchEvent(new Event('change'));
+    const mParam = parseFloat(P.get('mag'));
+    if (!isNaN(mParam)) {
+        magSlider.value = Math.max(0.5, Math.min(10, mParam));
+        magDisp.textContent = parseFloat(magSlider.value).toFixed(1) + '×';
+    }
+    addLog(nowTS(), `Disaster scenario received from Globe: ${dParam.toUpperCase()} — auto-executing...`, 'warning');
+    setTimeout(() => btnExe.onclick(), 1200);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+initBuilding();
+applyURLDisaster();
+connectWS();
+render();
+
+})();
+</script>
+</body>
+</html>

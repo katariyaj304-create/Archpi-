@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aethel Forensic | Lab &amp; Technical Dossier</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e8e1dd",
+                    "on-primary-fixed": "#291803",
+                    "surface-container-low": "#faf2ee",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#d1c4b8",
+                    "on-background": "#1e1b19",
+                    "surface-tint": "#725a3d",
+                    "surface-container-high": "#eee7e2",
+                    "inverse-surface": "#33302d",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface": "#fff8f4",
+                    "surface-variant": "#e8e1dd",
+                    "surface-dim": "#e0d9d4",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1e1b19",
+                    "on-primary-fixed-variant": "#594327",
+                    "error-container": "#ffdad6",
+                    "primary": "#725a3d",
+                    "inverse-on-surface": "#f7efeb",
+                    "tertiary": "#5e5e5e",
+                    "tertiary-container": "#a7a6a6",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "secondary": "#5f5e5e",
+                    "background": "#fff8f4",
+                    "surface-bright": "#fff8f4",
+                    "primary-fixed-dim": "#e1c19d",
+                    "tertiary-fixed": "#e4e2e2",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "on-secondary-fixed-variant": "#474746",
+                    "secondary-container": "#e2dfde",
+                    "on-primary-container": "#4d381d",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#3b3c3c",
+                    "on-surface-variant": "#4e453c",
+                    "secondary-fixed": "#e5e2e1",
+                    "primary-container": "#bfa17f",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-secondary-container": "#636262",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#e1c19d",
+                    "outline": "#80756b",
+                    "primary-fixed": "#ffddb8",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#f4ece8",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "unit": "4px",
+                    "section-gap": "80px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "data-mono": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "headline-sm": ["Playfair Display"],
+                    "label-caps": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .micro-texture {
+            background-image: radial-gradient(#d1c4b8 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            opacity: 0.1;
+        }
+        .aluminum-finish {
+            background: linear-gradient(135deg, #f6f6f6 0%, #e5e2e1 100%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background-color: rgba(253, 253, 253, 0.8);
+        }
+        /* Custom scrollbar for high-density data */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #80756b; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-surface border-b border-outline-variant fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Aethel Forensic</span>
+<div class="hidden md:flex gap-6">
+<a class="text-primary font-bold border-b-2 border-primary py-1 font-body-md text-body-md" href="#">Materials</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 py-1 font-body-md text-body-md" href="#">Timeline</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 py-1 font-body-md text-body-md" href="#">Mapping</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container px-3 py-1 border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-48" placeholder="Search Dossier..." type="text"/>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant">settings</span>
+</div>
+<div class="w-8 h-8 rounded-full border border-primary flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a chief structural engineer with short grey hair and spectacles, wearing a minimalist navy turtleneck. The background is a blurred architectural studio with technical blueprints and warm wood tones, suggesting expertise and authority in building forensics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjWrabxu9o63vL_smz_gtpVL7iScX8pr79GXRuBYr0NZZ3k8PuYqk1pA06aJwrsEq0UASR6xyvbClEfPC9XhmpEoS3-S-yylTRS6vbebUnWAxd2dHXqQP9ihZ4mAL4HnPcwlRlzfy4zFtKvyccvlhNzqO3EuYjKRsTOecMoWbhkmQfOsgCH_ZRVuTY0L76FYc3n4EOqVMSSDlLc2SXmhwu3UBWtRKVc6OQp2a_VppN6QKpAlwtdQboxw"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="bg-surface-container-low border-r border-outline-variant h-screen w-64 fixed left-0 top-0 pt-20 flex flex-col hidden lg:flex">
+<div class="px-6 mb-8">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant opacity-60 mb-2">PROJECT ALPHA</h3>
+<p class="font-headline-sm text-primary text-[20px]">Forensic Lab</p>
+<p class="text-xs text-on-surface-variant">Structural Engineering</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container border-r-2 border-primary scale-100 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label-caps text-label-caps">Materials</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">landscape</span>
+<span class="font-label-caps text-label-caps">Environment</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full py-3 bg-primary text-on-primary font-label-caps text-label-caps flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Analysis
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 pt-24 px-margin-mobile md:px-margin-desktop pb-12 relative min-h-screen">
+<div class="absolute inset-0 micro-texture pointer-events-none"></div>
+<!-- Header Section -->
+<header class="mb-12 border-b border-outline-variant pb-6 flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Technical Dossier: Site 14-B</h1>
+<p class="text-on-surface-variant max-w-2xl font-body-md">Comprehensive petrographic and stratigraphic analysis of the North Nave structural assembly. Consolidated data from X-ray diffraction, dendrochronology, and trade-route reconstruction.</p>
+</div>
+<div class="flex items-center gap-4 mb-1">
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant">LAST UPDATED</p>
+<p class="font-data-mono text-data-mono">2024.05.12 / 14:02 GMT</p>
+</div>
+</div>
+</header>
+<!-- Bento Grid: Material Analysis Lab -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- X-Ray Diffraction Viewer -->
+<div class="md:col-span-8 bg-surface border border-outline-variant overflow-hidden flex flex-col">
+<div class="bg-surface-container-high px-4 py-2 border-b border-outline-variant flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface">Binder Chemistry: XRD Phase Identification</span>
+<div class="flex gap-4">
+<span class="font-label-caps text-label-caps text-primary cursor-pointer">Roman Ash</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant opacity-40 cursor-pointer">Medieval Lime</span>
+</div>
+</div>
+<div class="flex-1 min-h-[400px] relative">
+<div class="absolute inset-0 bg-black flex items-center justify-center">
+<div class="w-full h-full relative" data-alt="A microscopic, high-contrast X-ray diffraction visualization of volcanic ash binder. Bright neon-like crystallization peaks in amber and teal stand out against a dark, textured gray background representing mineral matrix. Technical overlays of intensity curves and chemical labels like 'Stratified Pozzolana' are rendered in a crisp, architectural font." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCV6j7u5C7p3todsg3wXq74cNsUnyHOJEucBM529RFwOpt2ZszVaVtRujSKzx7lDkgjS7AS4DrWjjuVI5AlMGhUQIk1Y42ZRCHhPMi72_dLx3HqcqF1mgeI_44UXkYeZUrvdDD3atE373V8fh5suKm_r_Dfg3c5OH9rUWZG2weethf-OizZDwKTkR5Rv_JAvd3-bor_e-9vA7ppDht4Bz0MV6Gsl6fBO_cqsIdTgqErIEhiVV3pZGy62A')">
+<!-- Technical Overlays (CSS) -->
+<div class="absolute top-8 left-8 text-white">
+<p class="font-data-mono text-xs opacity-60">SPECTROGRAPH-DATA-STREAM_01</p>
+<p class="font-headline-sm">Pozzolanic Reactivity: 84.2%</p>
+</div>
+<div class="absolute bottom-8 right-8 text-right text-white">
+<p class="font-data-mono text-xs opacity-60">ANALYTICAL_LOCK_ACTIVE</p>
+<p class="font-body-md text-sm">Sample ID: ATH-22-NNA</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 grid grid-cols-4 border-t border-outline-variant">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">CALCIUM CONTENT</p>
+<p class="font-data-mono text-headline-sm">62.1%</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">SILICA RATIO</p>
+<p class="font-data-mono text-headline-sm">21.8%</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">POROSITY</p>
+<p class="font-data-mono text-headline-sm">14.3%</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">CRYSTAL SIZE</p>
+<p class="font-data-mono text-headline-sm">1.2μm</p>
+</div>
+</div>
+</div>
+<!-- Degradation Hazard Panel -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container border border-outline-variant p-6 flex-1">
+<h3 class="font-label-caps text-label-caps text-on-surface border-b border-outline-variant pb-3 mb-6">Degradation Hazards</h3>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Salt Crystallization</span>
+<span class="text-error font-data-mono">High Risk (8.4)</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-error" style="width: 84%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2">Efflorescence noted on interior spandrels. Sulphate infiltration detected.</p>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Rust Jacking</span>
+<span class="text-primary font-data-mono">Moderate (4.2)</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-primary" style="width: 42%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2">Oxidation of structural iron ties in the primary piers. Minimal expansion.</p>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md font-bold">Bio-erosion</span>
+<span class="text-on-surface-variant font-data-mono">Negligible (1.2)</span>
+</div>
+<div class="h-1 w-full bg-outline-variant">
+<div class="h-full bg-on-surface" style="width: 12%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-12 bg-white/50 p-4 border border-outline-variant aluminum-finish">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-2">FORENSIC SUMMARY</p>
+<p class="text-sm italic text-on-surface-variant leading-relaxed">"The interaction between historical cementation and modern pollutants is accelerating binder leaching in Sector 04."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Chronological Palimpsest (Timeline) -->
+<section class="mb-section-gap">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="font-headline-md text-headline-md">Chronological Palimpsest</h2>
+<div class="h-[1px] flex-1 bg-outline-variant"></div>
+</div>
+<div class="relative py-12">
+<!-- Main Timeline Axis -->
+<div class="absolute left-0 top-1/2 w-full h-[1px] bg-outline-variant -translate-y-1/2"></div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+<!-- Phase 1 -->
+<div class="group cursor-pointer">
+<div class="bg-surface border border-outline-variant p-6 mb-8 group-hover:border-primary transition-colors relative z-10">
+<div class="absolute -bottom-8 left-1/2 w-[1px] h-8 bg-outline-variant group-hover:bg-primary"></div>
+<span class="font-data-mono text-xs text-primary mb-2 block">120 AD — 150 AD</span>
+<h4 class="font-headline-sm text-lg mb-2">Original Foundation</h4>
+<p class="text-sm text-on-surface-variant mb-4">Deep travertine footings and opus caementicium walls. High-performance Roman volcanic ash binder.</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">POZZOLANA</span>
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">TRAVERTINE</span>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-surface border-2 border-primary mx-auto relative z-20"></div>
+</div>
+<!-- Phase 2 -->
+<div class="group cursor-pointer translate-y-12 md:translate-y-0">
+<div class="bg-surface border border-outline-variant p-6 mb-8 group-hover:border-primary transition-colors relative z-10">
+<div class="absolute -bottom-8 left-1/2 w-[1px] h-8 bg-outline-variant group-hover:bg-primary"></div>
+<span class="font-data-mono text-xs text-primary mb-2 block">1240 AD — 1285 AD</span>
+<h4 class="font-headline-sm text-lg mb-2">Gothic Expansion</h4>
+<p class="text-sm text-on-surface-variant mb-4">Pointed arch insertion and flying buttress additions. Introduction of Caen limestone and lime mortar.</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">LIME MORTAR</span>
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">ASHLLAR</span>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-surface border-2 border-outline mx-auto relative z-20"></div>
+</div>
+<!-- Phase 3 -->
+<div class="group cursor-pointer">
+<div class="bg-surface border border-outline-variant p-6 mb-8 group-hover:border-primary transition-colors relative z-10">
+<div class="absolute -bottom-8 left-1/2 w-[1px] h-8 bg-outline-variant group-hover:bg-primary"></div>
+<span class="font-data-mono text-xs text-primary mb-2 block">1982 AD — PRESENT</span>
+<h4 class="font-headline-sm text-lg mb-2">Modern Restoration</h4>
+<p class="text-sm text-on-surface-variant mb-4">Structural stabilization using epoxy injection and stainless steel rod reinforcement. Atmospheric monitoring.</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">EPOXY</span>
+<span class="px-2 py-1 bg-surface-container text-[10px] font-label-caps border border-outline-variant">STAINLESS</span>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-surface border-2 border-outline mx-auto relative z-20"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Widgets: Chronology Core -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- Dendrochronology Core Samples -->
+<div class="md:col-span-7 bg-surface-container-low border border-outline-variant p-6">
+<h3 class="font-label-caps text-label-caps mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">nature</span>
+                    Dendrochronology: Core Sample Scan #012
+                </h3>
+<div class="h-24 w-full bg-[#f0edea] border border-outline-variant mb-6 flex items-center overflow-hidden relative">
+<!-- Core sample texture simulation -->
+<div class="absolute inset-0 flex">
+<div class="h-full border-r border-outline-variant/30" style="width: 2px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 5px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 3px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 8px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 1px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 4px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 2px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 12px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 3px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 6px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 1px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 9px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 4px;"></div>
+<div class="h-full border-r border-outline-variant/30" style="width: 15px;"></div>
+<!-- ... repeating pattern ... -->
+</div>
+<div class="relative z-10 w-full px-4 flex justify-between">
+<div class="bg-primary/20 border border-primary px-2 py-1 backdrop-blur-sm">
+<p class="font-data-mono text-[10px] text-primary">GROWTH PEAK: 1242 AD</p>
+</div>
+<div class="bg-on-surface/5 border border-on-surface/20 px-2 py-1 backdrop-blur-sm">
+<p class="font-data-mono text-[10px] text-on-surface-variant">FELLING DATE: 1251 AD</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">SPECIES</p>
+<p class="font-body-md font-bold">Quercus robur</p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">RINGS COUNT</p>
+<p class="font-body-md font-bold">142 Years</p>
+</div>
+<div class="bg-surface p-3 border border-outline-variant">
+<p class="font-label-caps text-[10px] text-on-surface-variant mb-1">CONFIDENCE</p>
+<p class="font-body-md font-bold text-primary">98.2%</p>
+</div>
+</div>
+</div>
+<!-- Radiocarbon Assay Curve -->
+<div class="md:col-span-5 bg-surface border border-outline-variant p-6">
+<h3 class="font-label-caps text-label-caps mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">timer</span>
+                    Radiocarbon Assay: C-14 Calibration
+                </h3>
+<div class="h-48 relative border-l border-b border-outline-variant mb-4">
+<!-- Fake SVG calibration curve -->
+<svg class="w-full h-full" viewbox="0 0 400 200">
+<path d="M 20 180 Q 100 120 150 140 T 380 40" fill="none" stroke="#725a3d" stroke-width="2"></path>
+<rect fill="#725a3d" fill-opacity="0.1" height="100" width="30" x="140" y="80"></rect>
+<line stroke="#725a3d" stroke-dasharray="4" x1="155" x2="155" y1="20" y2="180"></line>
+</svg>
+<div class="absolute top-4 right-4 bg-surface-container-high border border-outline-variant p-2">
+<p class="font-data-mono text-[10px]">σ1: 1240-1265 AD</p>
+<p class="font-data-mono text-[10px]">σ2: 1235-1280 AD</p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Probability distribution curve for organic mortar samples from the tertiary vault support. Alignment with dendro-dates confirmed.</p>
+</div>
+</section>
+<!-- Provenance Map -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-12 bg-surface-container border border-outline-variant p-8 relative overflow-hidden">
+<div class="flex justify-between items-start mb-8 relative z-10">
+<div>
+<h2 class="font-headline-md text-headline-md mb-2">Provenance Map</h2>
+<p class="text-on-surface-variant max-w-xl">Reconstructed building material trade routes from the 1st Century BC to the 13th Century AD. Analysis based on isotopic signatures of marble and trace elements in volcanic ash.</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-primary rounded-full"></span>
+<span class="font-label-caps text-label-caps">Marble (Paros)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-on-surface rounded-full"></span>
+<span class="font-label-caps text-label-caps">Ash (Naples)</span>
+</div>
+</div>
+</div>
+<div class="aspect-[21/9] w-full border border-outline-variant relative bg-[#eee7e2] grayscale opacity-80 mix-blend-multiply" data-alt="A stylized technical map of the Mediterranean and European trade routes in a minimalist, historical archival style. Thin, precise gold and black lines trace routes across a muted, sepia-toned parchment background. Strategic cities like Rome, Naples, and Athens are marked with small architectural icons. The style is clinical, elegant, and evocative of 19th-century scientific cartography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC8Zz9bnxOv3Nix8PJVBVSBOZrzHjXtIaMr5EQ-N3amLsdCR6OY9pJ7_1ddSXg2rG2aZAFtihMgqyhruLB_vB1CjrhwUXmyvxzufjiXHFzkKlCADKKASntz_g3XBcYLxDEpEMS0M6HtYCItx4dlSCPAklsJU_r1irzPf2dyOPbVgEaWgiEzhHUnobz3A_CLpIZEwmtGCLmEe4t8gNlrYp8NK_ctgzUXTts5MoX5t9gn6m39i1s7e6NDnQ')">
+<!-- Map Overlays -->
+<div class="absolute inset-0 p-8 flex items-center justify-center">
+<div class="w-2/3 h-2/3 border border-dashed border-primary/40 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
+</div>
+<div class="absolute top-1/2 left-1/4 -translate-y-1/2 p-2 bg-white/90 border border-outline-variant shadow-sm">
+<p class="font-label-caps text-[9px]">SOURCE ALPHA</p>
+<p class="font-data-mono text-xs font-bold">Mount Vesuvius (Ash)</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (FAB) - Suppression Logic: This is a Detail/Dossier page, FAB is suppressed as per guidelines -->
+<!-- Mobile Navigation -->
+<div class="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant z-50 flex justify-around items-center h-16">
+<a class="flex flex-col items-center text-primary" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-label-caps">Analysis</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-label-caps">Timeline</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[10px] font-label-caps">Routes</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-caps">Account</span>
+</a>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.querySelectorAll('.group').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-4px)';
+                item.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = item.classList.contains('translate-y-12') ? 'translateY(48px)' : 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

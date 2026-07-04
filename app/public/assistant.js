@@ -70,28 +70,41 @@
 
     /* ================= styles ================= */
     var css = [
-        /* --- the orb (ElevenLabs-style living gradient sphere) --- */
-        '#aria-fab{position:fixed;bottom:88px;right:24px;z-index:9000;width:64px;height:64px;border-radius:50%;',
-        ' border:none;cursor:pointer;padding:0;background:transparent;filter:drop-shadow(0 10px 26px rgba(114,90,61,.45));',
-        ' transition:transform .25s}',
-        '#aria-fab:hover{transform:translateY(-3px) scale(1.06)}',
-        '.aria-orb{position:relative;width:64px;height:64px;border-radius:50%;overflow:hidden;',
-        ' background:radial-gradient(circle at 32% 28%,#fff8f4 0%,#e1c19d 22%,#bfa17f 48%,#725a3d 78%,#26221e 100%)}',
-        '.aria-orb::before{content:"";position:absolute;inset:-40%;border-radius:50%;',
-        ' background:conic-gradient(from 0deg,transparent 0deg,rgba(255,248,244,.55) 60deg,transparent 140deg,rgba(225,193,157,.5) 240deg,transparent 330deg);',
-        ' animation:orbSwirl 6s linear infinite}',
+        /* --- the orb: ElevenLabs-style liquid sphere (layered blurred
+               swirls counter-rotating inside a glossy ball) --- */
+        '#aria-fab{position:fixed;bottom:88px;right:24px;z-index:9000;width:66px;height:66px;border-radius:50%;',
+        ' border:none;cursor:pointer;padding:0;background:transparent;',
+        ' filter:drop-shadow(0 12px 28px rgba(20,16,12,.5));transition:transform .25s}',
+        '#aria-fab:hover{transform:translateY(-3px) scale(1.07)}',
+        '.aria-orb{display:block;position:relative;width:66px;height:66px;border-radius:50%;overflow:hidden;',
+        ' background:radial-gradient(circle at 50% 55%,#3a332c 0%,#191512 62%,#0b0908 100%)}',
+        '.aria-orb i{display:block}',
+        '.aria-orb i{position:absolute;inset:-35%;border-radius:50%;pointer-events:none}',
+        /* liquid band 1 — bright cream ribbon, heavy blur */
+        '.aria-orb .w1{background:conic-gradient(from 20deg,transparent 0deg,rgba(255,248,240,.95) 40deg,rgba(255,248,240,.15) 95deg,transparent 150deg,rgba(255,255,255,.6) 235deg,transparent 300deg);',
+        ' filter:blur(7px);animation:orbSwirl 7s linear infinite}',
+        /* liquid band 2 — gold ribbon, counter-rotating */
+        '.aria-orb .w2{background:conic-gradient(from 200deg,transparent 0deg,rgba(225,193,157,.85) 55deg,transparent 130deg,rgba(191,161,127,.5) 230deg,transparent 320deg);',
+        ' filter:blur(9px);animation:orbSwirlRev 11s linear infinite}',
+        /* slow deep wave for liquid depth */
+        '.aria-orb .w3{background:radial-gradient(ellipse 60% 42% at 50% 68%,rgba(255,255,255,.34) 0%,transparent 70%);',
+        ' filter:blur(5px);animation:orbBob 4.6s ease-in-out infinite}',
+        /* glass shell: top highlight + bottom vignette + rim light */
         '.aria-orb::after{content:"";position:absolute;inset:0;border-radius:50%;',
-        ' background:radial-gradient(circle at 66% 72%,rgba(38,34,30,.55) 0%,transparent 55%),',
-        '  radial-gradient(circle at 30% 26%,rgba(255,255,255,.8) 0%,transparent 34%);',
-        ' animation:orbBreathe 3.4s ease-in-out infinite}',
+        ' background:radial-gradient(circle at 32% 22%,rgba(255,255,255,.85) 0%,rgba(255,255,255,.12) 26%,transparent 42%),',
+        '  radial-gradient(circle at 50% 118%,rgba(0,0,0,.65) 0%,transparent 58%);',
+        ' box-shadow:inset 0 0 14px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,255,255,.5)}',
         '@keyframes orbSwirl{to{transform:rotate(360deg)}}',
-        '@keyframes orbBreathe{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}',
-        /* orb state rings */
-        '#aria-fab .ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;pointer-events:none}',
-        '#aria-fab.listening .ring{border-color:#c0392b;animation:ringPulse 1.1s ease-out infinite}',
-        '#aria-fab.speaking .ring{border-color:#e1c19d;animation:ringPulse 1.5s ease-out infinite}',
-        '#aria-fab.listening .aria-orb::before{animation-duration:1.6s}',
-        '#aria-fab.speaking .aria-orb::before{animation-duration:2.6s}',
+        '@keyframes orbSwirlRev{to{transform:rotate(-360deg)}}',
+        '@keyframes orbBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7%) scale(1.06)}}',
+        /* orb state rings + speed shifts */
+        '#aria-fab .aria-ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;pointer-events:none}',
+        '#aria-fab.listening .aria-ring{border-color:#c0392b;animation:ringPulse 1.1s ease-out infinite}',
+        '#aria-fab.speaking .aria-ring{border-color:#e1c19d;animation:ringPulse 1.4s ease-out infinite}',
+        '#aria-fab.listening .w1{animation-duration:1.8s}#aria-fab.listening .w2{animation-duration:3s}',
+        '#aria-fab.speaking .w1{animation-duration:2.6s}#aria-fab.speaking .w2{animation-duration:4.5s}',
+        '#aria-fab.speaking .aria-orb{animation:orbTalk .55s ease-in-out infinite}',
+        '@keyframes orbTalk{0%,100%{transform:scale(1)}50%{transform:scale(1.055)}}',
         '@keyframes ringPulse{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.28);opacity:0}}',
         /* --- panel --- */
         '#aria-panel{position:fixed;bottom:164px;right:24px;z-index:9001;width:396px;max-width:calc(100vw - 32px);',
@@ -101,9 +114,14 @@
         '#aria-panel.open{display:flex;animation:ariaIn .25s ease}',
         '@keyframes ariaIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}',
         '#aria-head{background:#26221e;color:#f7efeb;padding:13px 16px;display:flex;align-items:center;gap:11px}',
-        '#aria-head .mini-orb{width:30px;height:30px;border-radius:50%;flex:none;',
-        ' background:radial-gradient(circle at 32% 28%,#fff8f4 0%,#e1c19d 25%,#bfa17f 55%,#725a3d 100%);',
-        ' animation:orbBreathe 3.4s ease-in-out infinite}',
+        '#aria-head .mini-orb{width:32px;height:32px;border-radius:50%;flex:none;position:relative;overflow:hidden;',
+        ' background:radial-gradient(circle at 50% 55%,#3a332c 0%,#15110e 70%)}',
+        '#aria-head .mini-orb::before{content:"";position:absolute;inset:-35%;border-radius:50%;',
+        ' background:conic-gradient(from 20deg,transparent 0deg,rgba(255,248,240,.9) 50deg,transparent 130deg,rgba(225,193,157,.7) 250deg,transparent 330deg);',
+        ' filter:blur(4px);animation:orbSwirl 6s linear infinite}',
+        '#aria-head .mini-orb::after{content:"";position:absolute;inset:0;border-radius:50%;',
+        ' background:radial-gradient(circle at 32% 22%,rgba(255,255,255,.8) 0%,transparent 38%);',
+        ' box-shadow:inset 0 0 8px rgba(0,0,0,.5)}',
         '#aria-head b{font-size:14px;letter-spacing:.04em;display:block}',
         '#aria-head small{color:#bfa17f;font-size:10px;letter-spacing:.12em;text-transform:uppercase}',
         '#aria-head .spacer{flex:1}',
@@ -163,30 +181,68 @@
         if (stateEl) stateEl.textContent = label || '';
     }
 
-    function pickVoice() {
-        var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
-        return voices.find(function (v) { return /en[-_]IN/i.test(v.lang) && /female|neural|natural|online/i.test(v.name); })
-            || voices.find(function (v) { return /en[-_]IN/i.test(v.lang); })
-            || voices.find(function (v) { return /en[-_](GB|US)/i.test(v.lang) && /natural|neural|online/i.test(v.name); })
-            || voices.find(function (v) { return /^en/i.test(v.lang); }) || null;
+    // Edge/Chrome speechSynthesis is famously buggy: voices load async,
+    // cancel()-then-speak() races drop the utterance, garbage collection
+    // silences it mid-sentence, and long utterances stall. All handled here.
+    var voicesCache = [];
+    var currentUtterance = null;   // held globally so it can't be GC'd
+    var resumeTimer = null;
+
+    function refreshVoices() {
+        try { voicesCache = window.speechSynthesis.getVoices() || []; } catch (e) {}
+    }
+    if ('speechSynthesis' in window) {
+        refreshVoices();
+        window.speechSynthesis.onvoiceschanged = refreshVoices;
     }
 
-    function speak(text) {
-        if (isMuted() || !('speechSynthesis' in window) || !text) return;
-        window.speechSynthesis.cancel();
+    function pickVoice() {
+        var vs = voicesCache.length ? voicesCache : (window.speechSynthesis ? window.speechSynthesis.getVoices() : []);
+        return vs.find(function (v) { return /en[-_]IN/i.test(v.lang) && /neural|natural|online/i.test(v.name); })
+            || vs.find(function (v) { return /en[-_]IN/i.test(v.lang); })
+            || vs.find(function (v) { return /en[-_](GB|US)/i.test(v.lang) && /neural|natural|online/i.test(v.name); })
+            || vs.find(function (v) { return /^en/i.test(v.lang); }) || null;
+    }
+
+    // speak(text, onDone) — onDone always fires exactly once (after the voice
+    // finishes, errors, or when muted/unsupported) so callers can safely wait
+    // for ARIA to finish talking before changing the page.
+    function speak(text, onDone) {
+        var finished = false;
+        function done() {
+            if (finished) return;
+            finished = true;
+            clearInterval(resumeTimer); resumeTimer = null;
+            setOrbState('', '');
+            if (onDone) onDone();
+        }
+        if (isMuted() || !('speechSynthesis' in window) || !text) { done(); return; }
         // strip emoji/symbols so the voice sounds human, not like it's reading a keyboard
         var clean = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}⚡]/gu, '').replace(/\s+/g, ' ').trim();
-        if (!clean) return;
-        var u = new SpeechSynthesisUtterance(clean);
-        u.rate = 1.02; u.pitch = 1.04;
-        var v = pickVoice();
-        if (v) u.voice = v;
-        u.onstart = function () { setOrbState('speaking', 'Speaking…'); };
-        u.onend = function () { setOrbState('', ''); };
-        u.onerror = function () { setOrbState('', ''); };
-        window.speechSynthesis.speak(u);
+        if (!clean) { done(); return; }
+
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+        // small delay after cancel() — speaking immediately drops the utterance in Edge
+        setTimeout(function () {
+            var u = new SpeechSynthesisUtterance(clean);
+            currentUtterance = u;
+            u.rate = 1.02; u.pitch = 1.04; u.volume = 1;
+            var v = pickVoice();
+            if (v) u.voice = v;
+            u.onstart = function () { setOrbState('speaking', 'Speaking…'); };
+            u.onend = done;
+            u.onerror = done;
+            window.speechSynthesis.speak(u);
+            // long-utterance stall workaround: nudge the engine periodically
+            clearInterval(resumeTimer);
+            resumeTimer = setInterval(function () {
+                if (!window.speechSynthesis.speaking) { done(); return; }
+                try { window.speechSynthesis.pause(); window.speechSynthesis.resume(); } catch (e) {}
+            }, 8000);
+            // absolute safety net so navigation is never blocked forever
+            setTimeout(done, 25000);
+        }, 90);
     }
-    if ('speechSynthesis' in window) window.speechSynthesis.getVoices(); // warm the voice list
 
     /* ================= voice: input (speech recognition) ================= */
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -240,7 +296,7 @@
         fabEl = document.createElement('button');
         fabEl.id = 'aria-fab';
         fabEl.title = 'ARIA — talk to your ArchPi assistant';
-        fabEl.innerHTML = '<span class="aria-orb"></span><span class="ring"></span>';
+        fabEl.innerHTML = '<span class="aria-orb"><i class="w1"></i><i class="w2"></i><i class="w3"></i></span><span class="aria-ring"></span>';
         document.body.appendChild(fabEl);
 
         var panel = document.createElement('div');
@@ -477,8 +533,8 @@
                       (a.disaster ? '&disaster=' + encodeURIComponent(a.disaster) : '');
             }
         });
-        // Give the spoken reply a moment before the page changes
-        if (nav) setTimeout(function () { window.location.href = nav; }, 1800);
+        // The spoken reply has already finished (speak() gates execute)
+        if (nav) setTimeout(function () { window.location.href = nav; }, 350);
     }
 
     /* ================= send ================= */
@@ -553,8 +609,9 @@
             history.push({ role: 'assistant', content: reply, actions: actions });
             saveHistory(history);
             bubble('bot', reply, actions);
-            speak(reply);
-            execute(actions);
+            // ARIA finishes saying her reply BEFORE any action changes the
+            // page — otherwise navigation cuts the voice off mid-sentence
+            speak(reply, function () { execute(actions); });
         })
         .catch(function (e) {
             typing.remove();

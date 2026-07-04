@@ -1839,6 +1839,7 @@ Return JSON with EXACTLY these keys:
  "structural_system": "short description",
  "primary_material": "short description",
  "foundation": "short description",
+ "appearance": "one rich sentence for an artist. START with the overall massing in blunt unambiguous geometry words (a FLAT screen wall / a stepped pyramid outline / a rectangular slab / a cylindrical drum / a tapering square tower), then facade pattern, window rhythm, colour, and the signature features that make THIS building unmistakable. NEVER use ambiguous words like 'curved' or 'soaring' unless the entire building is truly cylindrical. Explicitly say 'flat front elevation' when the facade is planar.",
  "density_kgm3": number (average structural density),
  "lat": number, "lng": number,
  "seismic_zone": "string",
@@ -1959,13 +1960,24 @@ async function generateFluxDrawing(buildingName, description, size) {
     // Style locked to the reference FEA sheet's drafting: uniform thin CAD
     // linework, structure only. Colors, legend, title block and dimensions are
     // rendered live by the client so the heatmap stays dynamic.
-    const prompt = `Precise 2D CAD architectural front elevation drawing of ${subject}, ` +
-        `drafted exactly like the building elevation on a structural engineering FEA analysis sheet: ` +
+    // FLUX pattern-matches monuments to its favourite lookalikes (every pink
+    // Indian palace becomes a domed Mughal tomb). Explicitly forbid the
+    // features the building's own description never mentions.
+    const NEG_FEATURES = ['dome', 'minaret', 'spire', 'bell tower', 'colonnade'];
+    const descLower = subject.toLowerCase();
+    const negatives = NEG_FEATURES.filter(f => !descLower.includes(f.split(' ')[0]));
+    const negLine = negatives.length
+        ? `CRITICAL: this building has NO ${negatives.join(', NO ')} — draw none of those. `
+        : '';
+    const prompt = `Precise 2D CAD architectural front elevation drawing of ${subject}. ` +
+        `Faithfully reproduce THIS specific structure's real distinctive architecture exactly as described — ` +
+        `never substitute a different famous building. ` + negLine +
+        `Drafted exactly like the building elevation on a structural engineering FEA analysis sheet: ` +
         `uniform thin black technical pen linework on a PURE WHITE background, ` +
         `strict orthographic front elevation with zero perspective and zero foreshortening, ` +
         `true real-life proportions of this specific structure. ` +
         `Fine drafted interior detail: floor lines, window mullion grids, panel divisions, masonry courses, ` +
-        `arches, domes, columns, minarets and setbacks exactly as on the real building, ` +
+        `and every facade element this exact building truly has — nothing invented, nothing borrowed from lookalike monuments, ` +
         `all in finer line weight than the crisp closed continuous outer silhouette contour. ` +
         `ONLY the single structure on one simple flat horizontal ground line — ` +
         `no background, no sky, no trees, no plants, no people, no vehicles, no neighboring buildings, ` +
@@ -2018,7 +2030,9 @@ async function generateFluxDrawing(buildingName, description, size) {
 
     // Provider 2: Pollinations.ai — free keyless FLUX endpoint
     console.log(`[FLUX] Generating "${buildingName}" via Pollinations...`);
-    const seed = Math.abs([...buildingName].reduce((a, c) => a * 31 + c.charCodeAt(0) | 0, 7)) % 100000;
+    // Seed from name + prompt so an enriched description explores a fresh
+    // composition instead of resampling the old (wrong) one
+    const seed = Math.abs([...(buildingName + '|' + prompt.length)].reduce((a, c) => a * 31 + c.charCodeAt(0) | 0, 7)) % 100000;
     const pUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}` +
         `?width=${W}&height=${H}&model=flux&nologo=true&seed=${seed}`;
     const pr = await fetch(pUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
@@ -2052,13 +2066,18 @@ app.get('/api/generate-elevation', async (req, res) => {
         return res.json({ imageBase64: hit.dataUrl, model: hit.model || 'FLUX.1-dev', cached: true });
     }
 
-    // Enrich the prompt from the request or the cached structural profile
+    // Enrich the prompt from the request or the cached structural profile.
+    // The profile's "appearance" sentence carries the distinctive features
+    // (Hawa Mahal's honeycomb screen, not a generic domed monument) — without
+    // it the image model draws the nearest famous lookalike.
     let description = (req.query.description || '').trim();
     const prof = profileCache.get(key);
-    if (!description && prof?.data) {
+    if (prof?.data) {
         const p = prof.data;
-        description = [p.category, p.primary_material, p.height_m ? `${p.height_m}m tall` : '']
+        const facts = [p.category, p.primary_material, p.height_m ? `${p.height_m}m tall` : '']
             .filter(Boolean).join(', ');
+        const appearance = (p.appearance || '').trim();
+        description = [description, appearance, facts].filter(Boolean).join('. ');
     }
 
     // Canvas orientation from the structure's real proportions (cached profile,
